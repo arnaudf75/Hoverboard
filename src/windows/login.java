@@ -1,12 +1,8 @@
 package windows;
 
-import java.awt.Color;
-import java.awt.BorderLayout;
-
 import java.awt.*;
 import java.awt.event.*;
 
-import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JFrame;

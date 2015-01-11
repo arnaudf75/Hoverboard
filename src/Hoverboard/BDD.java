@@ -20,11 +20,8 @@ public class BDD {
             Class.forName("com.mysql.jdbc.Driver");
             dbcon = DriverManager.getConnection(dbUrl,user,password);
         }
-        catch (ClassNotFoundException class_error) {
-           System.out.println("Error while connecting to database "+class_error); 
-        }
-        catch (SQLException sql_error) {
-            System.out.println("Error while connecting to database "+sql_error);  
+        catch (ClassNotFoundException | SQLException conn_error) {
+           System.out.println("Error while connecting to database "+conn_error); 
         }
     }
 }
