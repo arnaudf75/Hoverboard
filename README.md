@@ -29,3 +29,4 @@ In this one you will find all of the application's documentation :
 # "/Ressources" folder
 
 In this folder you will find images used by the application and the APIs.
+

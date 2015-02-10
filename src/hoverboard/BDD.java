@@ -1,7 +1,5 @@
 package hoverboard;
 
-import windows.*;
-
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.Statement;      
@@ -14,12 +12,13 @@ public class BDD {
     String requete;
     Statement statement;
     ResultSet result;
-    String user, password;
+    String dbUrl, driver, user, password;
     
-    public BDD(String user, String password) {
+    public BDD(String dbUrl, String driver, String user, String password) {
+        
         try {
-            String dbUrl="jdbc:mysql://localhost:3306/hoverboard_jx90";
-            Class.forName("com.mysql.jdbc.Driver");
+            this.dbUrl=dbUrl;
+            Class.forName(driver);
             dbcon = DriverManager.getConnection(dbUrl,user,password);
         }
         catch (ClassNotFoundException | SQLException conn_error) {
@@ -27,10 +26,10 @@ public class BDD {
         }
     }
     
-     public boolean connect_user(String login, String password) {
+    public boolean connect_user(String login, String password) {
         requete = ("SELECT * FROM users WHERE login ='"+login+"' AND password ='"+password+"'");
         try {
-            Statement statement = dbcon.createStatement();
+            this.statement = dbcon.createStatement();
             result = statement.executeQuery(requete);
             if (!result.isBeforeFirst()) {
                 return (false);
@@ -39,7 +38,6 @@ public class BDD {
                 result.next();
                 String lastName = result.getString("lastName");
                 String firstName = result.getString("firstName");
-                Home home_window = new Home();
                 return (true);
             }
         }
@@ -48,4 +46,26 @@ public class BDD {
         }
         return (false);
     }
+    
+    public boolean ifUserExists(String login, String email) {
+        requete = ("SELECT email, login FROM users WHERE email = '"+email+"' OR login = '"+login+"'");
+        try {
+            this.statement = dbcon.createStatement();
+            result = statement.executeQuery(requete);
+            if (!result.isBeforeFirst()) {
+                // Pas d'users existant, on peut inscrire l'user
+                requete = "INSERT INTO users VALUES (NULL, '"+login+"', '"+login+"', '"+email+"', '"+login+"', '"+login+"' ,0 ,0) ";
+                statement.executeUpdate(requete);
+                return (true);
+            }
+            else {
+                return (false);
+            }
+        }
+        catch (SQLException error) {
+             System.out.println(error);   
+        }
+        return (true);
+    }
+     
 }

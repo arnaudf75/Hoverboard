@@ -1,97 +1,104 @@
 package windows;
 
+import hoverboard.BDD;
+import hoverboard.ParserXml;
 import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.util.Hashtable;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JFrame;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 public class Register_window extends JFrame implements ActionListener {
 
-    private JButton jButton1;
-    private JButton jButton2;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel jLabel5;
-    private JLabel jLabel6;
-    private JPasswordField jPasswordField1;
-    private JTextField jTextField1;
-    private JTextField jTextField2;
-    private JTextField jTextField3;
+    private final JButton validation = new JButton ("Valider");
+    private final JButton reset = new JButton ("Annuler");
+    private final JLabel logo = new JLabel (new ImageIcon("src/ressources/logo.png"));
+    private final JLabel email_label = new JLabel ("Enter your email adress");
+    private final JLabel firstName_label = new JLabel("Enter your first name :");
+    private final JLabel lastName_label = new JLabel("Enter your last name :");
+    private final JLabel login_label = new JLabel("Enter your login :");
+    private final JLabel password_label = new JLabel("Enter your password :");
     
+    private final JPanel bottom_container = new JPanel();
+    private final JPanel center_container = new JPanel();
+    private final JPanel main_container = new JPanel();
+    
+    private final JPasswordField password_field = new JPasswordField ();
+    private final JTextField email_field = new JTextField();
+    private final JTextField firstName_field = new JTextField();
+    private final JTextField lastName_field = new JTextField();
+    private final JTextField login_field = new JTextField();
     
     public Register_window() {
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        this.setTitle("Registration window");
+        this.setSize(400, 400);
 
-        jLabel1.setText("Nom");
+        validation.addActionListener(this);
+        reset.addActionListener(this);
 
-        jLabel2.setText("Prénom");
+        center_container.setLayout(new GridLayout(6, 6));
 
-        jLabel5.setText("Login");
+        center_container.add(firstName_label);
+        center_container.add(firstName_field);
+        center_container.add(lastName_label);
+        center_container.add(lastName_field);
+        center_container.add(email_label);
+        center_container.add(email_field);
+        center_container.add(login_label);
+        center_container.add(login_field);
+        center_container.add(password_label);
+        center_container.add(password_field); 
 
-        jLabel6.setText("Mot de passe");
+        bottom_container.add(validation);
+        bottom_container.add(reset);
 
-        jButton1.setText("Valider");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        main_container.add(logo, BorderLayout.NORTH);
+        main_container.add(center_container, BorderLayout.CENTER);
+        main_container.add(bottom_container, BorderLayout.SOUTH);
 
-        jButton2.setText("Annuler");
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(109, 109, 109)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel6))
-                        .addGap(14, 14, 14)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.TRAILING)))))
-                .addContainerGap(122, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addContainerGap())
-        );
+        this.setLocationRelativeTo(null);
+        this.setContentPane(main_container);
+        this.setVisible(true);
     }
+    
+    public void actionPerformed(ActionEvent event) {
+        Object source = event.getSource();
+
+        if (source == validation) {
+            String firstName = firstName_field.getText();
+            String lastName = lastName_field.getText();
+            String email = email_field.getText();
+            String login = login_field.getText();
+            String password = password_field.getText();
+            if (login.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "You must fill all of the fields to continue !" , "ERROR",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+            else {
+                ParserXml xmlParser = new ParserXml();
+                Hashtable data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax(), xmlParser.getDocument(), xmlParser.getRacine());        
+                BDD connexion = new BDD(data_jdbc.get("dbUrl").toString(), data_jdbc.get("driver").toString(), data_jdbc.get("login").toString(), data_jdbc.get("password").toString());
+                if (connexion.ifUserExists(login, email)) {
+                    JOptionPane.showMessageDialog(null, "Your account has been created, check your email inbox to activate it." , "ERROR",
+                    JOptionPane.INFORMATION_MESSAGE);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "This login or this email are already taken." , "ERROR",
+                    JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+        if(source == reset) {
+            System.out.println("Vous avez cliqué sur reset");
+        }
+    }
+    
 }

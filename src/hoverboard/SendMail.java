@@ -29,16 +29,22 @@ public class SendMail {
         
         // Code à laisser dans le constructeur
         
+        // A partir d'ici, le code doit être récupéré depuis la BDD
         String host = "smtp.gmail.com";
         String Password = "esgi_hoverboard";
         String from = "hoverboard.esgi@gmail.com";
+        
+        // Mail à passer en paramètre soit lorsque l'utilisateur s'inscrit soit si il est connecté, via une requête SQL
+        // à passer au constructeur pour créer l'objet mail
         String toAddress = "arnaudflaesch@hotmail.com";
+        
         // Get system properties
         Properties props = new Properties();
         props.setProperty("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-         
+        
+        // Code à mettre dans une méthode
         Session session = Session.getDefaultInstance(props, null);
         MimeMessage message = new MimeMessage(session);
         message.setFrom(new InternetAddress(from));
