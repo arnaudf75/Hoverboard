@@ -109,7 +109,7 @@ public class Login_window extends JFrame implements ActionListener {
             System.out.println("Vous avez cliqué sur reset, il faut rendre les champs vides");
         }
         else if (source == password_lost) {
-            System.out.println ("J'ai reconnu votre action, mais je ne la prends pas encore en charge.");
+            Forgot_Password forgot_psw = new Forgot_Password();
         }
         else if (source == register) {
             Register_window reg2 = new Register_window();
