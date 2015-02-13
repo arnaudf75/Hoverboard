@@ -24,6 +24,8 @@ public abstract class Widget extends JInternalFrame implements MouseListener,Act
     protected int positionY;
     protected int oldX;
     protected int oldY;
+    protected int height;
+    protected int width;
     
     protected JPanel settings=new JPanel();
     protected JPanel content=new JPanel();
@@ -67,7 +69,7 @@ public abstract class Widget extends JInternalFrame implements MouseListener,Act
             if(SwingUtilities.isLeftMouseButton(e)){
                 positionX += e.getX()-oldX;
                 positionY += e.getY()-oldY;
-                setBounds(positionX,positionY,200,200);
+                setBounds(positionX,positionY,height,width);
             }
         }
     }
