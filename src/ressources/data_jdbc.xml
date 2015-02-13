@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<root>
-    <dbUrl>jdbc:mysql://localhost:3306/hoverboard_jx90</dbUrl>
-    <driver>com.mysql.jdbc.Driver</driver>
-    <login>hoverboard_jx90</login>
-    <password>esgi_hoverboard</password>
-</root>
