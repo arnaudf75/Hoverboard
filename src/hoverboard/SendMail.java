@@ -17,26 +17,18 @@ import javax.mail.Transport;
 public class SendMail {
     
     public SendMail() throws MessagingException {
- 
-        // Code à utiliser lorsque l'utilisateur crée un compte
-        
-        try {
-            SendMail mail = new SendMail();
-        }
-        catch (MessagingException e) {
-            e.printStackTrace();
-        }
-        
-        // Code à laisser dans le constructeur
-        
+        String destinataire,host,expediteur,password;
+    }
+    
+    public void sendRegistrationEmail(String mailDestinataire) throws MessagingException {
         // A partir d'ici, le code doit être récupéré depuis la BDD
         String host = "smtp.gmail.com";
-        String Password = "esgi_hoverboard";
         String from = "hoverboard.esgi@gmail.com";
+        String Password = "esgi_hoverboard";
         
         // Mail à passer en paramètre soit lorsque l'utilisateur s'inscrit soit si il est connecté, via une requête SQL
         // à passer au constructeur pour créer l'objet mail
-        String toAddress = "arnaudflaesch@hotmail.com";
+        String toAddress = mailDestinataire;
         
         // Get system properties
         Properties props = new Properties();

@@ -1,7 +1,7 @@
 package hoverboard;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -41,16 +41,52 @@ public class ParserXml {
         return (dicto);
     }
     
-    public void creerDocument() {
+    public Hashtable getDataPost(SAXBuilder sax, Document document, Element racine) {
         try {
-            String fichier = "filefichier.xml";
-            XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            //Remarquez qu'il suffit simplement de créer une instance de FileOutputStream
-            //avec en argument le nom du fichier pour effectuer la sérialisation.
-            sortie.output(document, new FileOutputStream(fichier));
+            document = sax.build(new File("src/ressources/mypostit.xml"));
         }
-        catch (java.io.IOException e) {
-            
+        catch(IOException | JDOMException error) {
+            System.out.println(error);
+        }
+        racine = document.getRootElement();
+        dicto.put("text", racine.getChild("text").getText());
+        dicto.put("color", racine.getChild("color").getText());
+        return (dicto);
+    }
+    
+    public void creerCookie(String loginField, String passwordField) {
+        try {
+            Element cookie = new Element("cookie");
+            Document document = new Document();
+            document.setRootElement(cookie);
+            Element login = new Element("login").addContent(loginField);
+            Element password = new Element("password").addContent(passwordField);
+            document.getRootElement().addContent(login);
+            document.getRootElement().addContent(password);
+            XMLOutputter xmlOutput = new XMLOutputter();
+            xmlOutput.setFormat(Format.getPrettyFormat());
+            xmlOutput.output(document, new FileWriter("src/ressources/cookie_login.xml"));
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+    
+    public boolean isLoginValid(SAXBuilder sax, Document document, Element racine,BDD connexion) {
+        try {
+            document = sax.build(new File("src/ressources/cookie_login.xml"));
+        }
+        catch(IOException | JDOMException error) {
+            System.out.println(error);
+        }
+        racine = document.getRootElement();
+        String loginUser = racine.getChild("login").getText();
+        String passwordUser = racine.getChild("password").getText();
+        if (connexion.connect_user(loginUser, passwordUser)) {
+            return (true);
+        }
+        else {
+            return (false);
         }
     }
     

@@ -44,6 +44,7 @@ public class Login_window extends JFrame implements ActionListener {
         this.setTitle("Fenêtre de connexion");
         this.setSize(400, 400);
         this.setLocationRelativeTo(null);
+        this.setIconImage(new ImageIcon(this.getClass().getResource("logo.png")).getImage());
         
         validation.addActionListener(this);
         reset.addActionListener(this);
@@ -86,16 +87,14 @@ public class Login_window extends JFrame implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
             }
             else {
-                if (check_cookie.isSelected()) {
-                    System.out.println("J'ai cliqué chef");
-                }
-                else {
-                    System.out.println("J'ai pas cliqué chef");
-                }
                 ParserXml xmlParser = new ParserXml();
                 Hashtable data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax(), xmlParser.getDocument(), xmlParser.getRacine());        
                 BDD connexion = new BDD(data_jdbc.get("dbUrl").toString(), data_jdbc.get("driver").toString(), data_jdbc.get("login").toString(), data_jdbc.get("password").toString());
                 if (connexion.connect_user(login, password)) {
+                    if (check_cookie.isSelected()) {
+                        ParserXml parser = new ParserXml();
+                        parser.creerCookie(login,password);
+                    }
                     this.setVisible(false);
                     Home home_window = new Home();
                 }
