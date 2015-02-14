@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package windows;
 
 import java.awt.Dimension;
@@ -30,9 +25,9 @@ public class PostIt extends Widget{
         postit_text.setRows(9);
         postit_text.setColumns(20);
         JScrollPane scrollPane = new JScrollPane(postit_text,
-				                     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-				    scrollPane.setBounds(new Rectangle(-4, 1, 397, 198)); 
+                                                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                                                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setBounds(new Rectangle(-4, 1, 397, 198)); 
         content.add(scrollPane, null);
     }
     public PostIt(String text)
@@ -45,15 +40,11 @@ public class PostIt extends Widget{
         postit_text.setRows(9);
         postit_text.setColumns(20);
         JScrollPane scrollPane = new JScrollPane(postit_text,
-				                     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-				    scrollPane.setBounds(new Rectangle(-4, 1, 397, 198)); 
+                                                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                                                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setBounds(new Rectangle(-4, 1, 397, 198)); 
         content.add(scrollPane, null);        
     }
-    
-    
-    
-    
     
     public static void main(String[] args) {
         JFrame frame = new JFrame("Testing");

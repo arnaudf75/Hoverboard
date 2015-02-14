@@ -15,7 +15,6 @@ public class BDD {
     String dbUrl, driver, user, password;
     
     public BDD(String dbUrl, String driver, String user, String password) {
-        
         try {
             this.dbUrl=dbUrl;
             Class.forName(driver);
@@ -67,5 +66,4 @@ public class BDD {
         }
         return (true);
     }
-     
 }
