@@ -9,7 +9,8 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+
+import java.awt.event.MouseMotionListener;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -19,7 +20,7 @@ import javax.swing.SwingUtilities;
  *
  * @author Cavoleau
  */
-public abstract class Widget extends JInternalFrame implements MouseListener,ActionListener {
+public abstract class Widget extends JInternalFrame implements ActionListener,MouseMotionListener {
     protected int positionX;
     protected int positionY;
     protected int oldX;
@@ -29,59 +30,35 @@ public abstract class Widget extends JInternalFrame implements MouseListener,Act
     
     protected JPanel settings=new JPanel();
     protected JPanel content=new JPanel();
-    JButton del = new JButton("delete");
+    JButton del = new JButton("x");
     
     public Widget(){
         super();
+        settings.setLayout(new BorderLayout());
         this.add(settings, BorderLayout.NORTH);
         this.add(content, BorderLayout.CENTER);
         
         del.addActionListener(this);
-        settings.add(del);
+        settings.add(del,BorderLayout.EAST);
         
         this.setVisible(true);
         ((javax.swing.plaf.basic.BasicInternalFrameUI)this.getUI()).setNorthPane(null);
         
-        settings.addMouseListener(this);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        
+        settings.addMouseMotionListener(this);
     }
     
     @Override
-    public void mousePressed(MouseEvent e) {
-        Object source = e.getSource();
-        if (source == settings){
-            if(SwingUtilities.isLeftMouseButton(e))
-                    {
-                        oldX = e.getX();
-                        oldY = e.getY();
-                    }
-        }
+    public void mouseDragged(MouseEvent e) {
+       // if (contains(e.getX(),e.getY())) { A utiliser pour que le post it reste dans le cadre
+            positionX += e.getX();
+            positionY += e.getY();
+            setBounds(positionX,positionY,height,width);
+       //} 
     }
-
     @Override
-    public void mouseReleased(MouseEvent e) {
-        Object source = e.getSource();
-        if (source == settings){
-            if(SwingUtilities.isLeftMouseButton(e)){
-                positionX += e.getX()-oldX;
-                positionY += e.getY()-oldY;
-                setBounds(positionX,positionY,height,width);
-            }
-        }
-    }
+    public void mouseMoved(MouseEvent e) {
+	 
 
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        
     }
 
     @Override

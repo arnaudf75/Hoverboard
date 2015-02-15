@@ -18,7 +18,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-public class Login_window extends JFrame implements ActionListener {
+public class Login extends JFrame implements ActionListener {
     
     private final JButton validation = new JButton ("Valider");
     private final JButton reset = new JButton ("Annuler");
@@ -40,7 +40,7 @@ public class Login_window extends JFrame implements ActionListener {
     private final JTextField login_field = new JTextField();
 
     
-    public Login_window() {
+    public Login() {
         this.setTitle("Fenêtre de connexion");
         this.setSize(400, 400);
         this.setLocationRelativeTo(null);
@@ -111,7 +111,7 @@ public class Login_window extends JFrame implements ActionListener {
             Forgot_Password forgot_psw = new Forgot_Password();
         }
         else if (source == register) {
-            Register_window reg2 = new Register_window();
+            Register reg2 = new Register();
         }
     }
 }

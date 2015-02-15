@@ -31,10 +31,11 @@ public class Home extends JFrame implements ActionListener {
     private final JLabel background = new JLabel (new ImageIcon("src/ressources/background.png"));
     private final JPanel main_container = new JPanel();
     private final JPanel top_container = new JPanel();
+    private final JPanel center_container = new JPanel();
     
     public Home() {
         this.setTitle("Home Page");
-        this.setSize(500, 500);
+        this.setSize(800, 800);
         
         this.setIconImage(new ImageIcon(this.getClass().getResource("logo.png")).getImage());
         main_container.setLayout(new BorderLayout());
@@ -62,6 +63,7 @@ public class Home extends JFrame implements ActionListener {
         top_container.add(menu);
         //main_container.add(background);
         main_container.add(top_container, BorderLayout.NORTH);
+        main_container.add(center_container, BorderLayout.CENTER);
         
         this.setContentPane(main_container);
         this.setVisible(true);
@@ -73,13 +75,17 @@ public class Home extends JFrame implements ActionListener {
         //ParserXml parser = new ParserXml();
         //Hashtable dictoPost = parser.getDataPost(parser.getSax(), parser.getDocument(), parser.getRacine());
         //this.main_container.add(new PostIt(dictoPost.get("text").toString(),dictoPost.get("color").toString()));
-        main_container.add(new PostIt());
-        main_container.revalidate();
+        center_container.add(new PostIt("Post it de test"));
+        center_container.revalidate();
     }
     
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source==new_postit) {
+            PostIt test=new PostIt("test zefvergetrh\nlolilol\n3e line OP");
+            PostIt test2=new PostIt();
+            center_container.add(test);
+            center_container.add(test2);
             this.affichePost();
         }
         else if (source==menuDisconnect) {
@@ -89,7 +95,7 @@ public class Home extends JFrame implements ActionListener {
                 System.out.println("Cookie supprimé");
             }
             this.dispose();
-            Login_window login = new Login_window();
+            Login login = new Login();
         }
     }
 }

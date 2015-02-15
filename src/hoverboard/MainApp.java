@@ -18,11 +18,11 @@ public class MainApp {
                 Home myHome = new Home(); 
             }
             else {
-                Login_window login_window = new Login_window();
+                Login login_window = new Login();
             }
         }
         else {
-            Login_window login_window = new Login_window();
+            Login login_window = new Login();
         }
          
     }

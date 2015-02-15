@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class Register_window extends JFrame implements ActionListener {
+public class Register extends JFrame implements ActionListener {
 
     private final JButton validation = new JButton ("Valider");
     private final JButton reset = new JButton ("Annuler");
@@ -39,7 +39,7 @@ public class Register_window extends JFrame implements ActionListener {
     private final JTextField lastName_field = new JTextField();
     private final JTextField login_field = new JTextField();
     
-    public Register_window() {
+    public Register() {
         this.setTitle("Registration window");
         this.setSize(400, 400);
         this.setIconImage(new ImageIcon(this.getClass().getResource("logo.png")).getImage());
