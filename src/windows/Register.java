@@ -2,10 +2,12 @@ package windows;
 
 import hoverboard.BDD;
 import hoverboard.ParserXml;
+import hoverboard.SendMail;
 import java.awt.event.*;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.Hashtable;
+import javax.mail.MessagingException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,7 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class Register_window extends JFrame implements ActionListener {
+public class Register extends JFrame implements ActionListener {
 
     private final JButton validation = new JButton ("Valider");
     private final JButton reset = new JButton ("Annuler");
@@ -37,9 +39,10 @@ public class Register_window extends JFrame implements ActionListener {
     private final JTextField lastName_field = new JTextField();
     private final JTextField login_field = new JTextField();
     
-    public Register_window() {
+    public Register() {
         this.setTitle("Registration window");
         this.setSize(400, 400);
+        this.setIconImage(new ImageIcon(this.getClass().getResource("logo.png")).getImage());
 
         validation.addActionListener(this);
         reset.addActionListener(this);
@@ -89,6 +92,13 @@ public class Register_window extends JFrame implements ActionListener {
                 if (connexion.ifUserExists(login, email)) {
                     JOptionPane.showMessageDialog(null, "Your account has been created, check your email inbox to activate it." , "ERROR",
                     JOptionPane.INFORMATION_MESSAGE);
+                    try {
+                        SendMail send = new SendMail();
+                        send.sendRegistrationEmail(email);
+                    }
+                    catch (MessagingException e) {
+
+                    }
                 }
                 else {
                     JOptionPane.showMessageDialog(null, "This login or this email are already taken." , "ERROR",
@@ -99,6 +109,5 @@ public class Register_window extends JFrame implements ActionListener {
         if(source == reset) {
             System.out.println("Vous avez cliqué sur reset");
         }
-    }
-    
+    }    
 }

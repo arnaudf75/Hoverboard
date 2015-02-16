@@ -39,7 +39,7 @@ public class Forgot_Password extends JFrame implements ActionListener{
 	public Forgot_Password(){
             
             this.setTitle("Forgot Password");
-            this.setSize(400,160);
+            this.setSize(450,180);
             this.setVisible(true);
             this.setLocationRelativeTo(null);
             
