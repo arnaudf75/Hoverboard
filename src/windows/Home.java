@@ -89,7 +89,6 @@ public class Home extends JFrame implements ActionListener {
             this.affichePost();
         }
         else if (source==menuDisconnect) {
-            System.out.println("ici");
             File cookie = new File("src/ressources/cookie_login.xml");
             if(cookie.delete()){
                 System.out.println("Cookie supprimé");

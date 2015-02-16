@@ -31,3 +31,5 @@ nbproject/build-impl.xml
 Scripts/MPD.mwb.bak
 Scripts/MPD.mwb.bak
 Scripts/MPD.mwb.bak
+/src/nbproject/private/
+src/ressources/cookie_login.xml

@@ -37,12 +37,6 @@ INSERT INTO `elements` (`idElement`, `contentElement`, `positionX`, `positionY`,
 	(5, 'Mon contenu est vide', 45, 45, 3, 2);
 /*!40000 ALTER TABLE `elements` ENABLE KEYS */;
 
--- Export de données de la table hoverboard_jx90.news: ~2 rows (environ)
-/*!40000 ALTER TABLE `news` DISABLE KEYS */;
-INSERT INTO `news` (`idNews`, `contentNews`, `dateNews`) VALUES
-	(1, 'Welcome to the Hoverboard project homepage ', '2015-01-20'),
-	(2, 'Find the source code on GitHub at : https://github.com/arnaudf75/Hoverboard', '2015-01-27');
-/*!40000 ALTER TABLE `news` ENABLE KEYS */;
 
 -- Export de données de la table hoverboard_jx90.plugins: ~3 rows (environ)
 /*!40000 ALTER TABLE `plugins` DISABLE KEYS */;
