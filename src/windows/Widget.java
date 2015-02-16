@@ -6,10 +6,12 @@
 package windows;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javafx.scene.layout.Border;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -27,12 +29,17 @@ public abstract class Widget extends JInternalFrame implements MouseListener,Act
     protected int height;
     protected int width;
     
-    protected JPanel settings=new JPanel();
-    protected JPanel content=new JPanel();
-    JButton del = new JButton("delete");
+    protected JPanel settings;
+    protected JPanel content;
+    protected JButton del;
     
     public Widget(){
         super();
+        settings=new JPanel();
+        settings.setBackground(new Color(200,200,200));
+        content=new JPanel();
+        del=new JButton("delete");
+        
         this.add(settings, BorderLayout.NORTH);
         this.add(content, BorderLayout.CENTER);
         

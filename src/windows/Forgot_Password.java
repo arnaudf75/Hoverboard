@@ -16,7 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import javax.swing.JInternalFrame;
+
 /**
  *
  * @author Cavoleau
@@ -42,6 +42,9 @@ public class Forgot_Password extends JFrame implements ActionListener{
             this.setSize(400,160);
             this.setVisible(true);
             this.setLocationRelativeTo(null);
+            
+            valider_login.addActionListener(this);
+            valider_mail.addActionListener(this);
 
             grid_container.setLayout(new GridLayout(4,2));
             grid_container.add(use_login);

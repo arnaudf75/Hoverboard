@@ -31,16 +31,15 @@ public class PostIt extends Widget{
         postit_text.setColumns(20);
         JScrollPane scrollPane = new JScrollPane(postit_text,
 				                     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-				    scrollPane.setBounds(new Rectangle(-4, 1, 397, 198)); 
-        content.add(scrollPane, null);
+				                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED); 
+        content.add(scrollPane);
     }
     public PostIt(String text)
     {
         super();
         height=250;
         width=200;
-        this.setBounds(0, 0, height, width);
+        this.setBounds(0, 0, width, height);
         postit_text=new JTextArea(text);
         postit_text.setRows(9);
         postit_text.setColumns(20);
