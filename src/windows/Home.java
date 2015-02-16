@@ -41,6 +41,7 @@ public class Home extends JFrame implements ActionListener {
         main_container.setLayout(new BorderLayout());
         
         new_postit.addActionListener(this);
+        new_tasklist.addActionListener(this);
         menuDisconnect.addActionListener(this);
         
         dashboard_new.add(new_postit);
@@ -87,6 +88,11 @@ public class Home extends JFrame implements ActionListener {
             center_container.add(test);
             center_container.add(test2);
             this.affichePost();
+        }
+        if (source==new_tasklist) {
+            ToDoList testtodo=new ToDoList();
+            center_container.add(testtodo);
+            center_container.revalidate();
         }
         else if (source==menuDisconnect) {
             File cookie = new File("src/ressources/cookie_login.xml");

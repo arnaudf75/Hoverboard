@@ -43,6 +43,9 @@ public class ToDoList extends Widget implements ActionListener{
         taskList.setBackground(Color.red);
          
         taskList.add(new Task());
+        taskList.add(new Task());
+        taskList.add(new Task());
+        taskList.add(new Task());
         
         newTask.addActionListener(this);
         settings.add(newTask);
