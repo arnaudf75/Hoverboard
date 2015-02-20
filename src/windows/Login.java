@@ -1,13 +1,9 @@
 package windows;
 
 import hoverboard.*;
-
-import java.util.Hashtable;
-
 import java.awt.event.*;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -17,6 +13,12 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import java.util.HashMap;
+
+/**
+ * Login est la fenêtre par laquelle l'utilisateur se connecte à son compte.
+ * @author Arnaud
+ */
 
 public class Login extends JFrame implements ActionListener {
     
@@ -26,7 +28,6 @@ public class Login extends JFrame implements ActionListener {
     private final JButton register = new JButton ("I don't have an account");
     private final JCheckBox check_cookie = new JCheckBox ();
     
-    private final JLabel background = new JLabel (new ImageIcon("src/ressources/background.png"));
     private final JLabel logo = new JLabel (new ImageIcon("src/ressources/logo.png"));
     private final JLabel check_label = new JLabel ("Remember me ?");
     private final JLabel login_label = new JLabel("Enter your login :");
@@ -44,7 +45,6 @@ public class Login extends JFrame implements ActionListener {
         this.setTitle("Fenêtre de connexion");
         this.setSize(400, 400);
         this.setLocationRelativeTo(null);
-        this.setIconImage(new ImageIcon(this.getClass().getResource("logo.png")).getImage());
         
         validation.addActionListener(this);
         reset.addActionListener(this);
@@ -76,6 +76,13 @@ public class Login extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
+    /**
+     * Affiche la page d'accueil de l'utilisateur si le login et le mot de passe sont valides, ou affiche une fenêtre d'enregistrement ou de mot de passe perdu.
+     * @param event 
+     * L'action qui vient de se produire (bouton cliqué).
+     */
+    
+    @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
 
@@ -88,7 +95,7 @@ public class Login extends JFrame implements ActionListener {
             }
             else {
                 ParserXml xmlParser = new ParserXml();
-                Hashtable data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax(), xmlParser.getDocument(), xmlParser.getRacine());        
+                HashMap data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax());        
                 BDD connexion = new BDD(data_jdbc.get("dbUrl").toString(), data_jdbc.get("driver").toString(), data_jdbc.get("login").toString(), data_jdbc.get("password").toString());
                 if (connexion.connect_user(login, password)) {
                     if (check_cookie.isSelected()) {
@@ -105,13 +112,13 @@ public class Login extends JFrame implements ActionListener {
             }
         }
         else if(source == reset) {
-            System.out.println("Vous avez cliqué sur reset, il faut rendre les champs vides");
+
         }
         else if (source == password_lost) {
             Forgot_Password forgot_psw = new Forgot_Password();
         }
         else if (source == register) {
-            Register reg2 = new Register();
+            Register reg = new Register();
         }
     }
 }

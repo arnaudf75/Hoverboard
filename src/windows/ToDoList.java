@@ -58,20 +58,7 @@ public class ToDoList extends Widget implements ActionListener{
         content.add(scrollPane);
     }
     
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Testing");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-        JDesktopPane desktopPane=new JDesktopPane();
-        frame.add(desktopPane);
-        
-        ToDoList test=new ToDoList();
-        desktopPane.add(test);
-    }
-    
+    @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source == del){
@@ -101,6 +88,7 @@ class Task extends JPanel implements ActionListener{
         delTask.addActionListener(this);
     }
     
+    @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source == delTask){

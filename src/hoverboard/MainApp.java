@@ -1,9 +1,13 @@
 package hoverboard;
 
 import windows.*;
-
 import java.io.File;
-import java.util.Hashtable;
+import java.util.HashMap;
+
+/**
+ * MainApp est la classe principale qui s'exécute au démarrage de l'application.
+ * @author Arnaud
+ */
 
 public class MainApp {
 
@@ -12,9 +16,9 @@ public class MainApp {
         File cookie = new File("src/ressources/cookie_login.xml");
         if (cookie.exists()) {
             ParserXml xmlParser = new ParserXml();
-            Hashtable data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax(), xmlParser.getDocument(), xmlParser.getRacine());        
+            HashMap data_jdbc = xmlParser.getDataJDBC(xmlParser.sax);        
             BDD connexion = new BDD(data_jdbc.get("dbUrl").toString(), data_jdbc.get("driver").toString(), data_jdbc.get("login").toString(), data_jdbc.get("password").toString());
-            if ( xmlParser.isLoginValid(xmlParser.getSax(), xmlParser.getDocument(), xmlParser.getRacine(), connexion) ) {
+            if ( xmlParser.isLoginValid(xmlParser.sax, connexion) ) {
                 Home myHome = new Home(); 
             }
             else {
@@ -24,6 +28,5 @@ public class MainApp {
         else {
             Login login_window = new Login();
         }
-         
     }
 }

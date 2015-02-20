@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <smtp>smtp.gmail.com</smtp>
+    <sender>hoverboard.esgi@gmail.com</sender>
+    <password>esgi_hoverboard</password>
+</root>

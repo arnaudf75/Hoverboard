@@ -35,7 +35,7 @@ public abstract class Widget extends JInternalFrame implements ActionListener,Mo
         
         del.addActionListener(this);
         settings.add(del,BorderLayout.EAST);
-        
+        this.setResizable(true);
         this.setVisible(true);
         ((javax.swing.plaf.basic.BasicInternalFrameUI)this.getUI()).setNorthPane(null);
         

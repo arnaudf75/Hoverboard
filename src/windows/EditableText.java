@@ -9,6 +9,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * 
+ * @author Cavoleau
+ */
+
 public class EditableText extends JPanel {
 
     private JLabel label;

@@ -6,9 +6,7 @@ import hoverboard.SendMail;
 import java.awt.event.*;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.util.Hashtable;
 import javax.mail.MessagingException;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.ImageIcon;
@@ -17,6 +15,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import java.util.HashMap;
+
+/**
+ * Register est la fenêtre par laquelle l'utilisateur peut se créer un compte.
+ * @author Arnaud
+ */
 
 public class Register extends JFrame implements ActionListener {
 
@@ -42,7 +46,6 @@ public class Register extends JFrame implements ActionListener {
     public Register() {
         this.setTitle("Registration window");
         this.setSize(400, 400);
-        this.setIconImage(new ImageIcon(this.getClass().getResource("logo.png")).getImage());
 
         validation.addActionListener(this);
         reset.addActionListener(this);
@@ -72,6 +75,13 @@ public class Register extends JFrame implements ActionListener {
         this.setVisible(true);
     }
     
+    /**
+     * Enregistre l'utilisateur dans la base de données si celui-ci n'existe pas et lui envoie un mail d'activation.
+     * @param event 
+     * L'action qui vient de se produire (bouton cliqué).
+     */
+    
+    @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
 
@@ -87,17 +97,18 @@ public class Register extends JFrame implements ActionListener {
             }
             else {
                 ParserXml xmlParser = new ParserXml();
-                Hashtable data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax(), xmlParser.getDocument(), xmlParser.getRacine());        
+                HashMap data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax());        
                 BDD connexion = new BDD(data_jdbc.get("dbUrl").toString(), data_jdbc.get("driver").toString(), data_jdbc.get("login").toString(), data_jdbc.get("password").toString());
-                if (connexion.ifUserExists(login, email)) {
-                    JOptionPane.showMessageDialog(null, "Your account has been created, check your email inbox to activate it." , "ERROR",
+                if (connexion.registerUser(firstName, lastName, email, login, password)) {
+                    JOptionPane.showMessageDialog(null, "Your account has been created, check your email inbox to activate it." , "Success !",
                     JOptionPane.INFORMATION_MESSAGE);
                     try {
-                        SendMail send = new SendMail();
+                        String smtp="",  sender="", passwordMail="";
+                        SendMail send = new SendMail(smtp,sender, email, passwordMail);
                         send.sendRegistrationEmail(email);
                     }
                     catch (MessagingException e) {
-
+                        System.out.println(e);
                     }
                 }
                 else {
@@ -107,7 +118,6 @@ public class Register extends JFrame implements ActionListener {
             }
         }
         if(source == reset) {
-            System.out.println("Vous avez cliqué sur reset");
         }
     }    
 }

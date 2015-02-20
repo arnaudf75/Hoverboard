@@ -3,15 +3,16 @@ package windows;
 import java.awt.BorderLayout;
 import java.awt.event.*;
 import java.io.File;
-import java.nio.file.Files;
-
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+
+/**
+ * Home est la page d'accueil de l'utilisateur, elle contient tous les widgets du dashboard.
+ * @author Arnaud
+ */
 
 public class Home extends JFrame implements ActionListener {
     private final JMenuBar menu = new JMenuBar();
@@ -28,16 +29,12 @@ public class Home extends JFrame implements ActionListener {
     private final JMenuItem about_doc = new JMenuItem("View Online Documentation");
     private final JMenuItem about_help = new JMenuItem("About Hoverboard");
     private final JMenuItem menuDisconnect = new JMenuItem("Disconnect");
-    private final JLabel background = new JLabel (new ImageIcon("src/ressources/background.png"));
     private final JPanel main_container = new JPanel();
-    private final JPanel top_container = new JPanel();
-    private final JPanel center_container = new JPanel();
     
     public Home() {
         this.setTitle("Home Page");
         this.setSize(800, 800);
         
-        this.setIconImage(new ImageIcon(this.getClass().getResource("logo.png")).getImage());
         main_container.setLayout(new BorderLayout());
         
         new_postit.addActionListener(this);
@@ -61,38 +58,29 @@ public class Home extends JFrame implements ActionListener {
         menu.add(menuDisconnect);
         
         
-        top_container.add(menu);
-        //main_container.add(background);
-        main_container.add(top_container, BorderLayout.NORTH);
-        main_container.add(center_container, BorderLayout.CENTER);
-        
+        setJMenuBar(menu);        
         this.setContentPane(main_container);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
-    public void affichePost() {
-        //ParserXml parser = new ParserXml();
-        //Hashtable dictoPost = parser.getDataPost(parser.getSax(), parser.getDocument(), parser.getRacine());
-        //this.main_container.add(new PostIt(dictoPost.get("text").toString(),dictoPost.get("color").toString()));
-        center_container.add(new PostIt("Post it de test"));
-        center_container.revalidate();
-    }
+    /**
+     * Effectue une action en fonction du menu cliqué, par exemple un post-it sera ajouté, ou un les informations de l'utilisateur seront affichées.
+     * @param event 
+     * L'action qui vient de se produire (bouton cliqué).
+     */
     
+    @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source==new_postit) {
-            PostIt test=new PostIt("test zefvergetrh\nlolilol\n3e line OP");
-            PostIt test2=new PostIt();
-            center_container.add(test);
-            center_container.add(test2);
-            this.affichePost();
+            main_container.add(new PostIt());
+            main_container.revalidate();
         }
         if (source==new_tasklist) {
-            ToDoList testtodo=new ToDoList();
-            center_container.add(testtodo);
-            center_container.revalidate();
+            main_container.add(new ToDoList());
+            main_container.revalidate();
         }
         else if (source==menuDisconnect) {
             File cookie = new File("src/ressources/cookie_login.xml");
