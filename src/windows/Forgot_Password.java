@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import java.util.HashMap;
 
 /**
  * 
@@ -48,14 +49,24 @@ public class Forgot_Password extends JFrame implements ActionListener{
         this.add(main_container);
     }
 
+    /**
+     * Envoie un message à l'utilisateur à l'adresse qu'il a renseignée.
+     * @param event 
+     */
+    
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source == valider_mail){
             try {
-                String smtp="",  sender="",  destinataire="mail.arnaudflaesch@gmail.com", passwordMail="";
-                SendMail send = new SendMail(smtp,sender, destinataire, passwordMail);
-                send.sendPasswordLostEmail(mail_field.getText());
+                ParserXml xmlParser = new ParserXml();
+                HashMap data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax());        
+                BDD connexion = new BDD(data_jdbc.get("dbUrl").toString(), data_jdbc.get("driver").toString(), data_jdbc.get("login").toString(), data_jdbc.get("password").toString());
+                if (connexion.resetPassword(mail_field.getText())) {
+                    String smtp="",  sender="",  destinataire= mail_field.getText(), passwordMail="";
+                    SendMail send = new SendMail(smtp,sender, destinataire, passwordMail);
+                    send.sendPasswordLostEmail(mail_field.getText());
+                }
             }
             catch (MessagingException e) {
                 System.out.println(e);

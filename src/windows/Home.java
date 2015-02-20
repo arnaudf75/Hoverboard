@@ -74,14 +74,14 @@ public class Home extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        if (source==new_postit) {
+        if (source==new_postit) {/*
             main_container.add(new PostIt());
             main_container.revalidate();
         }
         if (source==new_tasklist) {
             main_container.add(new ToDoList());
             main_container.revalidate();
-        }
+        */}
         else if (source==menuDisconnect) {
             File cookie = new File("src/ressources/cookie_login.xml");
             if(cookie.delete()){

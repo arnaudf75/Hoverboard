@@ -74,6 +74,36 @@ public class BDD {
     }
     
     /**
+     * Cherche dans la base de données si un utilisateur existe avec cet email et change le mot de passe.
+     * @param emailUser
+     * L'adresse email renseignée dans le formulaire.
+     * @return 
+     * True si toutes les actions ont été effectuées, False si l'utilisateur n'existe pas ou que la connexion à la base de données n'a pas fonctionnée.
+     */
+    
+    public boolean resetPassword(String emailUser) {
+        requete = "SELECT * FROM users WHERE email ='"+emailUser+"'";
+        try {
+            this.statement = dbcon.createStatement();
+            result = statement.executeQuery(requete);
+            if (!result.isBeforeFirst()) {
+                // Aucun utilisateur avec cet email
+                return (false);
+            }
+            else {
+                // On doit réinitialiser le mot de passe de l'utilisateur ici
+                // Une idée : Update From users; Set password = random(passsword)
+                // On envoie le nouveau password par mail à l'utilisateur
+                return (true);
+            }
+        }
+        catch (SQLException error) {
+            System.out.println (error);
+        }
+        return (false);
+    }
+    
+    /**
      * Appellée lorsqu'un utilisateur demande la création d'un compte sur l'application. Elle vérifie qu'il n'existe pas déjà
      * un utilisateur utilisant ce login et ce mot de passe, sinon elle l'inscrit.
      * @param firstName
