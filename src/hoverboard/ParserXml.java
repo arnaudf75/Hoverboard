@@ -27,6 +27,7 @@ public class ParserXml {
     }
     
     /**
+     * Récupère les données du fichier data_jdbc.xml permettant la connexion à la base de données.
     * @param sax
     * L'objet SaxBuilder.
     * @return
@@ -50,25 +51,27 @@ public class ParserXml {
         return (dicto);
     }
     
+    
     /**
-     * 
+     * Récupère les données des fichiers de post-it au format .xml pour les afficher.
      * @param sax
      * L'objet SaxBuilder
+     * @param postIt
+     * Un fichier .xml contenant les données d'un post-it.
      * @return 
      * Dictionnaire contenant les données d'un post-it.
      */
     
-    public HashMap getDataPost(SAXBuilder sax) {
+    public HashMap getDataPost(SAXBuilder sax, String postIt) {
         try {
-            this.document = sax.build(new File("src/ressources/mypostit.xml"));
+            this.document = sax.build(new File(postIt));
         }
         catch(IOException | JDOMException error) {
             System.out.println(error);
         }
         Element racine = document.getRootElement();
         HashMap dicto = new HashMap();
-        dicto.put("text", racine.getChild("text").getText());
-        dicto.put("color", racine.getChild("color").getText());
+        dicto.put("content", racine.getChild("content").getText());
         return (dicto);
     }
     
@@ -93,6 +96,32 @@ public class ParserXml {
             XMLOutputter xmlOutput = new XMLOutputter();
             xmlOutput.setFormat(Format.getPrettyFormat());
             xmlOutput.output(document, new FileWriter("src/ressources/cookie_login.xml"));
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+    
+    public void creePostIt(int height, int width, int positionX, int positionY) {
+        try {
+            Element postIt = new Element("postIt");
+            this.document = new Document();
+            this.document.setRootElement(postIt);
+            Element elemHeight = new Element("height").addContent(Integer.toString(height));
+            Element elemWidth = new Element("width").addContent(Integer.toString(width));
+            Element elemPositionX = new Element("positionX").addContent(Integer.toString(positionX));
+            Element elemPositionY = new Element("positionY").addContent(Integer.toString(positionY));
+            Element elemContent = new Element("content");
+            this.document.getRootElement().addContent(elemHeight);
+            this.document.getRootElement().addContent(elemWidth);
+            this.document.getRootElement().addContent(elemPositionX);
+            this.document.getRootElement().addContent(elemPositionY);
+            this.document.getRootElement().addContent(elemContent);
+            XMLOutputter xmlOutput = new XMLOutputter();
+            xmlOutput.setFormat(Format.getPrettyFormat());
+            File directory = new File ("src/ressources/dashboard_3/");
+            int nb = directory.listFiles().length;
+            xmlOutput.output(this.document, new FileWriter(directory+"/"+Integer.toString(directory.listFiles().length)+".xml"));
         }
         catch (IOException e) {
             System.out.println(e);

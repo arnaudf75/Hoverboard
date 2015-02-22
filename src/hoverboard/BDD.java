@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.Statement;      
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 /**
  * BDD est la classe qui instancie une connexion à la base de données et qui contient les requêtes SQL permettant d'intéragir avec celle-ci.
@@ -36,9 +37,20 @@ public class BDD {
             this.dbUrl=dbUrl;
             Class.forName(driver);
             dbcon = DriverManager.getConnection(dbUrl,user,password);
+            this.statement = dbcon.createStatement();
         }
         catch (ClassNotFoundException | SQLException conn_error) {
            System.out.println("Error while connecting to database "+conn_error); 
+        }
+    }
+    
+    public void ajouteWidget(int positionX, int positionY, int height, int width, int idDashboard) {
+        this.requete = "INSERT INTO elements VALUES (NULL, '', "+positionX+", "+positionY+", "+height+", "+width+", "+idDashboard+", 1) "; // 1 veut dire qu'on ajoute un post-it, à changer plus tard
+        try {
+            statement.executeUpdate(this.requete);
+        }
+        catch (SQLException error) {
+            System.out.println(error);
         }
     }
     
@@ -73,35 +85,34 @@ public class BDD {
         return (false);
     }
     
-    /**
-     * Cherche dans la base de données si un utilisateur existe avec cet email et change le mot de passe.
-     * @param emailUser
-     * L'adresse email renseignée dans le formulaire.
-     * @return 
-     * True si toutes les actions ont été effectuées, False si l'utilisateur n'existe pas ou que la connexion à la base de données n'a pas fonctionnée.
-     */
-    
-    public boolean resetPassword(String emailUser) {
-        requete = "SELECT * FROM users WHERE email ='"+emailUser+"'";
+    public ResultSet getNewWidgets(int idDashboard) {
+        HashMap dicto = new HashMap();
+        this.requete = "SELECT E.*, T.nomTypePost FROM elements E, type_element T WHERE idDashboard = 3 AND E.idTypePost = T.idTypePost";
         try {
             this.statement = dbcon.createStatement();
-            result = statement.executeQuery(requete);
-            if (!result.isBeforeFirst()) {
-                // Aucun utilisateur avec cet email
-                return (false);
+            this.result = statement.executeQuery(requete);
+            if (!this.result.isBeforeFirst()) {
+                return (this.result);
             }
             else {
-                // On doit réinitialiser le mot de passe de l'utilisateur ici
-                // Une idée : Update From users; Set password = random(passsword)
-                // On envoie le nouveau password par mail à l'utilisateur
-                return (true);
+                // Faire un tableau de HashMap ?
+                /*
+                result.next();
+                dicto.put("content",result.getString("contentElement"));
+                dicto.put("positionX",result.getString("positionX"));
+                dicto.put("positionY",result.getString("positionY"));
+                dicto.put("length",result.getString("longueur"));
+                dicto.put("width",result.getString("largeur"));
+                */
+                return (this.result);
             }
         }
         catch (SQLException error) {
             System.out.println (error);
         }
-        return (false);
+        return (this.result);
     }
+    
     
     /**
      * Appellée lorsqu'un utilisateur demande la création d'un compte sur l'application. Elle vérifie qu'il n'existe pas déjà
@@ -138,5 +149,35 @@ public class BDD {
              System.out.println(error);   
         }
         return (true);
+    }
+    
+    /**
+     * Cherche dans la base de données si un utilisateur existe avec cet email et change le mot de passe.
+     * @param emailUser
+     * L'adresse email renseignée dans le formulaire.
+     * @return 
+     * True si toutes les actions ont été effectuées, False si l'utilisateur n'existe pas ou que la connexion à la base de données n'a pas fonctionnée.
+     */
+    
+    public boolean resetPassword(String emailUser) {
+        requete = "SELECT * FROM users WHERE email ='"+emailUser+"'";
+        try {
+            this.statement = dbcon.createStatement();
+            result = statement.executeQuery(requete);
+            if (!result.isBeforeFirst()) {
+                // Aucun utilisateur avec cet email
+                return (false);
+            }
+            else {
+                // On doit réinitialiser le mot de passe de l'utilisateur ici
+                // Une idée : Update From users; Set password = random(passsword)
+                // On envoie le nouveau password par mail à l'utilisateur
+                return (true);
+            }
+        }
+        catch (SQLException error) {
+            System.out.println (error);
+        }
+        return (false);
     }
 }
