@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import java.util.HashMap;
 
 /**
  * Register est la fenêtre par laquelle l'utilisateur peut se créer un compte.
@@ -96,9 +95,7 @@ public class Register extends JFrame implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
             }
             else {
-                ParserXml xmlParser = new ParserXml();
-                HashMap data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax());        
-                BDD connexion = new BDD(data_jdbc.get("dbUrl").toString(), data_jdbc.get("driver").toString(), data_jdbc.get("login").toString(), data_jdbc.get("password").toString());
+                BDD connexion = new BDD();
                 if (connexion.registerUser(firstName, lastName, email, login, password)) {
                     JOptionPane.showMessageDialog(null, "Your account has been created, check your email inbox to activate it." , "Success !",
                     JOptionPane.INFORMATION_MESSAGE);

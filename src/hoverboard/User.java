@@ -1,7 +1,7 @@
-package Hoverboard;
+package hoverboard;
 
 /**
- * User contient les informations concernant un utilisateur de l'application.
+ * User est la classe qui contient les informations concernant un utilisateur de l'application.
  * @author Arnaud
  */
 

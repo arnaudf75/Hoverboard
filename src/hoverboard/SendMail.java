@@ -38,7 +38,7 @@ public class SendMail {
         this.propertiesList.put("mail.smtp.starttls.enable", "true");
         this.session = Session.getDefaultInstance(this.propertiesList, null);
         this.message = new MimeMessage(this.session);
-        this.message.setFrom(new InternetAddress(this.sender));
+        this.message.setFrom(new InternetAddress("The Hoverboard Team <"+this.sender+">"));
         this.fullMessage.addBodyPart(this.messageBodyPart);
         this.fullMessage.addBodyPart(this.messageHtmlPart);
         this.message.setContent(this.fullMessage);

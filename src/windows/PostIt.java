@@ -1,11 +1,10 @@
 package windows;
 
-import hoverboard.BDD;
 import hoverboard.ParserXml;
 import java.awt.Rectangle;
+import java.awt.Color;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
-import java.util.HashMap;
 import javax.swing.JDesktopPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -16,45 +15,48 @@ import javax.swing.JTextArea;
  */
 
 public class PostIt extends Widget {
-    private final JTextArea postit_text;
+    
+    JTextArea postit_text = new JTextArea();
+    
     public PostIt()
     {
         super();
-        height=250;
-        width=200;
-        this.setBounds(0, 0, height, width);
-        postit_text=new JTextArea();
+        System.out.println("Nouveau Widget");
+        this.height = 250;
+        this.width = 200;
+        this.positionX = 50;
+        this.positionY = 50;
+        
+        this.setBounds(0, 0, this.height, this.width);
+        this.content.setBackground(Color.YELLOW);
+        this.content.add(postit_text);
         postit_text.setRows(9);
         postit_text.setColumns(20);
         JScrollPane scrollPane = new JScrollPane(postit_text,
                                                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                                                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBounds(new Rectangle(-4, 1, 397, 198)); 
-        content.add(scrollPane, null);
+        this.content.add(scrollPane, null);
+        this.idDashboard = 3; // VARIABLE RENTREE EN DUR !!!!!!!!!!!!
         
-        // Je crée un nouveau fichier .xml
-        ParserXml xmlParser = new ParserXml();
-        int idDashboard = 3; // Variable rentrée en dur, à enlever
-        xmlParser.creePostIt(this.height, this.width, this.positionX, this.positionY);
-        // Et je l'ajoute à la base de données
-        HashMap data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax());        
-        BDD connexion = new BDD(data_jdbc.get("dbUrl").toString(), data_jdbc.get("driver").toString(), data_jdbc.get("login").toString(), data_jdbc.get("password").toString());
-        connexion.ajouteWidget(this.height, this.width, this.positionX, this.positionY, idDashboard);
-        
+        this.idWidget = this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, 2);
     }
     
-    public PostIt(String text)
+    public PostIt(int idWidget, String text)
     {
         super();
-        height=250;
-        width=200;
+        this.idWidget = idWidget;
+        this.height=250;
+        this.width=200;
+        content.setBackground(Color.YELLOW);
         this.setBounds(0, 0, height, width);
-        postit_text=new JTextArea(text);
+        JTextArea postit_text=new JTextArea(text);
+        this.content.add(postit_text);
         postit_text.setRows(9);
         postit_text.setColumns(20);
         JScrollPane scrollPane = new JScrollPane(postit_text,
-                                                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                                                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                                                    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                                                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBounds(new Rectangle(-4, 1, 397, 198)); 
         content.add(scrollPane, null);        
     }

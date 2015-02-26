@@ -17,7 +17,7 @@ public class MainApp {
         if (cookie.exists()) {
             ParserXml xmlParser = new ParserXml();
             HashMap data_jdbc = xmlParser.getDataJDBC(xmlParser.sax);        
-            BDD connexion = new BDD(data_jdbc.get("dbUrl").toString(), data_jdbc.get("driver").toString(), data_jdbc.get("login").toString(), data_jdbc.get("password").toString());
+            BDD connexion = new BDD();
             if ( xmlParser.isLoginValid(xmlParser.sax, connexion) ) {
                 Home myHome = new Home(); 
             }

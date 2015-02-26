@@ -51,30 +51,6 @@ public class ParserXml {
         return (dicto);
     }
     
-    
-    /**
-     * Récupère les données des fichiers de post-it au format .xml pour les afficher.
-     * @param sax
-     * L'objet SaxBuilder
-     * @param postIt
-     * Un fichier .xml contenant les données d'un post-it.
-     * @return 
-     * Dictionnaire contenant les données d'un post-it.
-     */
-    
-    public HashMap getDataPost(SAXBuilder sax, String postIt) {
-        try {
-            this.document = sax.build(new File(postIt));
-        }
-        catch(IOException | JDOMException error) {
-            System.out.println(error);
-        }
-        Element racine = document.getRootElement();
-        HashMap dicto = new HashMap();
-        dicto.put("content", racine.getChild("content").getText());
-        return (dicto);
-    }
-    
     /**
      * Créer un fichier cookie pour connecter l'utilisateur automatiquement la prochain fois qu'il utilisera l'application.
      * Les informations saisies dans la fenêtre de login sont récupérées pour les insérées dans le fichier cookie_login.xml.
@@ -97,34 +73,8 @@ public class ParserXml {
             xmlOutput.setFormat(Format.getPrettyFormat());
             xmlOutput.output(document, new FileWriter("src/ressources/cookie_login.xml"));
         }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-    }
-    
-    public void creePostIt(int height, int width, int positionX, int positionY) {
-        try {
-            Element postIt = new Element("postIt");
-            this.document = new Document();
-            this.document.setRootElement(postIt);
-            Element elemHeight = new Element("height").addContent(Integer.toString(height));
-            Element elemWidth = new Element("width").addContent(Integer.toString(width));
-            Element elemPositionX = new Element("positionX").addContent(Integer.toString(positionX));
-            Element elemPositionY = new Element("positionY").addContent(Integer.toString(positionY));
-            Element elemContent = new Element("content");
-            this.document.getRootElement().addContent(elemHeight);
-            this.document.getRootElement().addContent(elemWidth);
-            this.document.getRootElement().addContent(elemPositionX);
-            this.document.getRootElement().addContent(elemPositionY);
-            this.document.getRootElement().addContent(elemContent);
-            XMLOutputter xmlOutput = new XMLOutputter();
-            xmlOutput.setFormat(Format.getPrettyFormat());
-            File directory = new File ("src/ressources/dashboard_3/");
-            int nb = directory.listFiles().length;
-            xmlOutput.output(this.document, new FileWriter(directory+"/"+Integer.toString(directory.listFiles().length)+".xml"));
-        }
-        catch (IOException e) {
-            System.out.println(e);
+        catch (IOException error) {
+            System.out.println("Erreur lors de la création du cookie "+error);
         }
     }
     
@@ -174,5 +124,66 @@ public class ParserXml {
     
     public Document getDocument() {
         return document;
+    }
+    
+    // A partir d'ici, toutes les fonctions sont en attente d'être utilisées
+
+    /**
+     * PAS ENCORE UTILISEE, A IMPLEMENTER QUAND LA PARTIE EN LIGNE DE L'APPLICATION SERA TERMINEE
+     * USAGE LOCAL : Crée un fichier .xml contenant les données du post-it.
+     * @param idDashboard
+     * @param height
+     * @param width
+     * @param positionX
+     * @param positionY 
+     */
+    
+    public void creePostIt(int idDashboard, int height, int width, int positionX, int positionY) {
+        try {
+            Element postIt = new Element("postIt");
+            this.document = new Document();
+            this.document.setRootElement(postIt);
+            Element elemHeight = new Element("height").addContent(Integer.toString(height));
+            Element elemWidth = new Element("width").addContent(Integer.toString(width));
+            Element elemPositionX = new Element("positionX").addContent(Integer.toString(positionX));
+            Element elemPositionY = new Element("positionY").addContent(Integer.toString(positionY));
+            Element elemContent = new Element("content");
+            this.document.getRootElement().addContent(elemHeight);
+            this.document.getRootElement().addContent(elemWidth);
+            this.document.getRootElement().addContent(elemPositionX);
+            this.document.getRootElement().addContent(elemPositionY);
+            this.document.getRootElement().addContent(elemContent);
+            XMLOutputter xmlOutput = new XMLOutputter();
+            xmlOutput.setFormat(Format.getPrettyFormat());
+            File directory = new File ("src/ressources/dashboard_"+idDashboard+"/");
+            xmlOutput.output(this.document, new FileWriter(directory+"/"+Integer.toString(directory.listFiles().length)+".xml"));
+        }
+        catch (IOException error) {
+            System.out.println("Erreur : Impossible de créer le post-it "+error);
+        }
+    }
+    
+    /**
+     * PAS ENCORE UTILISEE, A IMPLEMENTER QUAND LA PARTIE EN LIGNE DE L'APPLICATION SERA TERMINEE
+     * USAGE LOCAL : Récupère les données des fichiers de post-it au format .xml pour les afficher.
+     * @param sax
+     * L'objet SaxBuilder
+     * @param postIt
+     * Un fichier .xml contenant les données d'un post-it.
+     * @return 
+     * Dictionnaire contenant les données d'un post-it.
+     */
+    
+    public HashMap getDataPost(SAXBuilder sax, String postIt) {
+        try {
+            this.document = sax.build(new File(postIt));
+        }
+        catch(IOException | JDOMException error) {
+            System.out.println(error);
+        }
+        Element racine = document.getRootElement();
+        HashMap dicto = new HashMap();
+        dicto.put("content", racine.getChild("content").getText());
+        return (dicto);
     }
 }

@@ -14,44 +14,60 @@ import java.util.HashMap;
 
 public class BDD {
     
-    Connection dbcon = null;
+    Connection dataBaseConnection = null;
     String requete;
     Statement statement;
     ResultSet result;
-    String dbUrl, driver, user, password;
+    String databaseUrl, driver, user, password;
     
     /**
      * Initialise la connexion à la base de données
-     * @param dbUrl
-     * Adresse de la base de données
-     * @param driver
-     * Nom du driver utilisé
-     * @param user
-     * Login permettant de se connecter à la base de données
-     * @param password 
-     * Mot de passe permettant de se connecter à la base de données
      */
     
-    public BDD(String dbUrl, String driver, String user, String password) {
+    public BDD() {
+        ParserXml xmlParser = new ParserXml();
+        HashMap data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax());        
         try {
-            this.dbUrl=dbUrl;
-            Class.forName(driver);
-            dbcon = DriverManager.getConnection(dbUrl,user,password);
-            this.statement = dbcon.createStatement();
+            this.databaseUrl=data_jdbc.get("dbUrl").toString();
+            this.user =  data_jdbc.get("login").toString();
+            this.password =  data_jdbc.get("password").toString();
+            Class.forName(data_jdbc.get("driver").toString());
+            dataBaseConnection = DriverManager.getConnection(databaseUrl, user, password);
+            this.statement = dataBaseConnection.createStatement();
         }
         catch (ClassNotFoundException | SQLException conn_error) {
            System.out.println("Error while connecting to database "+conn_error); 
         }
     }
     
-    public void ajouteWidget(int positionX, int positionY, int height, int width, int idDashboard) {
-        this.requete = "INSERT INTO elements VALUES (NULL, '', "+positionX+", "+positionY+", "+height+", "+width+", "+idDashboard+", 1) "; // 1 veut dire qu'on ajoute un post-it, à changer plus tard
+    /**
+     * 
+     * @param positionX
+     * @param positionY
+     * @param height
+     * @param width
+     * @param idDashboard
+     * @param typeWidget
+     * @return 
+     */
+
+    public int ajouteWidget(int positionX, int positionY, int height, int width, int idDashboard, int typeWidget) {
+        this.requete = "INSERT INTO widgets VALUES (NULL, '', "+positionX+", "+positionY+", "+height+", "+width+", "+idDashboard+", "+typeWidget+") "; // 2 veut dire qu'on ajoute un post-it, à changer plus tard
+        int idWidget = -1;
         try {
-            statement.executeUpdate(this.requete);
+            this.statement.executeUpdate(this.requete, Statement.RETURN_GENERATED_KEYS);
+            this.result = this.statement.getGeneratedKeys();
+            if (this.result.next()) {
+                idWidget = this.result.getInt(1);
+                System.out.println("Id du widget : "+idWidget +" de type "+typeWidget);
+            }
         }
         catch (SQLException error) {
-            System.out.println(error);
+            System.out.println("Impossible d'ajouter le widget ! "+error);
+            return (-1);
         }
+        
+        return (idWidget);
     }
     
     /**
@@ -67,7 +83,6 @@ public class BDD {
     public boolean connect_user(String login, String password) {
         requete = ("SELECT * FROM users WHERE login ='"+login+"' AND password ='"+password+"'");
         try {
-            this.statement = dbcon.createStatement();
             result = statement.executeQuery(requete);
             if (!result.isBeforeFirst()) {
                 return (false);
@@ -85,30 +100,32 @@ public class BDD {
         return (false);
     }
     
-    public ResultSet getNewWidgets(int idDashboard) {
-        HashMap dicto = new HashMap();
-        this.requete = "SELECT E.*, T.nomTypePost FROM elements E, type_element T WHERE idDashboard = 3 AND E.idTypePost = T.idTypePost";
+    /**
+     * Supprime un widget dans la base de données.
+     * @param idWidget 
+     */
+    
+    public void deleteWidget(int idWidget) {
+        this.requete = "DELETE FROM widgets WHERE idWidget ="+idWidget;
         try {
-            this.statement = dbcon.createStatement();
+            this.statement.executeUpdate(requete);
+        }
+        catch (SQLException error) {
+            System.out.println ("Impossible de supprimer le widget ! "+error);
+        }
+    }
+    
+    public ResultSet getNewWidgets(int idDashboard) {
+        this.requete = "SELECT E.*, T.nomTypeWidget FROM widgets E, type_widget T WHERE idDashboard = 3 AND E.idTypeWidget = T.idTypeWidget";
+        try {
             this.result = statement.executeQuery(requete);
             if (!this.result.isBeforeFirst()) {
-                return (this.result);
-            }
-            else {
-                // Faire un tableau de HashMap ?
-                /*
-                result.next();
-                dicto.put("content",result.getString("contentElement"));
-                dicto.put("positionX",result.getString("positionX"));
-                dicto.put("positionY",result.getString("positionY"));
-                dicto.put("length",result.getString("longueur"));
-                dicto.put("width",result.getString("largeur"));
-                */
+                System.out.println("Aucun widget !");
                 return (this.result);
             }
         }
         catch (SQLException error) {
-            System.out.println (error);
+            System.out.println ("Impossible de récupérer les widgets ! "+error);
         }
         return (this.result);
     }
@@ -134,7 +151,6 @@ public class BDD {
     public boolean registerUser(String firstName, String lastName, String email, String login, String password) {
         requete = ("SELECT email, login FROM users WHERE email = '"+email+"' OR login = '"+login+"'");
         try {
-            this.statement = dbcon.createStatement();
             result = statement.executeQuery(requete);
             if (!result.isBeforeFirst()) {
                 // Pas d'users existant, on peut inscrire l'user
@@ -146,7 +162,7 @@ public class BDD {
             }
         }
         catch (SQLException error) {
-             System.out.println(error);   
+             System.out.println("Impossible de créer le compte ! "+error);   
         }
         return (true);
     }
@@ -162,7 +178,6 @@ public class BDD {
     public boolean resetPassword(String emailUser) {
         requete = "SELECT * FROM users WHERE email ='"+emailUser+"'";
         try {
-            this.statement = dbcon.createStatement();
             result = statement.executeQuery(requete);
             if (!result.isBeforeFirst()) {
                 // Aucun utilisateur avec cet email
@@ -176,7 +191,7 @@ public class BDD {
             }
         }
         catch (SQLException error) {
-            System.out.println (error);
+            System.out.println ("Impossible de changer le mot de passe ! "+error);
         }
         return (false);
     }

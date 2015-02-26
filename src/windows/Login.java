@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import java.util.HashMap;
 
 /**
  * Login est la fenêtre par laquelle l'utilisateur se connecte à son compte.
@@ -94,9 +93,7 @@ public class Login extends JFrame implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
             }
             else {
-                ParserXml xmlParser = new ParserXml();
-                HashMap data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax());        
-                BDD connexion = new BDD(data_jdbc.get("dbUrl").toString(), data_jdbc.get("driver").toString(), data_jdbc.get("login").toString(), data_jdbc.get("password").toString());
+                BDD connexion = new BDD();
                 if (connexion.connect_user(login, password)) {
                     if (check_cookie.isSelected()) {
                         ParserXml parser = new ParserXml();
