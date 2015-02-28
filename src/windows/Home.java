@@ -20,6 +20,7 @@ import java.util.HashMap;
  */
 
 public class Home extends JFrame implements ActionListener {
+    private final BDD connexion = new BDD();
     private final JMenuBar menu = new JMenuBar();
     private final JMenu menuDashboard = new JMenu("Dashboard");
     private final JMenu dashboard_new = new JMenu ("New");
@@ -36,6 +37,7 @@ public class Home extends JFrame implements ActionListener {
     private final JMenuItem menuDisconnect = new JMenuItem("Disconnect");
     private final JPanel main_container = new JPanel();
     
+    @SuppressWarnings("LeakingThisInConstructor")
     public Home() {
         this.setTitle("Home Page");
         this.setSize(800, 800);
@@ -66,8 +68,7 @@ public class Home extends JFrame implements ActionListener {
         setJMenuBar(menu);  
         
         int idDashboard = 3; // VARIABLE RENTREE EN DUR !!!!!!!!!!!!
-        BDD connexion = new BDD();       
-        ResultSet listeWidgets = connexion.getNewWidgets(idDashboard);
+        ResultSet listeWidgets = this.connexion.getNewWidgets(idDashboard);
         try {
             while (listeWidgets.next()){
                 switch (listeWidgets.getInt("idTypeWidget")) {
@@ -95,7 +96,6 @@ public class Home extends JFrame implements ActionListener {
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-    
     
     /**
      * Effectue une action en fonction du menu cliqué, par exemple un post-it sera ajouté, ou un les informations de l'utilisateur seront affichées.
@@ -128,16 +128,15 @@ public class Home extends JFrame implements ActionListener {
     }
 
     /**
-     * Synchronise les widgets stockés en local avec ceux stockés dans la base de données.
+     * Synchronise les widgets stockés EN LOCAL avec ceux stockés dans la base de données.
      * @param idDashboard 
      */
     
     public void refreshWidgets(int idDashboard) {
         // Todo -> Avec l'id du dashboard, je fais une requête vers la BDD pour voir si jamais un widget aurait été rajouté
         ParserXml myParser = new ParserXml();
-        BDD connexion = new BDD();
         HashMap dicto = new HashMap();
-        ResultSet resultWidgets = connexion.getNewWidgets(idDashboard);
+        ResultSet resultWidgets = this.connexion.getNewWidgets(idDashboard);
         System.out.println(resultWidgets);
         // ET enregistrer dans la BDD les nouveaux widgets ajoutés en local
         File directory = new File("src/ressources/dashboard_"+idDashboard);

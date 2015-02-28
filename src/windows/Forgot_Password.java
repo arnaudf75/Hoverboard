@@ -27,6 +27,7 @@ public class Forgot_Password extends JFrame implements ActionListener{
     private final JTextField mail_field = new JTextField();
     private final JButton valider_mail = new JButton ("Valider");
     
+    @SuppressWarnings("LeakingThisInConstructor")
     public Forgot_Password(){
 
         this.setTitle("Forgot Password");

@@ -20,7 +20,7 @@ public class Dashboard extends JPanel {
         
         // Je crée un nouveau fichier .xml
         ParserXml myParser = new ParserXml();
-        int idDashboard = 3; // Variable rentrée en dur, à enlever
+        this.idDashboard = 3; // Variable rentrée en dur, à enlever
         //myParser.creePostIt(idDashboard, this.height, this.width, this.positionX, this.positionY);
         HashMap dicto = new HashMap();
         File directory = new File("src/ressources/dashboard_"+idDashboard);        

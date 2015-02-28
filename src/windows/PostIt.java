@@ -1,6 +1,5 @@
 package windows;
 
-import hoverboard.ParserXml;
 import java.awt.Rectangle;
 import java.awt.Color;
 import static java.lang.Boolean.FALSE;
@@ -21,7 +20,6 @@ public class PostIt extends Widget {
     public PostIt()
     {
         super();
-        System.out.println("Nouveau Widget");
         this.height = 250;
         this.width = 200;
         this.positionX = 50;
@@ -50,10 +48,10 @@ public class PostIt extends Widget {
         this.width=200;
         content.setBackground(Color.YELLOW);
         this.setBounds(0, 0, height, width);
-        JTextArea postit_text=new JTextArea(text);
         this.content.add(postit_text);
-        postit_text.setRows(9);
-        postit_text.setColumns(20);
+        this.postit_text.setRows(9);
+        this.postit_text.setColumns(20);
+        this.postit_text.setText(text);
         JScrollPane scrollPane = new JScrollPane(postit_text,
                                                     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                                                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -61,9 +59,9 @@ public class PostIt extends Widget {
         content.add(scrollPane, null);        
     }
     
-    
-    public void updatePostIt(String content) {
-        // Je récupère le nouveau contenu du JTextField, je l'envoie au fichier .xml correspondant
-        // Ensuite je fais un Update BDD SET content = content
+    @Override
+    public void updateWidget (int idWidget) {
+        String contentPostIt = this.postit_text.getText();
+        this.connexion.updateWidgetBDD(idWidget, contentPostIt);
     }
 }

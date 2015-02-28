@@ -39,7 +39,7 @@ public class Login extends JFrame implements ActionListener {
     private final JPasswordField password_field = new JPasswordField();
     private final JTextField login_field = new JTextField();
 
-    
+    @SuppressWarnings("LeakingThisInConstructor")
     public Login() {
         this.setTitle("Fenêtre de connexion");
         this.setSize(400, 400);

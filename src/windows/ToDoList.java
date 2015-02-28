@@ -20,19 +20,18 @@ import javax.swing.JScrollPane;
  * @author Cavoleau
  */
 
-public class ToDoList extends Widget implements ActionListener {
+public class ToDoList extends Widget {
     
     JButton newTask = new JButton("New Task");
     JPanel taskList = new JPanel();
     JPanel bottom_container = new JPanel();
     
-    
+    @SuppressWarnings("LeakingThisInConstructor")
     public ToDoList()
     {
         super();
-        System.out.println("Nouveau Widget");
-        height=250;
-        width=300;
+        this.height=250;
+        this.width=300;
         taskList.setLayout(new BoxLayout(taskList, BoxLayout.PAGE_AXIS));
         content.setLayout(new BorderLayout());
         bottom_container.setLayout(new BorderLayout());

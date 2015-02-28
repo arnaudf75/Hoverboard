@@ -1,7 +1,6 @@
 package windows;
 
 import hoverboard.BDD;
-import hoverboard.ParserXml;
 import hoverboard.SendMail;
 import java.awt.event.*;
 import java.awt.BorderLayout;
@@ -42,6 +41,7 @@ public class Register extends JFrame implements ActionListener {
     private final JTextField lastName_field = new JTextField();
     private final JTextField login_field = new JTextField();
     
+    @SuppressWarnings("LeakingThisInConstructor")
     public Register() {
         this.setTitle("Registration window");
         this.setSize(400, 400);

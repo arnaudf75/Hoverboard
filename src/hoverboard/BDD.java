@@ -195,4 +195,14 @@ public class BDD {
         }
         return (false);
     }
+    
+    public void updateWidgetBDD(int idWidget, String contentWidget) {
+        this.requete = "UPDATE widgets SET contentWidget = '"+contentWidget+"' WHERE idWidget = "+idWidget;
+        try {
+            this.statement.executeUpdate(this.requete);
+        }
+        catch (SQLException error) {
+            System.out.println ("Impossible de modifier le widget "+error); 
+        }
+    }
 }
