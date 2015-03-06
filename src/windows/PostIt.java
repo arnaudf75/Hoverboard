@@ -1,10 +1,9 @@
 package windows;
 
-import java.awt.Rectangle;
 import java.awt.Color;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import javax.swing.JDesktopPane;
+import java.awt.event.ActionEvent;
+import java.awt.Rectangle;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -57,6 +56,32 @@ public class PostIt extends Widget {
                                                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBounds(new Rectangle(-4, 1, 397, 198)); 
         content.add(scrollPane, null);        
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        Object source = event.getSource();
+        if (source == save) {
+            this.updateWidget(this.idWidget);
+        }
+        else if (source == refresh) {
+            this.refreshWidget(this.idWidget);
+        }
+        else if (source == del){
+            int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete that widget ?",
+            "Confirm deletion", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            
+            if (option == JOptionPane.OK_OPTION) {
+                this.dispose();
+                this.connexion.deleteWidget(this.idWidget);
+            }
+        }
+    }
+    
+    @Override
+    public void refreshWidget(int idWidget) {
+        String contentWidget = this.connexion.getContentWidget(idWidget);
+        this.postit_text.setText(contentWidget);
     }
     
     @Override

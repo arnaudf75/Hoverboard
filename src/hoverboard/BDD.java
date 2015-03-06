@@ -115,7 +115,23 @@ public class BDD {
         }
     }
     
+    public String getContentWidget(int idWidget) {
+        String contentWidget = "NULL";
+        this.requete = "SELECT contentWidget FROM widgets WHERE idWidget ="+idWidget;
+        try {
+            this.result = statement.executeQuery(requete);
+            this.result.next();
+            contentWidget = result.getString("contentWidget");
+        }
+        catch (SQLException error) {
+            System.out.println ("Impossible de supprimer le widget ! "+error);
+            
+        }
+        return (contentWidget);
+    }
+    
     public ResultSet getNewWidgets(int idDashboard) {
+        // idDashboard est rentrée en dur (3 signifie qu'on accède au panneau partagé)
         this.requete = "SELECT E.*, T.nomTypeWidget FROM widgets E, type_widget T WHERE idDashboard = 3 AND E.idTypeWidget = T.idTypeWidget";
         try {
             this.result = statement.executeQuery(requete);

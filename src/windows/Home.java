@@ -37,6 +37,10 @@ public class Home extends JFrame implements ActionListener {
     private final JMenuItem menuDisconnect = new JMenuItem("Disconnect");
     private final JPanel main_container = new JPanel();
     
+    /**
+     * Crée la fenêtre d'accueil de l'utilisateur, comportant les menus lui permettant de créer des widgets, accéder à ses options, etc.
+     */
+    
     @SuppressWarnings("LeakingThisInConstructor")
     public Home() {
         this.setTitle("Home Page");
