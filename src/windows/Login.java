@@ -1,9 +1,12 @@
 package windows;
 
-import hoverboard.*;
+import hoverboard.BDD;
+import hoverboard.ParserXml;
 import java.awt.event.*;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -20,7 +23,7 @@ import javax.swing.JTextField;
  */
 
 public class Login extends JFrame implements ActionListener {
-    
+    private final BDD connexion = new BDD();
     private final JButton validation = new JButton ("Valider");
     private final JButton reset = new JButton ("Annuler");
     private final JButton password_lost = new JButton("I lost my password");
@@ -93,18 +96,24 @@ public class Login extends JFrame implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
             }
             else {
-                BDD connexion = new BDD();
-                if (connexion.connect_user(login, password)) {
-                    if (check_cookie.isSelected()) {
-                        ParserXml parser = new ParserXml();
-                        parser.creerCookie(login,password);
+                ResultSet isUser = this.connexion.connect_user(login, password);
+                try {
+                    if (!isUser.isBeforeFirst()) {
+                        JOptionPane.showMessageDialog(null, "Nobody in the database with this login and password !" , "ERROR",
+                        JOptionPane.ERROR_MESSAGE);
                     }
-                    this.setVisible(false);
-                    Home home_window = new Home();
+                    else {
+                        isUser.next();
+                        if (check_cookie.isSelected()) {
+                            ParserXml parser = new ParserXml();
+                            parser.creerCookie(login,password);
+                        }
+                        this.dispose();
+                        Home home_window = new Home(isUser.getInt("idUser"));
+                    }
                 }
-                else {
-                    JOptionPane.showMessageDialog(null, "Nobody in the database with this login and password !" , "ERROR",
-                    JOptionPane.ERROR_MESSAGE);
+                catch (SQLException error) {
+                    System.out.println("Impossible de vous connecter, connexion à la base de données impossible"+ error);
                 }
             }
         }

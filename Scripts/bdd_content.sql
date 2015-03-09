@@ -70,7 +70,7 @@ INSERT INTO `users` (`idUser`, `firstName`, `lastName`, `email`, `login`, `passw
 
 -- Export de données de la table hoverboard_esgi.utilise : ~0 rows (environ)
 /*!40000 ALTER TABLE `utilise` DISABLE KEYS */;
-INSERT INTO `utilise` (`idUser`, `idDashboard`, `idDashboardAdmin`) VALUES
+INSERT INTO `utilise` (`idUser`, `idDashboard`, `isDashboardAdmin`) VALUES
 	(1, 1, 1),
 	(1, 3, 1),
 	(2, 2, 1),

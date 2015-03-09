@@ -3,6 +3,8 @@ package hoverboard;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -17,7 +19,6 @@ import org.jdom2.output.Format;
  */
 
 public class ParserXml {
-    
     SAXBuilder sax;
     Document document = new Document();
     
@@ -28,13 +29,11 @@ public class ParserXml {
     
     /**
      * Récupère les données du fichier data_jdbc.xml permettant la connexion à la base de données.
-    * @param sax
-    * L'objet SaxBuilder.
     * @return
     * Dictionnaire contenant les données permettant d'initialiser la connexion à la base de données (url, nom du driver, login et password).
     */
 
-    public HashMap getDataJDBC(SAXBuilder sax) {
+    public HashMap getDataJDBC() {
         try {
             this.document = sax.build(new File("src/ressources/data_jdbc.xml"));
         }
@@ -78,54 +77,53 @@ public class ParserXml {
         }
     }
     
+    public HashMap getDataCookie () {
+        try {
+            this.document = sax.build(new File("src/ressources/cookie_login.xml"));
+        }
+        catch(IOException | JDOMException error) {
+            System.out.println("Le cookie n'existe pas !"+ error);
+        }
+        Element racine = this.document.getRootElement();
+        HashMap dicto = new HashMap();
+        dicto.put("loginUser", racine.getChild("login").getText());
+        dicto.put("passwordUser", racine.getChild("password").getText());
+        return (dicto);
+    }
+    
     /**
      * Est appellée si il existe un cookie de login. Vérifie que celui-ci est valide.
-     * @param sax
-     * L'objet SaxBuilder.
      * @param connexion
      * L'objet BDD, permettant d'utiliser les méthodes de la classe.
      * @return 
      * True si les informations de login et de mot de passe dans le cookie sont bonnes, False sinon.
      */    
     
-    public boolean isLoginValid(SAXBuilder sax, BDD connexion) {
+    public int isLoginValid(BDD connexion) {
         try {
             this.document = sax.build(new File("src/ressources/cookie_login.xml"));
         }
         catch(IOException | JDOMException error) {
-            System.out.println(error);
+            System.out.println("Le cookie n'existe pas !"+ error);
         }
         Element racine = this.document.getRootElement();
         String loginUser = racine.getChild("login").getText();
         String passwordUser = racine.getChild("password").getText();
-        if (connexion.connect_user(loginUser, passwordUser)) {
-            return (true);
+        ResultSet isUser = connexion.connect_user(loginUser, passwordUser);
+        try {
+            if (isUser.isBeforeFirst()) {
+                return (-1);
+            }
+            else {
+                return (isUser.getInt("idUser"));
+            }
         }
-        else {
-            return (false);
+        catch (SQLException error) {
+            System.out.println("Le cookie n'est pas valide, impossible de vous connecter ! "+error);
         }
+        return (-1);
     }
-    
-    /**
-     * Récupère l'objet SaxBuilder.
-     * @return 
-     * L'objet SaxBuilder.
-     */
-        
-    public SAXBuilder getSax() {
-        return sax;
-    }
-    
-    /**
-     * Récupère l'objet Document.
-     * @return 
-     * L'objet Document.
-     */
-    
-    public Document getDocument() {
-        return document;
-    }
-    
+       
     // A partir d'ici, toutes les fonctions sont en attente d'être utilisées
 
     /**
@@ -174,7 +172,7 @@ public class ParserXml {
      * Dictionnaire contenant les données d'un post-it.
      */
     
-    public HashMap getDataPost(SAXBuilder sax, String postIt) {
+    public HashMap getDataPost(String postIt) {
         try {
             this.document = sax.build(new File(postIt));
         }

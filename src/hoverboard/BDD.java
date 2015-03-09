@@ -26,7 +26,7 @@ public class BDD {
     
     public BDD() {
         ParserXml xmlParser = new ParserXml();
-        HashMap data_jdbc = xmlParser.getDataJDBC(xmlParser.getSax());        
+        HashMap data_jdbc = xmlParser.getDataJDBC();        
         try {
             this.databaseUrl=data_jdbc.get("dbUrl").toString();
             this.user =  data_jdbc.get("login").toString();
@@ -80,24 +80,15 @@ public class BDD {
      * True si il exite bien un utilisateur, False si il n'en existe aucun ou qu'une erreur est levée.
      */
     
-    public boolean connect_user(String login, String password) {
-        requete = ("SELECT * FROM users WHERE login ='"+login+"' AND password ='"+password+"'");
+    public ResultSet connect_user(String login, String password) {
+        this.requete = ("SELECT idUser, firstName, lastName, email, isAdmin FROM users WHERE login ='"+login+"' AND password ='"+password+"' AND isActive = 1");
         try {
-            result = statement.executeQuery(requete);
-            if (!result.isBeforeFirst()) {
-                return (false);
-            }
-            else {
-                result.next();
-                String lastName = result.getString("lastName");
-                String firstName = result.getString("firstName");
-                return (true);
-            }
+            this.result = this.statement.executeQuery(requete);
         }
         catch (SQLException error) {
             System.out.println (error);
         }
-        return (false);
+        return (this.result);
     }
     
     /**
@@ -116,16 +107,27 @@ public class BDD {
     }
     
     public ResultSet getNewWidgets(int idDashboard) {
-        this.requete = "SELECT E.*, T.nomTypeWidget FROM widgets E, type_widget T WHERE idDashboard = 3 AND E.idTypeWidget = T.idTypeWidget";
+        this.requete = "SELECT E.*, T.nomTypeWidget FROM widgets E, type_widget T WHERE idDashboard = "+idDashboard+" AND E.idTypeWidget = T.idTypeWidget";
         try {
             this.result = statement.executeQuery(requete);
             if (!this.result.isBeforeFirst()) {
                 System.out.println("Aucun widget !");
-                return (this.result);
             }
         }
         catch (SQLException error) {
             System.out.println ("Impossible de récupérer les widgets ! "+error);
+        }
+        return (this.result);
+    }
+    
+    public ResultSet getDashboards(int idUser) {
+        this.requete = "SELECT U.idUser, U.idDashboard, U.isDashboardAdmin, D.titleDashboard, D.descriptionDashboard, D.isShared"
+                    + " FROM utilise U RIGHT JOIN dashboard D ON D.idDashboard = U.idDashboard WHERE idUser = "+idUser;
+        try {
+            this.result = statement.executeQuery(requete);
+        }
+        catch (SQLException error) {
+            System.out.println ("Impossible de récupérer la liste des dashboards !"+ error);
         }
         return (this.result);
     }

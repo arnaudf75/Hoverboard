@@ -4,6 +4,7 @@ import hoverboard.BDD;
 import hoverboard.ParserXml;
 import java.awt.BorderLayout;
 import java.awt.event.*;
+import java.awt.GridLayout;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 
 public class Home extends JFrame implements ActionListener {
     private final BDD connexion = new BDD();
+    private int idUser = -1;
     private final JMenuBar menu = new JMenuBar();
     private final JMenu menuDashboard = new JMenu("Dashboard");
     private final JMenu dashboard_new = new JMenu ("New");
@@ -38,10 +40,10 @@ public class Home extends JFrame implements ActionListener {
     private final JPanel main_container = new JPanel();
     
     @SuppressWarnings("LeakingThisInConstructor")
-    public Home() {
-        this.setTitle("Home Page");
+    public Home(int idUser) {
+        this.setTitle("Choose a dashboard");
         this.setSize(800, 800);
-        
+        this.idUser = idUser;
         main_container.setLayout(new BorderLayout());
         
         new_postit.addActionListener(this);
@@ -58,7 +60,7 @@ public class Home extends JFrame implements ActionListener {
         menuOptions.add(options_infoUser);
         menuHelp.add(about_help);
         menuHelp.add(about_doc);
-        
+
         menu.add(menuDashboard);
         menu.add(menuPlugins);
         menu.add(menuOptions);
@@ -67,30 +69,27 @@ public class Home extends JFrame implements ActionListener {
         
         setJMenuBar(menu);  
         
-        int idDashboard = 3; // VARIABLE RENTREE EN DUR !!!!!!!!!!!!
-        ResultSet listeWidgets = this.connexion.getNewWidgets(idDashboard);
+        ResultSet listeDashboard = connexion.getDashboards(this.idUser);
+        JPanel dashPreviews = new JPanel();
+        
         try {
-            while (listeWidgets.next()){
-                switch (listeWidgets.getInt("idTypeWidget")) {
-                    case 1 : {
-                        this.main_container.add(new ToDoList(listeWidgets.getInt("idWidget"),listeWidgets.getString("contentWidget")));
-                        break;
-                    }
-                    case 2 : {
-                        this.main_container.add(new PostIt(listeWidgets.getInt("idWidget"),listeWidgets.getString("contentWidget")));
-                        break;
-                    }
-                    default : {
-                        System.out.println("Type de widget non pris en charge");
-                        break;
-                    }
-                }
+            listeDashboard.last();
+            int numberRows = listeDashboard.getRow()/2;
+            listeDashboard.beforeFirst();
+            dashPreviews.setLayout(new GridLayout(numberRows,2));
+            while (listeDashboard.next()) {
+                int idDashboard = listeDashboard.getInt("idDashboard");
+                int isShared = listeDashboard.getInt("isShared");
+                int isAdmin = listeDashboard.getInt("isDashboardAdmin");
+                String titleDashboard = listeDashboard.getString("titleDashboard");
+                String descriptionDashboard = listeDashboard.getString("descriptionDashboard");
+                dashPreviews.add(new Dashboard(idDashboard, titleDashboard, descriptionDashboard, isAdmin, isShared));
             }
         }
         catch (SQLException error) {
-            System.out.println(error);
+            System.out.println("Impossible d'afficher la liste des dashboards ! "+error);
         }
-                
+        main_container.add(dashPreviews);
         this.setContentPane(main_container);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
@@ -116,9 +115,7 @@ public class Home extends JFrame implements ActionListener {
         }
         else if (source==menuDisconnect) {
             File cookie = new File("src/ressources/cookie_login.xml");
-            if(cookie.delete()){
-                System.out.println("Cookie supprimé");
-            }
+            cookie.delete();
             this.dispose();
             Login login = new Login();
         }
@@ -144,7 +141,7 @@ public class Home extends JFrame implements ActionListener {
         String [] listeFichiers = directory.list();
         // Pour chaque post it récupéré (au format Hashmap), je crée un nouveau post it (new PostIt) et à la fin je fais un revalidate()
         for (int i=0; i<directory.listFiles().length; i++) {
-            dicto = myParser.getDataPost(myParser.getSax(),"src/ressources/dashboard_"+idDashboard+"/"+listeFichiers[i]);
+            dicto = myParser.getDataPost("src/ressources/dashboard_"+idDashboard+"/"+listeFichiers[i]);
             this.main_container.add(new PostIt(899898,dicto.get("content").toString()));
         }
         this.main_container.revalidate();
