@@ -1,17 +1,22 @@
 package hoverboard;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.Statement;      
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 /**
- * BDD est la classe qui instancie une connexion à la base de données et qui contient les requêtes SQL permettant d'intéragir avec celle-ci.
+ * BDD est la classe qui instancie une connexion à la base de données et qui contient les requêtes SQL
+ * permettant d'intéragir avec celle-ci.
  * @author Arnaud
  */
-
 public class BDD {
     
     Connection dataBaseConnection = null;
@@ -21,38 +26,43 @@ public class BDD {
     String databaseUrl, driver, user, password;
     
     /**
-     * Initialise la connexion à la base de données
-     */
-    
+     * Initialise la connexion à la base de données à partir du fichier data_jdbc.xml.
+     */ 
     public BDD() {
-        ParserXml xmlParser = new ParserXml();
-        HashMap data_jdbc = xmlParser.getDataJDBC();        
         try {
-            this.databaseUrl=data_jdbc.get("dbUrl").toString();
-            this.user =  data_jdbc.get("login").toString();
-            this.password =  data_jdbc.get("password").toString();
-            Class.forName(data_jdbc.get("driver").toString());
+            Document data_jdbc = new SAXBuilder().build(new File("src/ressources/data_jdbc.xml"));
+            Element racine = data_jdbc.getRootElement();
+            this.databaseUrl= racine.getChild("dbUrl").getText();
+            this.user =  racine.getChild("login").getText();
+            this.password =  racine.getChild("password").getText();
+            Class.forName(racine.getChild("driver").getText());
             dataBaseConnection = DriverManager.getConnection(databaseUrl, user, password);
             this.statement = dataBaseConnection.createStatement();
         }
-        catch (ClassNotFoundException | SQLException conn_error) {
-           System.out.println("Error while connecting to database "+conn_error); 
+        catch (ClassNotFoundException | IOException | JDOMException | SQLException error) {
+           System.out.println("Error while connecting to database "+error); 
         }
     }
     
     /**
-     * 
+     * Ajoute un widget créé depuis le menu à la base de données.
      * @param positionX
+     * La position horizontale du widget sur le dashboard.
      * @param positionY
+     * La position verticale du widget sur le dashboard.
      * @param height
+     * La hauteur du widget.
      * @param width
+     * La largeur du widget.
      * @param idDashboard
+     * L'id du dashboard depuis lequel le widget a été créé.
      * @param typeWidget
-     * @return 
+     * Le type du widget (post-it, liste de tâches ou sondage). 
+     * @return
+     * L'id du widget issu de l'insertion dans la base de données. Si cette dernière échoue, la fonction renvoie -1.
      */
-
     public int ajouteWidget(int positionX, int positionY, int height, int width, int idDashboard, int typeWidget) {
-        this.requete = "INSERT INTO widgets VALUES (NULL, '', "+positionX+", "+positionY+", "+height+", "+width+", "+idDashboard+", "+typeWidget+") "; // 2 veut dire qu'on ajoute un post-it, à changer plus tard
+        this.requete = "INSERT INTO widgets VALUES (NULL, '', "+positionX+", "+positionY+", "+height+", "+width+", "+idDashboard+", "+typeWidget+") ";
         int idWidget = -1;
         try {
             this.statement.executeUpdate(this.requete, Statement.RETURN_GENERATED_KEYS);
@@ -78,8 +88,7 @@ public class BDD {
      * Le mot de passe saisit par l'utilisateur via la fenêtre de login.
      * @return 
      * True si il exite bien un utilisateur, False si il n'en existe aucun ou qu'une erreur est levée.
-     */
-    
+     */   
     public ResultSet connect_user(String login, String password) {
         this.requete = ("SELECT idUser, firstName, lastName, email, isAdmin FROM users WHERE login ='"+login+"' AND password ='"+password+"' AND isActive = 1");
         try {
@@ -95,7 +104,6 @@ public class BDD {
      * Supprime un widget dans la base de données.
      * @param idWidget 
      */
-    
     public void deleteWidget(int idWidget) {
         this.requete = "DELETE FROM widgets WHERE idWidget ="+idWidget;
         try {
@@ -106,7 +114,35 @@ public class BDD {
         }
     }
     
-    public ResultSet getNewWidgets(int idDashboard) {
+    /**
+     * Récupère le contenu d'un widget depuis la base de données.
+     * @param idWidget
+     * L'id du widget concerné.
+     * @return
+     * Le contenu du wigdet peut être soit du texte (pour les post-it) soit un élément faisant partie d'un fichier .xml (pour les listes de tâches et les sondages).
+     */
+    public String getContentWidget(int idWidget) {
+        String contentWidget = "NULL";
+        this.requete = "SELECT contentWidget FROM widgets WHERE idWidget ="+idWidget;
+        try {
+            this.result = statement.executeQuery(requete);
+            this.result.next();
+            contentWidget = result.getString("contentWidget");
+        }
+        catch (SQLException error) {
+            System.out.println ("Impossible de récupérer le contenu du widget ! "+error);
+        }
+        return (contentWidget);
+    }
+    
+    /**
+     * Récupère les widgets d'un dashboard.
+     * @param idDashboard
+     * L'id du dashboard concerné.
+     * @return
+     * Les données de chaque widget (id, contenu, position et dimensions) dans un ResultSet.
+     */
+    public ResultSet getWidgets(int idDashboard) {
         this.requete = "SELECT E.*, T.nomTypeWidget FROM widgets E, type_widget T WHERE idDashboard = "+idDashboard+" AND E.idTypeWidget = T.idTypeWidget";
         try {
             this.result = statement.executeQuery(requete);
@@ -120,6 +156,14 @@ public class BDD {
         return (this.result);
     }
     
+    /**
+     * Récupère la liste des dashboards d'un utilisateur.
+     * @param idUser
+     * L'id de l'utilisateur connecté.
+     * @return
+     * Un ResultSet contenant les données de chaque dashboard : id, droits (administrateur ou non),
+     * si il est partagé ou non, le titre et la description.
+     */
     public ResultSet getDashboards(int idUser) {
         this.requete = "SELECT U.idUser, U.idDashboard, U.isDashboardAdmin, D.titleDashboard, D.descriptionDashboard, D.isShared"
                     + " FROM utilise U RIGHT JOIN dashboard D ON D.idDashboard = U.idDashboard WHERE idUser = "+idUser;
@@ -148,8 +192,7 @@ public class BDD {
      * Email saisit par l'utilisateur.
      * @return 
      * True si l'utilisateur a bien été inscrit, False sinon.
-     */
-    
+     */ 
     public boolean registerUser(String firstName, String lastName, String email, String login, String password) {
         requete = ("SELECT email, login FROM users WHERE email = '"+email+"' OR login = '"+login+"'");
         try {
@@ -175,8 +218,7 @@ public class BDD {
      * L'adresse email renseignée dans le formulaire.
      * @return 
      * True si toutes les actions ont été effectuées, False si l'utilisateur n'existe pas ou que la connexion à la base de données n'a pas fonctionnée.
-     */
-    
+     */  
     public boolean resetPassword(String emailUser) {
         requete = "SELECT * FROM users WHERE email ='"+emailUser+"'";
         try {
@@ -198,7 +240,15 @@ public class BDD {
         return (false);
     }
     
-    public void updateWidgetBDD(int idWidget, String contentWidget) {
+    /**
+     * La fonction est appellée lorsque l'utilisateur clique sur le bouton "Enregistrer" (îcone de disquete) sur un widget.
+     * Elle modifie le contenu d'un widget dans la base de données.
+     * @param idWidget
+     * L'id du widget concerné.
+     * @param contentWidget 
+     * Le contenu du widget modifié.
+     */
+    public void updateWidget(int idWidget, String contentWidget) {
         this.requete = "UPDATE widgets SET contentWidget = '"+contentWidget+"' WHERE idWidget = "+idWidget;
         try {
             this.statement.executeUpdate(this.requete);

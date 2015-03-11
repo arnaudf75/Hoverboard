@@ -1,17 +1,10 @@
 package windows;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -19,15 +12,15 @@ import javax.swing.JScrollPane;
  *
  * @author Cavoleau
  */
-
 public class ToDoList extends Widget {
     
-    JButton newTask = new JButton("New Task");
+    JButton newTask = new JButton("Nouvelle tâche");
     JPanel taskList = new JPanel();
     JPanel bottom_container = new JPanel();
     
+    
     @SuppressWarnings("LeakingThisInConstructor")
-    public ToDoList()
+    public ToDoList(int idDashboard)
     {
         super();
         this.height=250;
@@ -46,13 +39,15 @@ public class ToDoList extends Widget {
                                                     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                                                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         content.add(scrollPane);
-        this.idDashboard = 3; // VARIABLE RENTREE EN DUR !!!!!!!!!!
+        this.idDashboard = idDashboard;
         this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, 1);
     }
     
-    public ToDoList(int idWidget, String contenuWidget)
+    @SuppressWarnings("LeakingThisInConstructor")
+    public ToDoList(int idWidget, String contenuWidget, int positionX, int positionY, int height, int width)
     {
         super();
+        this.idWidget = idWidget;
         this.height=250;
         this.width=300;
         taskList.setLayout(new BoxLayout(taskList, BoxLayout.PAGE_AXIS));
@@ -69,46 +64,27 @@ public class ToDoList extends Widget {
                                                     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                                                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         content.add(scrollPane);
-        this.idDashboard = 3; // VARIABLE RENTREE EN DUR !!!!!!!!!!
     }
     
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        if (source == del){
-            this.dispose();
-        }
         if (source == newTask){
-            taskList.add(new Task());
-            taskList.revalidate();//pour qu'elle s'affiche bien sans avoir a deplacer le widget
+            this.taskList.add(new Task());
+            this.taskList.revalidate();//pour qu'elle s'affiche bien sans avoir a deplacer le widget
         }
-    }
-}
 
-class Task extends JPanel implements ActionListener{
-    JCheckBox done;
-    EditableText taskName;
-    JButton delTask;
-    Task()
-    {
-        done=new JCheckBox();
-        this.add(done);
-        
-        taskName = new EditableText("Nouvelle tache");
-        this.add(taskName); 
-        
-        delTask = new JButton("Delete");
-        this.add(delTask);
-        delTask.addActionListener(this);
-    }
-    
-    @Override
-    public void actionPerformed(ActionEvent event) {
-        Object source = event.getSource();
-        if (source == delTask){
-            Container parent =this.getParent();
-            parent.remove(this);//retire la tache de la lsite de tache
-            parent.revalidate();
+        else if (source == refresh) {
+
+        }
+        else if (source == del){
+            int option = JOptionPane.showConfirmDialog(null, "Êtes vous sûr de bien vouloir supprimer ce post-it ?",
+            "Confirmez la suppression", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            
+            if (option == JOptionPane.OK_OPTION) {
+                this.dispose();
+                this.connexion.deleteWidget(this.idWidget);
+            }
         }
     }
 }
