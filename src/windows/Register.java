@@ -2,7 +2,8 @@ package windows;
 
 import hoverboard.BDD;
 import hoverboard.SendMail;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.mail.MessagingException;
@@ -19,17 +20,16 @@ import javax.swing.JTextField;
  * Register est la fenêtre par laquelle l'utilisateur peut se créer un compte.
  * @author Arnaud
  */
-
 public class Register extends JFrame implements ActionListener {
 
     private final JButton validation = new JButton ("Valider");
     private final JButton reset = new JButton ("Annuler");
     private final JLabel logo = new JLabel (new ImageIcon("src/ressources/logo.png"));
-    private final JLabel email_label = new JLabel ("Enter your email adress");
-    private final JLabel firstName_label = new JLabel("Enter your first name :");
-    private final JLabel lastName_label = new JLabel("Enter your last name :");
-    private final JLabel login_label = new JLabel("Enter your login :");
-    private final JLabel password_label = new JLabel("Enter your password :");
+    private final JLabel email_label = new JLabel ("Adresse email");
+    private final JLabel firstName_label = new JLabel("Prénom :");
+    private final JLabel lastName_label = new JLabel("Nom de famille :");
+    private final JLabel login_label = new JLabel("Login :");
+    private final JLabel password_label = new JLabel("Mot de passe :");
     
     private final JPanel bottom_container = new JPanel();
     private final JPanel center_container = new JPanel();
@@ -41,9 +41,13 @@ public class Register extends JFrame implements ActionListener {
     private final JTextField lastName_field = new JTextField();
     private final JTextField login_field = new JTextField();
     
+    /**
+     * Crée une fenêtre permettant à l'utilisateur de se créer un compte sur l'application
+     * avec ses informations (login, mot de passe, nom, prénom et email).
+     */
     @SuppressWarnings("LeakingThisInConstructor")
     public Register() {
-        this.setTitle("Registration window");
+        this.setTitle("Inscription");
         this.setSize(400, 400);
 
         validation.addActionListener(this);
@@ -79,7 +83,6 @@ public class Register extends JFrame implements ActionListener {
      * @param event 
      * L'action qui vient de se produire (bouton cliqué).
      */
-    
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
@@ -91,17 +94,16 @@ public class Register extends JFrame implements ActionListener {
             String login = login_field.getText();
             String password = password_field.getText();
             if (login.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "You must fill all of the fields to continue !" , "ERROR",
+                JOptionPane.showMessageDialog(null, "Vous devez remplir tous les champs pour continuer !" , "ERREUR",
                     JOptionPane.ERROR_MESSAGE);
             }
             else {
                 BDD connexion = new BDD();
                 if (connexion.registerUser(firstName, lastName, email, login, password)) {
-                    JOptionPane.showMessageDialog(null, "Your account has been created, check your email inbox to activate it." , "Success !",
+                    JOptionPane.showConfirmDialog(null, "Votre compte a été crée, vérifiez votre boîte mail pour l'activer." , "Compte créé !",
                     JOptionPane.INFORMATION_MESSAGE);
                     try {
-                        String smtp="",  sender="", passwordMail="";
-                        SendMail send = new SendMail(smtp,sender, email, passwordMail);
+                        SendMail send = new SendMail();
                         send.sendRegistrationEmail(email);
                     }
                     catch (MessagingException e) {
@@ -109,12 +111,13 @@ public class Register extends JFrame implements ActionListener {
                     }
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "This login or this email are already taken." , "ERROR",
+                    JOptionPane.showMessageDialog(null, "Ce login ou cet email est déjà pris." , "ERREUR",
                     JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
         if(source == reset) {
+        
         }
     }    
 }

@@ -1,80 +1,68 @@
 package windows;
 
 import hoverboard.BDD;
-import hoverboard.ParserXml;
 import java.awt.BorderLayout;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.Container;
-import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- *
+ * Dashboard est la classe qui permet d'afficher et de créer les widgets.
  * @author Arnaud
  */
-
 public class Dashboard extends JPanel implements ActionListener {
     
     private int idDashboard = -1;
     protected BDD connexion = new BDD();
-    private String titleDashboard = "";
-    private String descriptionDashboard = "";
-    private final JButton validatePanel = new JButton("Enter");
-    private final JLabel persoIcon = new JLabel (new ImageIcon("src/ressources/solo.png"));
-    private final JLabel sharedIcon = new JLabel (new ImageIcon("src/ressources/groupofpeople.png"));
-    private final JLabel adminIcon = new JLabel (new ImageIcon("src/ressources/admin.png"));
-    private final JPanel main_panel = new JPanel();
-    private final JPanel icon_container = new JPanel();
+    private final JButton homeButton = new JButton(new ImageIcon("src/ressources/home.png"));
+    private final JButton new_postit = new JButton("Nouveau Post-it");
+    private final JButton new_tasklist = new JButton("Nouvelle liste de tâches");
+    private final JButton new_poll = new JButton("Nouveau sondage");
+    private final JButton validatePanel = new JButton("Accèder au dashboard");
+
+    private final JPanel topRightSide_container = new JPanel();
     private final JPanel top_container = new JPanel();
-    private final JPanel middle_container = new JPanel();
-    
-    public Dashboard(int idDashboard, String titleDashboard, String descriptionDashboard, int isAdmin, int isShared) {
-        this.idDashboard = idDashboard;
-        this.titleDashboard = titleDashboard;
-        this.descriptionDashboard = descriptionDashboard;
-        this.persoIcon.setToolTipText("This dashboard is personnal");
-        this.sharedIcon.setToolTipText("This dashboard is shared");
-        this.adminIcon.setToolTipText("Your are the administrator of this dashboard");
-        this.main_panel.setLayout(new BorderLayout());
-        this.top_container.setLayout(new BorderLayout());
-        this.validatePanel.addActionListener(this);
-        if (isShared == 1) {
-            this.icon_container.add(sharedIcon);
-        }
-        else {
-            this.icon_container.add(persoIcon);
-        }
-        if (isAdmin == 1) {
-            this.icon_container.add(adminIcon);
-        }
-        this.top_container.add(this.icon_container, BorderLayout.WEST);
-        this.top_container.add(new JLabel(this.titleDashboard), BorderLayout.CENTER);
-        this.middle_container.add(new JLabel(this.descriptionDashboard));
-        this.main_panel.add(this.top_container, BorderLayout.NORTH);
-        this.main_panel.add(this.middle_container, BorderLayout.CENTER);
-        this.main_panel.add(this.validatePanel, BorderLayout.SOUTH);
-        this.add(main_panel);
-    }
-    
-    public Dashboard(int idDashboard)  {
         
+    /**
+     * Crée le dashboard complet avec les widgets qui y sont associés.
+     * @param idDashboard
+     * L'id du dashboard choisi dans la liste des dashboards de la page d'accueil.
+     */
+    @SuppressWarnings("LeakingThisInConstructor")
+    public Dashboard(int idDashboard)  {   
         this.idDashboard = idDashboard;
-        ResultSet listeWidgets = this.connexion.getNewWidgets(idDashboard);
+        this.setLayout(new BorderLayout());
+        this.top_container.setLayout(new BorderLayout());
+        
+        homeButton.addActionListener(this);
+        new_postit.addActionListener(this);
+        new_tasklist.addActionListener(this);
+        new_poll.addActionListener(this);
+        
+        this.topRightSide_container.add(new_postit);
+        this.topRightSide_container.add(new_tasklist);
+        this.topRightSide_container.add(new_poll);
+        this.top_container.add(topRightSide_container, BorderLayout.EAST);
+        this.add(homeButton, BorderLayout.SOUTH);
+        
+        ResultSet listeWidgets = this.connexion.getWidgets(idDashboard);
         try {
             while (listeWidgets.next()){
                 switch (listeWidgets.getInt("idTypeWidget")) {
                     case 1 : {
-                        this.add(new ToDoList(listeWidgets.getInt("idWidget"),listeWidgets.getString("contentWidget")));
+                        this.add(new ToDoList(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                                              listeWidgets.getInt("positionY"), listeWidgets.getInt("largeur"), listeWidgets.getInt("longueur")));
                         break;
                     }
                     case 2 : {
-                        this.add(new PostIt(listeWidgets.getInt("idWidget"),listeWidgets.getString("contentWidget")));
+                        this.add(new PostIt(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                                            listeWidgets.getInt("positionY"), listeWidgets.getInt("largeur"), listeWidgets.getInt("longueur")));
                         break;
                     }
                     default : {
@@ -85,17 +73,43 @@ public class Dashboard extends JPanel implements ActionListener {
             }
         }
         catch (SQLException error) {
-            System.out.println(error);
+            System.out.println("Impossible d'afficher les widgets ! "+error);
         }
+        
+        this.add(top_container, BorderLayout.NORTH);
     }
     
+    /**
+     * En fonction de l'action, peut créer un widget ou revenir à la page d'accueil.
+     * @param event
+     * L'action qui vient de se produire (bouton cliqué)
+     */
     @Override
     public void actionPerformed(ActionEvent event) {
-        Container parent =this.getParent();
-        System.out.println(this.idDashboard);
-        parent.removeAll();
-        parent.add(new Dashboard(this.idDashboard));
-        parent.revalidate();
+        Object source = event.getSource();
+        if (source == homeButton) {
+            Container parent = this.getParent();
+            parent.removeAll();
+            parent.add(new ListeDashboard(1));
+            parent.revalidate();
+        }
+        else if (source == validatePanel) {
+            Container parent =this.getParent();
+            parent.removeAll();
+            parent.add(new Dashboard(this.idDashboard));
+            parent.revalidate();
+        }
+        else if (source == new_postit) {
+            this.add(new PostIt(this.idDashboard));
+            this.revalidate();
+        }
+        else if (source == new_tasklist) {
+            this.add(new ToDoList(this.idDashboard));
+            this.revalidate();
+        }
+        else if (source == new_poll){
+            
+        }
     }
     
     // Code pour l'affichage de widgets depuis un dossier local avec des fichiers .xml

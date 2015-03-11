@@ -14,10 +14,9 @@ import javax.mail.Session;
 import javax.mail.Transport;
 
 /**
- * SendMail est la classe permettant d'envoyer des messages instantanés aux utilisateurs de l'application grâce à l'API javax.mail.
+ * SendMail est la classe permettant d'envoyer des messages instantanés aux utilisateurs de l'application grâce à l'API Java Mail.
  * @author Arnaud
  */
-
 public class SendMail {
     BodyPart messageBodyPart = new MimeBodyPart();
     MimeBodyPart messageHtmlPart = new MimeBodyPart();
@@ -25,14 +24,20 @@ public class SendMail {
     Multipart fullMessage = new MimeMultipart();
     Properties propertiesList = new Properties();
     Session session;
-    String smtp, sender, destinataire, password;
+    String smtp, sender, password, mailDestinataire;
     Transport transport;
     
-    public SendMail(String smtp, String sender, String destinataire, String password) throws MessagingException {
+    /**
+     * Crée un objet Mail contenant les informations de l'expéditeur et du destinataire. Les méthodes ajouteront
+     * les différents textes du message en fonction de l'action choisie par l'utilisateur (inscription, mot de passe perdu, etc.).
+     * @throws MessagingException
+     * si il est impossible d'établir une connexion avec le serveur de messagerie.
+     */
+    public SendMail() throws MessagingException {
         this.smtp = "smtp.gmail.com";
         this.sender = "hoverboard.esgi@gmail.com";
-        this.destinataire = destinataire;
         this.password = "esgi_hoverboard";
+        // Ces 3 variables doivent être récupérées depuis la base de données ou un fichier .xml.
         this.propertiesList.setProperty("mail.transport.protocol", "smtp");
         this.propertiesList.put("mail.smtp.auth", "true");
         this.propertiesList.put("mail.smtp.starttls.enable", "true");
@@ -42,7 +47,6 @@ public class SendMail {
         this.fullMessage.addBodyPart(this.messageBodyPart);
         this.fullMessage.addBodyPart(this.messageHtmlPart);
         this.message.setContent(this.fullMessage);
-        this.message.addRecipients(Message.RecipientType.TO, this.destinataire);
         this.transport = this.session.getTransport();
     }
     
@@ -53,8 +57,8 @@ public class SendMail {
      * @throws MessagingException 
      * si l'email n'arrive pas à être envoyé.
      */
-    
     public void sendRegistrationEmail(String mailDestinataire) throws MessagingException {
+        this.message.addRecipients(Message.RecipientType.TO, mailDestinataire);
         this.message.setSubject("Welcome to Hoverboard !");
         this.messageBodyPart.setText("Welcome to Hoverboard.\n"
                 + "Click on the following link to activate your account:\n"
@@ -63,7 +67,6 @@ public class SendMail {
                 + "Cordially,\n"
                 + "The Hoverboard Team\n\n");
         this.messageHtmlPart.setContent("<i>This email has been sent to you automatically, please don't reply.</i>", "text/html");
-        
         try {
             this.transport.connect(this.smtp, this.sender, this.password);
             this.transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
@@ -82,8 +85,8 @@ public class SendMail {
      * @throws MessagingException 
      * si l'email n'arrive pas à être envoyé.
      */
-    
     public void sendPasswordLostEmail(String mailDestinataire) throws MessagingException {
+        this.message.addRecipients(Message.RecipientType.TO, mailDestinataire);
         this.message.setSubject("How to change your password");
         this.messageBodyPart.setText("Hi,\n"
                 + "You have recently asked to change your password.\n"

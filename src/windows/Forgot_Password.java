@@ -1,7 +1,7 @@
 package windows;
 
-import hoverboard.*;
-
+import hoverboard.BDD;
+import hoverboard.SendMail;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +17,6 @@ import javax.swing.JTextField;
  * 
  * @author Cavoleau
  */
-
 public class Forgot_Password extends JFrame implements ActionListener{
     private final JPanel grid_container= new JPanel();
     private final JPanel main_container= new JPanel();
@@ -30,7 +29,7 @@ public class Forgot_Password extends JFrame implements ActionListener{
     @SuppressWarnings("LeakingThisInConstructor")
     public Forgot_Password(){
 
-        this.setTitle("Forgot Password");
+        this.setTitle("Mot de passe perdu");
         this.setSize(600,180);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
@@ -51,7 +50,8 @@ public class Forgot_Password extends JFrame implements ActionListener{
 
     /**
      * Envoie un message à l'utilisateur à l'adresse qu'il a renseignée.
-     * @param event 
+     * @param event
+     * L'action qui vient de se produire, en l'occurence un clic sur le bouton "Valider".
      */
     
     @Override
@@ -61,8 +61,7 @@ public class Forgot_Password extends JFrame implements ActionListener{
             try {
                 BDD connexion = new BDD();
                 if (connexion.resetPassword(mail_field.getText())) {
-                    String smtp="",  sender="",  destinataire= mail_field.getText(), passwordMail="";
-                    SendMail send = new SendMail(smtp,sender, destinataire, passwordMail);
+                    SendMail send = new SendMail();
                     send.sendPasswordLostEmail(mail_field.getText());
                 }
             }

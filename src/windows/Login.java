@@ -1,10 +1,12 @@
 package windows;
 
 import hoverboard.BDD;
-import hoverboard.ParserXml;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
@@ -16,24 +18,27 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 /**
  * Login est la fenêtre par laquelle l'utilisateur se connecte à son compte.
  * @author Arnaud
  */
-
 public class Login extends JFrame implements ActionListener {
     private final BDD connexion = new BDD();
     private final JButton validation = new JButton ("Valider");
     private final JButton reset = new JButton ("Annuler");
-    private final JButton password_lost = new JButton("I lost my password");
-    private final JButton register = new JButton ("I don't have an account");
+    private final JButton password_lost = new JButton("J'ai perdu mon mot de passe");
+    private final JButton register = new JButton ("Créer un compte");
     private final JCheckBox check_cookie = new JCheckBox ();
     
     private final JLabel logo = new JLabel (new ImageIcon("src/ressources/logo.png"));
-    private final JLabel check_label = new JLabel ("Remember me ?");
-    private final JLabel login_label = new JLabel("Enter your login :");
-    private final JLabel password_label = new JLabel("Enter your password :");
+    private final JLabel check_label = new JLabel ("Se souvenir de moi");
+    private final JLabel login_label = new JLabel("Saisissez votre login :");
+    private final JLabel password_label = new JLabel("Saisissez votre mot de passe :");
     
     
     private final JPanel main_container = new JPanel();
@@ -42,6 +47,10 @@ public class Login extends JFrame implements ActionListener {
     private final JPasswordField password_field = new JPasswordField();
     private final JTextField login_field = new JTextField();
 
+    /**
+     * Crée une fenêtre de login dans laquelle l'utilisateur rentre ses identifiants
+     * ou demande à afficher une fenêtre d'inscription ou de mot de passe perdu.
+     */
     @SuppressWarnings("LeakingThisInConstructor")
     public Login() {
         this.setTitle("Fenêtre de connexion");
@@ -83,7 +92,6 @@ public class Login extends JFrame implements ActionListener {
      * @param event 
      * L'action qui vient de se produire (bouton cliqué).
      */
-    
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
@@ -92,21 +100,20 @@ public class Login extends JFrame implements ActionListener {
             String login = login_field.getText();
             String password = password_field.getText();
             if (login.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "You must enter your login and your password to continue !" , "ERROR",
+                JOptionPane.showMessageDialog(null, "Vous devez entrer votre login et votre mot de passe pour vous connecter !" , "ERREUR",
                     JOptionPane.ERROR_MESSAGE);
             }
             else {
                 ResultSet isUser = this.connexion.connect_user(login, password);
                 try {
                     if (!isUser.isBeforeFirst()) {
-                        JOptionPane.showMessageDialog(null, "Nobody in the database with this login and password !" , "ERROR",
+                        JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec ce login et ce mot de passe !" , "ERREUR",
                         JOptionPane.ERROR_MESSAGE);
                     }
                     else {
                         isUser.next();
                         if (check_cookie.isSelected()) {
-                            ParserXml parser = new ParserXml();
-                            parser.creerCookie(login,password);
+                            this.creerCookie(login,password);
                         }
                         this.dispose();
                         Home home_window = new Home(isUser.getInt("idUser"));
@@ -125,6 +132,28 @@ public class Login extends JFrame implements ActionListener {
         }
         else if (source == register) {
             Register reg = new Register();
+        }
+    }
+    
+    /**
+     * Créer un fichier cookie pour connecter l'utilisateur automatiquement la prochain fois qu'il utilisera l'application.
+     * Les informations saisies dans la fenêtre de login sont récupérées pour les insérées dans le fichier cookie_login.xml.
+     * @param loginField
+     * Le login saisi par l'utilisateur lors de la connexion
+     * @param passwordField
+     * Le mot de passe saisi par l'utilisateur lors de la connexion
+     */
+    public void creerCookie(String loginField, String passwordField) {
+        try {
+            Document cookie = new Document().setRootElement(new Element("cookie"));
+            cookie.getRootElement().addContent(new Element("login").addContent(loginField));
+            cookie.getRootElement().addContent(new Element("password").addContent(passwordField));
+            XMLOutputter cookie_login = new XMLOutputter();
+            cookie_login.setFormat(Format.getPrettyFormat());
+            cookie_login.output(cookie, new FileWriter("src/ressources/cookie_login.xml"));
+        }
+        catch (IOException error) {
+            System.out.println("Erreur lors de la création du cookie "+error);
         }
     }
 }
