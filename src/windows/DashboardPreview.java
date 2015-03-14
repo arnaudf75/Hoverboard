@@ -1,6 +1,5 @@
 package windows;
 
-import hoverboard.BDD;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -15,16 +14,15 @@ import javax.swing.JPanel;
  * @author Arnaud
  */
 public class DashboardPreview extends JPanel implements ActionListener {
-    
+    private int idUser = -1;
     private int idDashboard = -1;
-    protected BDD connexion = new BDD();
     private String titleDashboard = "";
     private String descriptionDashboard = "";
-    private final JButton homeButton = new JButton(new ImageIcon("src/ressources/home.png"));
+    private final JButton homeButton = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/home.png")));
     private final JButton validatePanel = new JButton("Accèder au dashboard");
-    private final JLabel persoIcon = new JLabel (new ImageIcon("src/ressources/solo.png"));
-    private final JLabel sharedIcon = new JLabel (new ImageIcon("src/ressources/groupofpeople.png"));
-    private final JLabel adminIcon = new JLabel (new ImageIcon("src/ressources/admin.png"));
+    private final JLabel persoIcon = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/solo.png")));
+    private final JLabel sharedIcon = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/groupofpeople.png")));
+    private final JLabel adminIcon = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/admin.png")));
     private final JPanel main_panel = new JPanel();
     private final JPanel topRightSide_container = new JPanel();
     private final JPanel top_container = new JPanel();
@@ -33,6 +31,8 @@ public class DashboardPreview extends JPanel implements ActionListener {
      /**
      * Crée un aperçu d'un dashboard avec des informations le concernant : si il est partagé ou non,
      * si l'utilisateur en est l'administrateur, son titre et sa description.
+     * @param idUser
+     * L'id de l'utilisateur connecté.
      * @param idDashboard
      * L'id du dashboard concerné.
      * @param titleDashboard
@@ -45,8 +45,9 @@ public class DashboardPreview extends JPanel implements ActionListener {
      * Vaut 1 si le dashboard est partagé, 0 sinon.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public DashboardPreview(int idDashboard, String titleDashboard, String descriptionDashboard, int isAdmin, int isShared) {
+    public DashboardPreview(int idUser, int idDashboard, String titleDashboard, String descriptionDashboard, int isAdmin, int isShared) {
         this.idDashboard = idDashboard;
+        this.idUser = idUser;
         this.titleDashboard = titleDashboard;
         this.descriptionDashboard = descriptionDashboard;
         this.persoIcon.setToolTipText("Ce dashboard est personnel");
@@ -84,7 +85,7 @@ public class DashboardPreview extends JPanel implements ActionListener {
         else if (source == validatePanel) {
             Container parent =this.getParent();
             parent.removeAll();
-            parent.add(new Dashboard(this.idDashboard));
+            parent.add(new Dashboard(this.idDashboard, this.idUser));
             parent.revalidate();
         }
     }

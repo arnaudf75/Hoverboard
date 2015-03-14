@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -34,8 +35,7 @@ public class Login extends JFrame implements ActionListener {
     private final JButton password_lost = new JButton("J'ai perdu mon mot de passe");
     private final JButton register = new JButton ("Créer un compte");
     private final JCheckBox check_cookie = new JCheckBox ();
-    
-    private final JLabel logo = new JLabel (new ImageIcon("src/ressources/logo.png"));
+    private final JLabel logo = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/logo.png")));
     private final JLabel check_label = new JLabel ("Se souvenir de moi");
     private final JLabel login_label = new JLabel("Saisissez votre login :");
     private final JLabel password_label = new JLabel("Saisissez votre mot de passe :");
@@ -56,7 +56,6 @@ public class Login extends JFrame implements ActionListener {
         this.setTitle("Fenêtre de connexion");
         this.setSize(400, 400);
         this.setLocationRelativeTo(null);
-        
         validation.addActionListener(this);
         reset.addActionListener(this);
         password_lost.addActionListener(this);
@@ -150,10 +149,12 @@ public class Login extends JFrame implements ActionListener {
             cookie.getRootElement().addContent(new Element("password").addContent(passwordField));
             XMLOutputter cookie_login = new XMLOutputter();
             cookie_login.setFormat(Format.getPrettyFormat());
-            cookie_login.output(cookie, new FileWriter("src/ressources/cookie_login.xml"));
+            new File("userData").mkdirs();
+            cookie_login.output(cookie, new FileWriter(new File("userData/cookie_login.xml")));
         }
         catch (IOException error) {
-            System.out.println("Erreur lors de la création du cookie "+error);
+            JOptionPane.showMessageDialog(null, error, "ERREUR", JOptionPane.INFORMATION_MESSAGE);
+            System.out.println("Erreur lors de la création du cookie ! "+error);
         }
     }
 }
