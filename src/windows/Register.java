@@ -24,7 +24,7 @@ public class Register extends JFrame implements ActionListener {
 
     private final JButton validation = new JButton ("Valider");
     private final JButton reset = new JButton ("Annuler");
-    private final JLabel logo = new JLabel (new ImageIcon("src/ressources/logo.png"));
+    private final JLabel logo = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/logo.png")));
     private final JLabel email_label = new JLabel ("Adresse email");
     private final JLabel firstName_label = new JLabel("Prénom :");
     private final JLabel lastName_label = new JLabel("Nom de famille :");
@@ -100,7 +100,7 @@ public class Register extends JFrame implements ActionListener {
             else {
                 BDD connexion = new BDD();
                 if (connexion.registerUser(firstName, lastName, email, login, password)) {
-                    JOptionPane.showConfirmDialog(null, "Votre compte a été crée, vérifiez votre boîte mail pour l'activer." , "Compte créé !",
+                    JOptionPane.showMessageDialog(null, "Votre compte a été crée, vérifiez votre boîte mail pour l'activer." , "Compte créé !",
                     JOptionPane.INFORMATION_MESSAGE);
                     try {
                         SendMail send = new SendMail();

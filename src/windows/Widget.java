@@ -28,9 +28,9 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
     
     protected BDD connexion = new BDD();
     protected Dimension buttonSize = new Dimension(16,15);
-    protected JButton save = new JButton(new ImageIcon("src/ressources/save.png"));
-    protected JButton refresh = new JButton(new ImageIcon("src/ressources/refresh.png"));
-    protected JButton del = new JButton(new ImageIcon("src/ressources/delete.png"));
+    protected JButton save = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/save.png")));
+    protected JButton refresh = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/refresh.png")));
+    protected JButton del = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/delete.png")));
     protected JPanel buttons = new JPanel();
     protected JPanel settings = new JPanel();
     protected JPanel content = new JPanel();

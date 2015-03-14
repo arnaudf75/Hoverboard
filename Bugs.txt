@@ -1,3 +1,0 @@
-Sur Login_Window.java :
-	Ligne 115 : L'ouverture de la fenêtre register est dans un if, elle peut donc être appellée plusieurs fois
-	et s'ouvrir indéfiniement. Il faudrait mettre une condition dans l'appel du constructeur.

@@ -1,6 +1,5 @@
 package hoverboard;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.Connection;
@@ -30,7 +29,7 @@ public class BDD {
      */ 
     public BDD() {
         try {
-            Document data_jdbc = new SAXBuilder().build(new File("src/ressources/data_jdbc.xml"));
+            Document data_jdbc = new SAXBuilder().build(this.getClass().getClassLoader().getResource("ressources/data_jdbc.xml"));
             Element racine = data_jdbc.getRootElement();
             this.databaseUrl= racine.getChild("dbUrl").getText();
             this.user =  racine.getChild("login").getText();
@@ -40,7 +39,7 @@ public class BDD {
             this.statement = dataBaseConnection.createStatement();
         }
         catch (ClassNotFoundException | IOException | JDOMException | SQLException error) {
-           System.out.println("Error while connecting to database "+error); 
+           System.out.println("Impossible de se connecter à la base de données ! "+error); 
         }
     }
     
@@ -102,7 +101,8 @@ public class BDD {
     
     /**
      * Supprime un widget dans la base de données.
-     * @param idWidget 
+     * @param idWidget
+     * L'id du widget que l'utilisateur veut supprimer.
      */
     public void deleteWidget(int idWidget) {
         this.requete = "DELETE FROM widgets WHERE idWidget ="+idWidget;
@@ -146,9 +146,6 @@ public class BDD {
         this.requete = "SELECT E.*, T.nomTypeWidget FROM widgets E, type_widget T WHERE idDashboard = "+idDashboard+" AND E.idTypeWidget = T.idTypeWidget";
         try {
             this.result = statement.executeQuery(requete);
-            if (!this.result.isBeforeFirst()) {
-                System.out.println("Aucun widget !");
-            }
         }
         catch (SQLException error) {
             System.out.println ("Impossible de récupérer les widgets ! "+error);

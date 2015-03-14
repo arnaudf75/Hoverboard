@@ -30,8 +30,7 @@ public class SendMail {
     /**
      * Crée un objet Mail contenant les informations de l'expéditeur et du destinataire. Les méthodes ajouteront
      * les différents textes du message en fonction de l'action choisie par l'utilisateur (inscription, mot de passe perdu, etc.).
-     * @throws MessagingException
-     * si il est impossible d'établir une connexion avec le serveur de messagerie.
+     * @throws MessagingException si il est impossible d'établir une connexion avec le serveur de messagerie.
      */
     public SendMail() throws MessagingException {
         this.smtp = "smtp.gmail.com";
@@ -54,8 +53,7 @@ public class SendMail {
      * Envoie un mail de confirmation d'inscription à l'utilisateur.
      * @param mailDestinataire
      * Adresse email du destinataire.
-     * @throws MessagingException 
-     * si l'email n'arrive pas à être envoyé.
+     * @throws MessagingException si l'email n'arrive pas à être envoyé.
      */
     public void sendRegistrationEmail(String mailDestinataire) throws MessagingException {
         this.message.addRecipients(Message.RecipientType.TO, mailDestinataire);
@@ -82,8 +80,7 @@ public class SendMail {
      * Envoie un mail à l'utilisateur pour qu'il change son mot de passe.
      * @param mailDestinataire
      * Adresse email du destinataire.
-     * @throws MessagingException 
-     * si l'email n'arrive pas à être envoyé.
+     * @throws MessagingException si l'email n'arrive pas à être envoyé.
      */
     public void sendPasswordLostEmail(String mailDestinataire) throws MessagingException {
         this.message.addRecipients(Message.RecipientType.TO, mailDestinataire);

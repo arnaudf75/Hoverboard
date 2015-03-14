@@ -3,7 +3,6 @@ package windows;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Container;
-import java.text.AttributedString;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -16,7 +15,6 @@ class Task extends JPanel implements ActionListener{
     JCheckBox done = new JCheckBox();
     EditableText taskName = new EditableText("Nouvelle tache");
     JButton delTask = new JButton("Delete");
-    AttributedString tache = new AttributedString("test");
     
     @SuppressWarnings("LeakingThisInConstructor")
     public Task()

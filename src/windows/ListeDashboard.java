@@ -12,9 +12,14 @@ import javax.swing.JPanel;
  */
 public class ListeDashboard extends JPanel {
     
-    protected int idUser = -1;
+    private int idUser = -1;
     protected BDD connexion = new BDD();
     
+    /**
+     * Crée un JPanel contenant la liste des dashboards utilisés par l'utilisateur.
+     * @param idUser
+     * L'id de l'utilisateur connecté.
+     */
     public ListeDashboard(int idUser) {
         this.idUser = idUser;
         ResultSet listeDashboard = connexion.getDashboards(this.idUser);
@@ -30,7 +35,7 @@ public class ListeDashboard extends JPanel {
                 int isAdmin = listeDashboard.getInt("isDashboardAdmin");
                 String titleDashboard = listeDashboard.getString("titleDashboard");
                 String descriptionDashboard = listeDashboard.getString("descriptionDashboard");
-                this.add(new DashboardPreview(idDashboard, titleDashboard, descriptionDashboard, isAdmin, isShared));
+                this.add(new DashboardPreview(idUser, idDashboard, titleDashboard, descriptionDashboard, isAdmin, isShared));
             }
         }
         catch (SQLException error) {

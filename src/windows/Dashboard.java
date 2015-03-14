@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -19,12 +18,12 @@ import javax.swing.JPanel;
 public class Dashboard extends JPanel implements ActionListener {
     
     private int idDashboard = -1;
-    protected BDD connexion = new BDD();
-    private final JButton homeButton = new JButton(new ImageIcon("src/ressources/home.png"));
+    private int idUser = -1;
+    private BDD connexion = new BDD();
+    private final JButton homeButton = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/home.png")));
     private final JButton new_postit = new JButton("Nouveau Post-it");
     private final JButton new_tasklist = new JButton("Nouvelle liste de tâches");
     private final JButton new_poll = new JButton("Nouveau sondage");
-    private final JButton validatePanel = new JButton("Accèder au dashboard");
 
     private final JPanel topRightSide_container = new JPanel();
     private final JPanel top_container = new JPanel();
@@ -33,9 +32,12 @@ public class Dashboard extends JPanel implements ActionListener {
      * Crée le dashboard complet avec les widgets qui y sont associés.
      * @param idDashboard
      * L'id du dashboard choisi dans la liste des dashboards de la page d'accueil.
+     * @param idUser
+     * L'id de l'utilisateur connecté.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public Dashboard(int idDashboard)  {   
+    public Dashboard(int idDashboard, int idUser)  {
+        this.idUser  = idUser;
         this.idDashboard = idDashboard;
         this.setLayout(new BorderLayout());
         this.top_container.setLayout(new BorderLayout());
@@ -90,13 +92,7 @@ public class Dashboard extends JPanel implements ActionListener {
         if (source == homeButton) {
             Container parent = this.getParent();
             parent.removeAll();
-            parent.add(new ListeDashboard(1));
-            parent.revalidate();
-        }
-        else if (source == validatePanel) {
-            Container parent =this.getParent();
-            parent.removeAll();
-            parent.add(new Dashboard(this.idDashboard));
+            parent.add(new ListeDashboard(this.idUser));
             parent.revalidate();
         }
         else if (source == new_postit) {
