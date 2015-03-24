@@ -10,7 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- *
+ * DashboardPreview est la classe qui affiche dans un panneau un aperçu d'un dashboard avec des informations le concernant : si il est partagé ou non,
+ * si l'utilisateur en est l'administrateur, son titre et sa description.
  * @author Arnaud
  */
 public class DashboardPreview extends JPanel implements ActionListener {
@@ -29,20 +30,14 @@ public class DashboardPreview extends JPanel implements ActionListener {
     private final JPanel middle_container = new JPanel();
     
      /**
-     * Crée un aperçu d'un dashboard avec des informations le concernant : si il est partagé ou non,
-     * si l'utilisateur en est l'administrateur, son titre et sa description.
-     * @param idUser
-     * L'id de l'utilisateur connecté.
-     * @param idDashboard
-     * L'id du dashboard concerné.
-     * @param titleDashboard
-     * Le titre du dashboard.
-     * @param descriptionDashboard
-     * La description du dashboard.
-     * @param isAdmin
-     * Vaut 1 si l'utilisateur administre le dashboard, 0 sinon.
-     * @param isShared
-     * Vaut 1 si le dashboard est partagé, 0 sinon.
+     * Crée un aperçu d'un dashboard. Ce constructeur est appellé dans la classe ListeDashboard pour afficher les dashboards
+     * appartenant ou auquel participe un utilisateur.
+     * @param idUser L'id de l'utilisateur connecté.
+     * @param idDashboard L'id du dashboard concerné.
+     * @param titleDashboard Le titre du dashboard.
+     * @param descriptionDashboard La description du dashboard.
+     * @param isAdmin Vaut 1 si l'utilisateur administre le dashboard, 0 sinon.
+     * @param isShared Vaut 1 si le dashboard est partagé, 0 sinon.
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public DashboardPreview(int idUser, int idDashboard, String titleDashboard, String descriptionDashboard, int isAdmin, int isShared) {
@@ -83,10 +78,8 @@ public class DashboardPreview extends JPanel implements ActionListener {
             parent.repaint();
         }
         else if (source == validatePanel) {
-            Container parent =this.getParent();
-            parent.removeAll();
-            parent.add(new Dashboard(this.idDashboard, this.idUser));
-            parent.revalidate();
+            Dashboard selectedDashboard = new Dashboard(this.idDashboard, this.idUser, this.titleDashboard);
+
         }
     }
 }

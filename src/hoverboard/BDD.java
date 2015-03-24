@@ -29,7 +29,7 @@ public class BDD {
      */ 
     public BDD() {
         try {
-            Document data_jdbc = new SAXBuilder().build(this.getClass().getClassLoader().getResource("ressources/data_jdbc.xml"));
+            Document data_jdbc = new SAXBuilder().build(this.getClass().getClassLoader().getResource("ressources/data_jdbc_old.xml"));
             Element racine = data_jdbc.getRootElement();
             this.databaseUrl= racine.getChild("dbUrl").getText();
             this.user =  racine.getChild("login").getText();
@@ -43,22 +43,52 @@ public class BDD {
         }
     }
     
+    public int ajouteDashboard(int idUser, String titreDashboard, String descriptionDashboard, int isShared) {
+        this.requete = "INSERT INTO dashboard VALUES(NULL, '"+titreDashboard+"', '"+descriptionDashboard+"', "+isShared+")";
+        int idDashboard = -1;
+        try {
+            this.statement.executeUpdate(this.requete, Statement.RETURN_GENERATED_KEYS);
+            this.result = this.statement.getGeneratedKeys();
+            if (this.result.next()) {
+                idDashboard = this.result.getInt(1);
+            }
+            this.requete = "INSERT INTO utilise VALUES ("+idUser+", "+idDashboard+", 1)";
+            this.statement.executeUpdate(this.requete);
+        }
+        catch (SQLException error) {
+            System.out.println("Impossible d'ajouter le dashboard ! "+error);
+            return (-1);
+        }
+        return (idDashboard);
+    }
+    
+    public boolean ajouteUserToDashboard(int idDashboard, String pseudoUser) {
+        this.requete = "SELECT idUser from users WHERE login ='"+pseudoUser+"' ";
+        int idUser = -1;
+        try {
+            this.result = this.statement.executeQuery(this.requete);
+            if (this.result.next()) {
+                idUser = this.result.getInt("idUser");
+                this.requete = "INSERT INTO utilise VALUES ("+idUser+", "+idDashboard+", 0)";
+                this.statement.executeUpdate(this.requete);
+                return (true);
+            }
+        }
+        catch (SQLException error) {
+            System.out.println("Impossible d'ajouter '"+pseudoUser+"' au dashboard !");
+        }
+        return (false);
+    }
+    
     /**
      * Ajoute un widget créé depuis le menu à la base de données.
-     * @param positionX
-     * La position horizontale du widget sur le dashboard.
-     * @param positionY
-     * La position verticale du widget sur le dashboard.
-     * @param height
-     * La hauteur du widget.
-     * @param width
-     * La largeur du widget.
-     * @param idDashboard
-     * L'id du dashboard depuis lequel le widget a été créé.
-     * @param typeWidget
-     * Le type du widget (post-it, liste de tâches ou sondage). 
-     * @return
-     * L'id du widget issu de l'insertion dans la base de données. Si cette dernière échoue, la fonction renvoie -1.
+     * @param positionX La position horizontale du widget sur le dashboard.
+     * @param positionY La position verticale du widget sur le dashboard.
+     * @param height La hauteur du widget.
+     * @param width La largeur du widget.
+     * @param idDashboard L'id du dashboard depuis lequel le widget a été créé.
+     * @param typeWidget Le type du widget (post-it, liste de tâches ou sondage). 
+     * @return L'id du widget issu de l'insertion dans la base de données. Si cette dernière échoue, la fonction renvoie -1.
      */
     public int ajouteWidget(int positionX, int positionY, int height, int width, int idDashboard, int typeWidget) {
         this.requete = "INSERT INTO widgets VALUES (NULL, '', "+positionX+", "+positionY+", "+height+", "+width+", "+idDashboard+", "+typeWidget+") ";
@@ -68,14 +98,12 @@ public class BDD {
             this.result = this.statement.getGeneratedKeys();
             if (this.result.next()) {
                 idWidget = this.result.getInt(1);
-                System.out.println("Id du widget : "+idWidget +" de type "+typeWidget);
             }
         }
         catch (SQLException error) {
             System.out.println("Impossible d'ajouter le widget ! "+error);
             return (-1);
         }
-        
         return (idWidget);
     }
     
