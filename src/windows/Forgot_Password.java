@@ -20,8 +20,7 @@ import javax.swing.JTextField;
 public class Forgot_Password extends JFrame implements ActionListener{
     private final JPanel grid_container= new JPanel();
     private final JPanel main_container= new JPanel();
-    
-    private final JLabel logo = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/logo.png")));
+    private final JLabel logo = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/logo.png")));
     private final JLabel use_mail = new JLabel("Entrez votre adresse mail :");
     private final JTextField mail_field = new JTextField();
     private final JButton valider_mail = new JButton ("Valider");

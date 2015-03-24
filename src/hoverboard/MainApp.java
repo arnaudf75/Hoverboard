@@ -1,7 +1,7 @@
 package hoverboard;
 
 import windows.Login;
-import windows.Home;
+import windows.ListeDashboard;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class MainApp {
                 else {
                     isUser.next();
                     int idUser = isUser.getInt("idUser");
-                    Home myHome = new Home(idUser);
+                    ListeDashboard myDashboards = new ListeDashboard(idUser);
                 }
             }
             else {

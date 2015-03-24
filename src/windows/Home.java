@@ -1,55 +1,57 @@
 package windows;
 
 import hoverboard.BDD;
+import windows.newdashboard.CreateDashboard;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.sql.ResultSet;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import java.util.HashMap;
 
 /**
  * Home est la page d'accueil de l'utilisateur, elle contient tous les widgets du dashboard.
  * @author Arnaud
  */
-public class Home extends JFrame implements ActionListener {
+
+public abstract class Home extends JFrame implements ActionListener {
     protected BDD connexion = new BDD();
-    private int idUser = -1;
-    private final JMenuBar menu = new JMenuBar();
-    private final JMenu menuPlugins = new JMenu("Plugins");
-    private final JMenuItem plugins_library = new JMenuItem("Aller à la bibliothèque de plugins en ligne");
-    private final JMenu menuOptions = new JMenu("Options");
-    private final JMenuItem options_infoUser = new JMenuItem("Mes informations");
-    private final JMenu menuHelp = new JMenu("Aide");
-    private final JMenuItem about_doc = new JMenuItem("Voir la documentation en ligne");
-    private final JMenuItem about_help = new JMenuItem("A propos d'Hoverboard");
-    private final JMenuItem menuDisconnect = new JMenuItem("Se déconnecter");
-    private final JPanel main_container = new JPanel();
+    protected int idUser = -1;
+    protected final JMenuBar menu = new JMenuBar();
+    protected final JMenu new_item = new JMenu("Nouveau");
+    protected final JMenuItem menu_newDashboard = new JMenuItem("Dashboard");
+    protected final JMenu menuPlugins = new JMenu("Plugins");
+    protected final JMenuItem plugins_library = new JMenuItem("Aller à la bibliothèque de plugins en ligne");
+    protected final JMenu menuOptions = new JMenu("Options");
+    protected final JMenuItem options_infoUser = new JMenuItem("Mes informations");
+    protected final JMenu menuHelp = new JMenu("Aide");
+    protected final JMenuItem about_doc = new JMenuItem("Voir la documentation en ligne");
+    protected final JMenuItem about_help = new JMenuItem("A propos d'Hoverboard");
+    protected final JMenuItem menuDisconnect = new JMenuItem("Se déconnecter");
+    protected final JPanel main_container = new JPanel();
     
     /**
      * Crée la fenêtre d'accueil de l'utilisateur, comportant les menus lui permettant d'accéder à ses options, etc.
-     * @param idUser
-     * L'id de l'utilisateur connecté.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public Home(int idUser) {
-        this.idUser = idUser;
-        this.setTitle("Choisissez un dashboard");
-        this.setSize(800, 800);
+    public Home() {
+        this.setSize(1200, 1000);
         main_container.setLayout(new BorderLayout());
-        
+        menu_newDashboard.addActionListener(this);
         menuDisconnect.addActionListener(this);
 
+        new_item.add(menu_newDashboard);
         menuPlugins.add(plugins_library);
         menuOptions.add(options_infoUser);
         menuHelp.add(about_help);
         menuHelp.add(about_doc);
 
+
+        menu.add(new_item);
         menu.add(menuPlugins);
         menu.add(menuOptions);
         menu.add(menuHelp);
@@ -57,8 +59,6 @@ public class Home extends JFrame implements ActionListener {
         
         setJMenuBar(menu);  
         
-        
-        main_container.add(new ListeDashboard(this.idUser));
         this.setContentPane(main_container);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
@@ -67,13 +67,16 @@ public class Home extends JFrame implements ActionListener {
     
     /**
      * Effectue une action en fonction du menu cliqué, par exemple afficher les informations de l'utilisateur.
-     * @param event 
-     * L'action qui vient de se produire (bouton cliqué).
+     * @param event L'action qui vient de se produire (bouton cliqué).
      */
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        if (source == menuDisconnect) {
+
+        if (source == menu_newDashboard) {
+            CreateDashboard createDash = new CreateDashboard(this.idUser);
+        }
+        else if (source == menuDisconnect) {
             File cookie = new File("userData/cookie_login.xml");
             cookie.delete();
             this.dispose();
@@ -86,7 +89,7 @@ public class Home extends JFrame implements ActionListener {
      * Synchronise les widgets stockés EN LOCAL avec ceux stockés dans la base de données.
      * @param idDashboard 
      */
-    
+    /*
     public void refreshWidgets(int idDashboard) {
         // Todo -> Avec l'id du dashboard, je fais une requête vers la BDD pour voir si jamais un widget aurait été rajouté
         HashMap dicto = new HashMap();
@@ -101,6 +104,6 @@ public class Home extends JFrame implements ActionListener {
             //dicto = myParser.getDataPost("src/ressources/dashboard_"+idDashboard+"/"+listeFichiers[i]);
             //this.main_container.add(new PostIt(899898,dicto.get("content").toString()));
         }*/
-        this.main_container.revalidate();
-    }
+        /*this.main_container.revalidate();
+    }*/
 }

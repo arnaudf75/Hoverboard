@@ -1,29 +1,23 @@
 package windows;
 
-import hoverboard.BDD;
 import java.awt.GridLayout;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.JPanel;
 
 /**
- *
+ * La classe ListeDashboard affiche dans une fenêtre la liste des dashboards d'un utilisateur.
  * @author Arnaud
  */
-public class ListeDashboard extends JPanel {
-    
-    private int idUser = -1;
-    protected BDD connexion = new BDD();
-    
+public class ListeDashboard extends Home {
+
     /**
-     * Crée un JPanel contenant la liste des dashboards utilisés par l'utilisateur.
-     * @param idUser
-     * L'id de l'utilisateur connecté.
+     * Crée une fenêtre contenant la liste des dashboard à partir de l'id de l'utilisateur connecté.
+     * @param idUser L'id de l'utilisateur connecté.
      */
     public ListeDashboard(int idUser) {
         this.idUser = idUser;
+        this.setTitle("Choisissez un dashboard");
         ResultSet listeDashboard = connexion.getDashboards(this.idUser);
-        
         try {
             listeDashboard.last();
             int numberRows = listeDashboard.getRow()/2;
@@ -37,6 +31,7 @@ public class ListeDashboard extends JPanel {
                 String descriptionDashboard = listeDashboard.getString("descriptionDashboard");
                 this.add(new DashboardPreview(idUser, idDashboard, titleDashboard, descriptionDashboard, isAdmin, isShared));
             }
+            this.revalidate();
         }
         catch (SQLException error) {
             System.out.println("Impossible d'afficher la liste des dashboards ! "+error);

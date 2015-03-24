@@ -1,10 +1,11 @@
 package windows;
 
 import hoverboard.BDD;
+import windows.newdashboard.AddMates;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Container;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
@@ -15,34 +16,33 @@ import javax.swing.JPanel;
  * Dashboard est la classe qui permet d'afficher et de créer les widgets.
  * @author Arnaud
  */
-public class Dashboard extends JPanel implements ActionListener {
-    
+
+public class Dashboard extends Home implements ActionListener {
     private int idDashboard = -1;
-    private int idUser = -1;
-    private BDD connexion = new BDD();
     private final JButton homeButton = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/home.png")));
     private final JButton new_postit = new JButton("Nouveau Post-it");
     private final JButton new_tasklist = new JButton("Nouvelle liste de tâches");
     private final JButton new_poll = new JButton("Nouveau sondage");
-
+    private final JButton add_users = new JButton("Ajouter des utilisateurs à ce dashboard");
     private final JPanel topRightSide_container = new JPanel();
     private final JPanel top_container = new JPanel();
         
     /**
      * Crée le dashboard complet avec les widgets qui y sont associés.
-     * @param idDashboard
-     * L'id du dashboard choisi dans la liste des dashboards de la page d'accueil.
-     * @param idUser
-     * L'id de l'utilisateur connecté.
+     * @param idDashboard L'id du dashboard choisi dans la liste des dashboards de la page d'accueil.
+     * @param idUser L'id de l'utilisateur connecté.
+     * @param titreDashboard Le titre affiché en haut de la fenêtre.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public Dashboard(int idDashboard, int idUser)  {
+    public Dashboard(int idDashboard, int idUser, String titreDashboard) {
         this.idUser  = idUser;
         this.idDashboard = idDashboard;
+        this.setTitle(titreDashboard);
         this.setLayout(new BorderLayout());
         this.top_container.setLayout(new BorderLayout());
         
         homeButton.addActionListener(this);
+        add_users.addActionListener(this);
         new_postit.addActionListener(this);
         new_tasklist.addActionListener(this);
         new_poll.addActionListener(this);
@@ -50,6 +50,7 @@ public class Dashboard extends JPanel implements ActionListener {
         this.topRightSide_container.add(new_postit);
         this.topRightSide_container.add(new_tasklist);
         this.topRightSide_container.add(new_poll);
+        this.topRightSide_container.add(add_users);
         this.top_container.add(topRightSide_container, BorderLayout.EAST);
         this.add(homeButton, BorderLayout.SOUTH);
         
@@ -83,17 +84,17 @@ public class Dashboard extends JPanel implements ActionListener {
     
     /**
      * En fonction de l'action, peut créer un widget ou revenir à la page d'accueil.
-     * @param event
-     * L'action qui vient de se produire (bouton cliqué)
+     * @param event L'action qui vient de se produire (bouton cliqué)
      */
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source == homeButton) {
-            Container parent = this.getParent();
-            parent.removeAll();
-            parent.add(new ListeDashboard(this.idUser));
-            parent.revalidate();
+            this.dispose();
+            ListeDashboard myDashboards = new ListeDashboard(this.idUser);
+        }
+        else if (source == add_users) {
+            AddMates addUsersToDashboard = new AddMates(this.idDashboard);
         }
         else if (source == new_postit) {
             this.add(new PostIt(this.idDashboard));

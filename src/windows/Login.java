@@ -88,8 +88,7 @@ public class Login extends JFrame implements ActionListener {
     
     /**
      * Affiche la page d'accueil de l'utilisateur si le login et le mot de passe sont valides, ou affiche une fenêtre d'enregistrement ou de mot de passe perdu.
-     * @param event 
-     * L'action qui vient de se produire (bouton cliqué).
+     * @param event L'action qui vient de se produire (bouton cliqué).
      */
     @Override
     public void actionPerformed(ActionEvent event) {
@@ -115,7 +114,7 @@ public class Login extends JFrame implements ActionListener {
                             this.creerCookie(login,password);
                         }
                         this.dispose();
-                        Home home_window = new Home(isUser.getInt("idUser"));
+                        ListeDashboard myDashboards = new ListeDashboard(isUser.getInt("idUser"));
                     }
                 }
                 catch (SQLException error) {
