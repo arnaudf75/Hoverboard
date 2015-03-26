@@ -163,6 +163,20 @@ public class BDD {
         return (contentWidget);
     }
     
+    public String getFieldWidget(int idWidget, String field) {
+        String fieldWidget = "NULL";
+        this.requete = "SELECT "+field+" FROM widgets WHERE idWidget ="+idWidget;
+        try {
+            this.result = statement.executeQuery(requete);
+            this.result.next();
+            fieldWidget = result.getString(field);
+        }
+        catch (SQLException error) {
+            System.out.println ("Impossible de récupérer le contenu du widget ! "+error);
+        }
+        return (fieldWidget);
+    }
+    
     /**
      * Récupère les widgets d'un dashboard.
      * @param idDashboard
@@ -275,6 +289,21 @@ public class BDD {
      */
     public void updateWidget(int idWidget, String contentWidget) {
         this.requete = "UPDATE widgets SET contentWidget = '"+contentWidget+"' WHERE idWidget = "+idWidget;
+        try {
+            this.statement.executeUpdate(this.requete);
+        }
+        catch (SQLException error) {
+            System.out.println ("Impossible de modifier le widget "+error); 
+        }
+    }
+    public void updateWidget(int idWidget, String contentWidget, int positionX, int positionY, int height, int width) {
+        this.requete = "UPDATE widgets SET "
+                + "contentWidget = '"+contentWidget+"', "
+                + "positionX = "+positionX+", "
+                + "positionY = "+positionY+", "
+                + "longueur = "+height+", "
+                + "largeur = "+width+" "
+                + "WHERE idWidget = "+idWidget;
         try {
             this.statement.executeUpdate(this.requete);
         }
