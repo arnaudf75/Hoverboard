@@ -14,7 +14,7 @@ import javax.swing.JScrollPane;
  */
 public class ToDoList extends Widget {
     
-    JButton newTask = new JButton("Nouvelle tâche");
+    JButton newTask = new JButton("Ajouter tâche");
     JPanel taskList = new JPanel();
     JPanel bottom_container = new JPanel();
     
@@ -28,9 +28,9 @@ public class ToDoList extends Widget {
     {
         super();
         
-        this.height=250;
-        this.width=300;
-        this.setBounds(positionX, positionY, height, width);
+        this.height=300;
+        this.width=250;
+        this.setBounds(positionX, positionY, this.width, this.height);
         
         taskList.setLayout(new BoxLayout(taskList, BoxLayout.PAGE_AXIS));
         content.setLayout(new BorderLayout());

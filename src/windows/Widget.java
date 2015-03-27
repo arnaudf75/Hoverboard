@@ -83,7 +83,7 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
         this.width=width;
         this.positionX=positionX;
         this.positionY=positionY;
-        this.setBounds(positionX, positionY, height, width);
+        this.setBounds(positionX, positionY, this.width, this.height);
         
         this.save.setPreferredSize(buttonSize);
         this.refresh.setPreferredSize(buttonSize);
@@ -125,7 +125,7 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
             //System.out.println(oldX+"  --- "+oldY);
             positionX += event.getX()-oldX;
             positionY += event.getY()-oldY;
-            setBounds(positionX,positionY,height,width);
+            setBounds(positionX,positionY,width,height);
        //} 
     }
     public void actionPerformed(ActionEvent event) {

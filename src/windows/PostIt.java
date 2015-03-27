@@ -21,9 +21,9 @@ public class PostIt extends Widget {
     public PostIt(int idDashboard)
     {
         super();
-        this.height = 250;
-        this.width = 200;
-        this.setBounds(this.positionX, this.positionY, this.height, this.width);
+        this.height = 200;
+        this.width = 250;
+        this.setBounds(this.positionX, this.positionY, this.width, this.height);
         
         this.content.add(postit_text);
         postit_text.setRows(9);
