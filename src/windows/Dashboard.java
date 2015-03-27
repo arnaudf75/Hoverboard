@@ -112,7 +112,8 @@ public class Dashboard extends Home implements ActionListener {
             this.revalidate();
         }
         else if (source == new_poll){
-            
+            this.widget_container.add(new Poll(this.idDashboard));
+            this.revalidate();
         }
     }
     
