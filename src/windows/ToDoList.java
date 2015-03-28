@@ -1,6 +1,7 @@
 package windows;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -94,7 +95,17 @@ public class ToDoList extends Widget {
         }
         //
         else if (source == save){
-            this.connexion.updateWidget(idWidget, "test",positionX,positionY,height,width);
+            Component[] comps = this.taskList.getComponents();
+            String content = "";
+            content=content.concat("<tasklist>");
+            for(int cpt=0;cpt<comps.length;cpt++){
+                content=content.concat("<task>");
+                content=content.concat("<done>"+((Task)comps[cpt]).done.isSelected()+"</done>");
+                content=content.concat("<name>"+((Task)comps[cpt]).taskName.label.getText()+"</name>");
+                content=content.concat("</task>");
+            }
+            content=content.concat("</tasklist>");
+            this.connexion.updateWidget(idWidget, content,positionX,positionY,height,width);
         }
         //Recherche la derniere version sur la BDD
         else if (source == refresh) {
