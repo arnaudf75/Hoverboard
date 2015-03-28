@@ -194,6 +194,23 @@ public class BDD {
         }
         return (this.result);
     }
+    /**
+     * Récupère le widget ayant l'id idWidget
+     * @param idWidget
+     * L'id du widget concerné.
+     * @return
+     * Les données de chaque widget (id, contenu, position et dimensions) dans un ResultSet.
+     */
+    public ResultSet getWidget(int idWidget) {
+        this.requete = "SELECT E.*, T.nomTypeWidget FROM widgets E, type_widget T WHERE idWidget = "+idWidget+" AND E.idTypeWidget = T.idTypeWidget";
+        try {
+            this.result = statement.executeQuery(requete);
+        }
+        catch (SQLException error) {
+            System.out.println ("Impossible de récupérer le widget ! "+error);
+        }
+        return (this.result);
+    }
     
     /**
      * Récupère la liste des dashboards d'un utilisateur.

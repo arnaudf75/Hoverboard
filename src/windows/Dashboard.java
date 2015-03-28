@@ -66,13 +66,11 @@ public class Dashboard extends Home implements ActionListener {
                     case 1 : {
                         this.widget_container.add(new ToDoList(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
                                             listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur")));
-                        System.out.println("todo trouve");
                         break;
                     }
                     case 2 : {
                         this.widget_container.add(new PostIt(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
                                 listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur")));
-                        System.out.println("post trouve");
                         break;
                     }
                     default : {

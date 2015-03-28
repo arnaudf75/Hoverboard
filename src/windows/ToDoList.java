@@ -3,11 +3,18 @@ package windows;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 /**
  *
@@ -68,7 +75,6 @@ public class ToDoList extends Widget {
         taskList.setLayout(new BoxLayout(taskList, BoxLayout.PAGE_AXIS));
         content.setLayout(new BorderLayout());
         bottom_container.setLayout(new BorderLayout());
-        taskList.add(new Task());
         content.add(taskList, BorderLayout.CENTER);
         content.add(bottom_container, BorderLayout.SOUTH);
         bottom_container.add(newTask, BorderLayout.CENTER);
@@ -78,6 +84,21 @@ public class ToDoList extends Widget {
                                                     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                                                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         content.add(scrollPane);
+        //Creation en fonction du XML du contenu du widget
+        org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
+        try {
+            Document doc = saxBuilder.build(new StringReader(contenuWidget));
+            List<Element> tasklist = doc.getRootElement().getChildren();
+            for(int cpt=0;cpt<tasklist.size();cpt++){
+                this.taskList.add(new Task(tasklist.get(cpt).getChild("name").getText(),Boolean.valueOf(tasklist.get(cpt).getChild("done").getText())));
+            }
+        } 
+        catch (JDOMException e) {
+            // handle JDOMException
+        } 
+        catch (IOException e) {
+            // handle IOException
+        }
         this.revalidate();
     }
     
@@ -110,8 +131,24 @@ public class ToDoList extends Widget {
         //Recherche la derniere version sur la BDD
         else if (source == refresh) {
             super.refresh();
-            this.revalidate();
-        }
+            String contenuWidget = this.connexion.getContentWidget(idWidget);
+            this.taskList.removeAll();
+            org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
+            try {
+                Document doc = saxBuilder.build(new StringReader(contenuWidget));
+                List<Element> tasklist = doc.getRootElement().getChildren();
+                for(int cpt=0;cpt<tasklist.size();cpt++){
+                    this.taskList.add(new Task(tasklist.get(cpt).getChild("name").getText(),Boolean.valueOf(tasklist.get(cpt).getChild("done").getText())));
+                }
+            } 
+            catch (JDOMException e) {
+                // handle JDOMException
+            } 
+            catch (IOException e) {
+                // handle IOException
+            }
+                this.revalidate();
+            }
         //Supprime le widget
         else if (source == del){
             int option = JOptionPane.showConfirmDialog(null, "Êtes vous sûr de bien vouloir supprimer cette liste de tâches ?",

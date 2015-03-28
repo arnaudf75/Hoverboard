@@ -156,7 +156,7 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
         this.positionY=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "positionY"));
         this.height=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "longueur"));
         this.width=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "largeur"));
-        this.setBounds(positionX, positionY, height, width);
+        this.setBounds(positionX, positionY, width, height);
     }
     public void save(){
         
