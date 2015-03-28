@@ -30,8 +30,6 @@ public class Forgot_Password extends JFrame implements ActionListener{
 
         this.setTitle("Mot de passe perdu");
         this.setSize(600,180);
-        this.setVisible(true);
-        this.setLocationRelativeTo(null);
 
         valider_mail.addActionListener(this);
 
@@ -45,6 +43,9 @@ public class Forgot_Password extends JFrame implements ActionListener{
         main_container.add(grid_container);
 
         this.add(main_container);
+        
+        this.setVisible(true);
+        this.setLocationRelativeTo(null);
     }
 
     /**

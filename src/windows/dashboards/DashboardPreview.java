@@ -1,4 +1,6 @@
-package windows;
+package windows.dashboards;
+
+import hoverboard.User;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -10,16 +12,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
-<<<<<<< HEAD
- *
-=======
+
  * DashboardPreview est la classe qui affiche dans un panneau un aperçu d'un dashboard avec des informations le concernant : si il est partagé ou non,
  * si l'utilisateur en est l'administrateur, son titre et sa description.
->>>>>>> feature/dashboard
  * @author Arnaud
  */
 public class DashboardPreview extends JPanel implements ActionListener {
-    private int idUser = -1;
+    private User utilisateur = null;
     private int idDashboard = -1;
     private String titleDashboard = "";
     private String descriptionDashboard = "";
@@ -34,10 +33,9 @@ public class DashboardPreview extends JPanel implements ActionListener {
     private final JPanel middle_container = new JPanel();
     
      /**
-
      * Crée un aperçu d'un dashboard. Ce constructeur est appellé dans la classe ListeDashboard pour afficher les dashboards
      * appartenant ou auquel participe un utilisateur.
-     * @param idUser L'id de l'utilisateur connecté.
+     * @param utilisateur Les informations concernant l'utilisateur connecté.
      * @param idDashboard L'id du dashboard concerné.
      * @param titleDashboard Le titre du dashboard.
      * @param descriptionDashboard La description du dashboard.
@@ -45,9 +43,9 @@ public class DashboardPreview extends JPanel implements ActionListener {
      * @param isShared Vaut 1 si le dashboard est partagé, 0 sinon.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public DashboardPreview(int idUser, int idDashboard, String titleDashboard, String descriptionDashboard, int isAdmin, int isShared) {
+    public DashboardPreview(User utilisateur, int idDashboard, String titleDashboard, String descriptionDashboard, int isAdmin, int isShared) {
+        this.utilisateur = utilisateur;
         this.idDashboard = idDashboard;
-        this.idUser = idUser;
         this.titleDashboard = titleDashboard;
         this.descriptionDashboard = descriptionDashboard;
         this.persoIcon.setToolTipText("Ce dashboard est personnel");
@@ -83,7 +81,7 @@ public class DashboardPreview extends JPanel implements ActionListener {
             parent.repaint();
         }
         else if (source == validatePanel) {
-            Dashboard selectedDashboard = new Dashboard(this.idDashboard, this.idUser, this.titleDashboard);
+            Dashboard selectedDashboard = new Dashboard(this.idDashboard, this.titleDashboard, utilisateur);
 
         }
     }

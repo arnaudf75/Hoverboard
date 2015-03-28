@@ -1,4 +1,4 @@
-package windows.newdashboard;
+package windows.menus.newdashboard;
 
 import hoverboard.BDD;
 

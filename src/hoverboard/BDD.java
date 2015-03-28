@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.Statement;      
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -29,7 +30,7 @@ public class BDD {
      */ 
     public BDD() {
         try {
-            Document data_jdbc = new SAXBuilder().build(this.getClass().getClassLoader().getResource("ressources/data_jdbc_old.xml"));
+            Document data_jdbc = new SAXBuilder().build(this.getClass().getClassLoader().getResource("ressources/data_jdbc.xml"));
             Element racine = data_jdbc.getRootElement();
             this.databaseUrl= racine.getChild("dbUrl").getText();
             this.user =  racine.getChild("login").getText();
@@ -109,12 +110,9 @@ public class BDD {
     
     /**
      * Est exécutée lorsqu'un utilisateur essaye de se connecter à l'application. Vérifie que le login et le mot de passe saisis sont valides.
-     * @param login
-     * Le login saisit par l'utilisateur via la fenêtre de login.
-     * @param password
-     * Le mot de passe saisit par l'utilisateur via la fenêtre de login.
-     * @return 
-     * True si il exite bien un utilisateur, False si il n'en existe aucun ou qu'une erreur est levée.
+     * @param login Le login saisit par l'utilisateur via la fenêtre de login.
+     * @param password Le mot de passe saisit par l'utilisateur via la fenêtre de login.
+     * @return True si il exite bien un utilisateur, False si il n'en existe aucun ou qu'une erreur est levée.
      */   
     public ResultSet connect_user(String login, String password) {
         this.requete = ("SELECT idUser, firstName, lastName, email, isAdmin FROM users WHERE login ='"+login+"' AND password ='"+password+"' AND isActive = 1");
@@ -144,16 +142,14 @@ public class BDD {
     
     /**
      * Récupère le contenu d'un widget depuis la base de données.
-     * @param idWidget
-     * L'id du widget concerné.
-     * @return
-     * Le contenu du wigdet peut être soit du texte (pour les post-it) soit un élément faisant partie d'un fichier .xml (pour les listes de tâches et les sondages).
+     * @param idWidget L'id du widget concerné.
+     * @return Le contenu du wigdet peut être soit du texte (pour les post-it) soit un élément faisant partie d'un fichier .xml (pour les listes de tâches et les sondages).
      */
     public String getContentWidget(int idWidget) {
         String contentWidget = "NULL";
         this.requete = "SELECT contentWidget FROM widgets WHERE idWidget ="+idWidget;
         try {
-            this.result = statement.executeQuery(requete);
+            this.result = this.statement.executeQuery(this.requete);
             this.result.next();
             contentWidget = result.getString("contentWidget");
         }
@@ -164,11 +160,29 @@ public class BDD {
     }
     
     /**
+     * 
+     * @param idUser
+     * @return 
+     */
+    public ResultSet getMyPlugins(int idUser) {
+        this.requete = "SELECT T.*, P.namePlugin, P.descriptionPlugin FROM telecharge T"
+                    + " RIGHT JOIN plugins P ON T.idPlugin = P.idPlugin"
+                    + " WHERE idUser = " + idUser
+                    + " AND P.isValid = 1"
+                    + " ORDER BY T.idStatutPlugin DESC";
+        try {
+            this.result = this.statement.executeQuery(this.requete);
+        }
+        catch (SQLException error) {
+            System.out.println("Impossible de récupérer la liste des plugins !");
+        }
+        return (this.result);
+    }
+    
+    /**
      * Récupère les widgets d'un dashboard.
-     * @param idDashboard
-     * L'id du dashboard concerné.
-     * @return
-     * Les données de chaque widget (id, contenu, position et dimensions) dans un ResultSet.
+     * @param idDashboard L'id du dashboard concerné.
+     * @return Les données de chaque widget (id, contenu, position et dimensions) dans un ResultSet.
      */
     public ResultSet getWidgets(int idDashboard) {
         this.requete = "SELECT E.*, T.nomTypeWidget FROM widgets E, type_widget T WHERE idDashboard = "+idDashboard+" AND E.idTypeWidget = T.idTypeWidget";
@@ -183,11 +197,8 @@ public class BDD {
     
     /**
      * Récupère la liste des dashboards d'un utilisateur.
-     * @param idUser
-     * L'id de l'utilisateur connecté.
-     * @return
-     * Un ResultSet contenant les données de chaque dashboard : id, droits (administrateur ou non),
-     * si il est partagé ou non, le titre et la description.
+     * @param idUser L'id de l'utilisateur connecté.
+     * @return Un ResultSet contenant les données de chaque dashboard : id, droits (administrateur ou non), si il est partagé ou non, le titre et la description.
      */
     public ResultSet getDashboards(int idUser) {
         this.requete = "SELECT U.idUser, U.idDashboard, U.isDashboardAdmin, D.titleDashboard, D.descriptionDashboard, D.isShared"
@@ -201,22 +212,15 @@ public class BDD {
         return (this.result);
     }
     
-    
     /**
      * Appellée lorsqu'un utilisateur demande la création d'un compte sur l'application. Elle vérifie qu'il n'existe pas déjà
      * un utilisateur utilisant ce login et ce mot de passe, sinon elle l'inscrit.
-     * @param firstName
-     * Prénom saisit par l'utilisateur.
-     * @param lastName
-     * Nom de famille saisit par l'utilisateur.
-     * @param login
-     * Login choisit par l'utilisateur
-     * @param password
-     * Mot de passe choisit par l'utilisateur.
-     * @param email
-     * Email saisit par l'utilisateur.
-     * @return 
-     * True si l'utilisateur a bien été inscrit, False sinon.
+     * @param firstName Prénom saisi par l'utilisateur.
+     * @param lastName Nom de famille saisi par l'utilisateur.
+     * @param login Login choisit par l'utilisateur
+     * @param password Mot de passe choisit par l'utilisateur.
+     * @param email Email saisit par l'utilisateur.
+     * @return True si l'utilisateur a bien été inscrit, False sinon.
      */ 
     public boolean registerUser(String firstName, String lastName, String email, String login, String password) {
         requete = ("SELECT email, login FROM users WHERE email = '"+email+"' OR login = '"+login+"'");
@@ -266,12 +270,28 @@ public class BDD {
     }
     
     /**
+     * 
+     * @param idUser
+     * @param idPlugin 
+     * @param statut
+     */
+    public void setStatutPlugin(int idUser, int idPlugin, int statut) {
+        this.requete = "UPDATE telecharge SET idStatutPlugin = "+statut
+                      +" WHERE idPlugin = "+idPlugin
+                      +" AND idUser = "+idUser;
+        try {
+            this.statement.executeUpdate(this.requete);
+        }
+        catch (SQLException error) {
+            JOptionPane.showMessageDialog(null, "Impossible de modifier le statut du plugin !" +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    /**
      * La fonction est appellée lorsque l'utilisateur clique sur le bouton "Enregistrer" (îcone de disquete) sur un widget.
      * Elle modifie le contenu d'un widget dans la base de données.
-     * @param idWidget
-     * L'id du widget concerné.
-     * @param contentWidget 
-     * Le contenu du widget modifié.
+     * @param idWidget L'id du widget concerné.
+     * @param contentWidget Le contenu du widget modifié.
      */
     public void updateWidget(int idWidget, String contentWidget) {
         this.requete = "UPDATE widgets SET contentWidget = '"+contentWidget+"' WHERE idWidget = "+idWidget;

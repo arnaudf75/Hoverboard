@@ -1,7 +1,7 @@
 package hoverboard;
 
 import windows.Login;
-import windows.ListeDashboard;
+import windows.dashboards.ListeDashboard;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +41,11 @@ public class MainApp {
                 else {
                     isUser.next();
                     int idUser = isUser.getInt("idUser");
-                    ListeDashboard myDashboards = new ListeDashboard(idUser);
+                    String firstName = isUser.getString("firstName");
+                    String lastName = isUser.getString("lastName");
+                    String email = isUser.getString("email");
+                    int isAdmin = isUser.getInt("isAdmin");
+                    ListeDashboard myDashboards = new ListeDashboard(new User(idUser, login, firstName, lastName, email, isAdmin));
                 }
             }
             else {

@@ -1,7 +1,7 @@
-package windows;
+package windows.dashboards;
 
-import hoverboard.BDD;
-import windows.newdashboard.AddMates;
+import hoverboard.User;
+import windows.menus.newdashboard.AddMates;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import windows.PostIt;
+import windows.ToDoList;
 
 /**
  * Dashboard est la classe qui permet d'afficher et de créer les widgets.
@@ -30,12 +32,12 @@ public class Dashboard extends Home implements ActionListener {
     /**
      * Crée le dashboard complet avec les widgets qui y sont associés.
      * @param idDashboard L'id du dashboard choisi dans la liste des dashboards de la page d'accueil.
-     * @param idUser L'id de l'utilisateur connecté.
      * @param titreDashboard Le titre affiché en haut de la fenêtre.
+     * @param utilisateur L'objet User qui contient les informations de l'utilisateur connecté.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public Dashboard(int idDashboard, int idUser, String titreDashboard) {
-        this.idUser  = idUser;
+    public Dashboard(int idDashboard, String titreDashboard, User utilisateur) {
+        this.utilisateur = utilisateur;
         this.idDashboard = idDashboard;
         this.setTitle(titreDashboard);
         this.setLayout(new BorderLayout());
@@ -91,7 +93,7 @@ public class Dashboard extends Home implements ActionListener {
         Object source = event.getSource();
         if (source == homeButton) {
             this.dispose();
-            ListeDashboard myDashboards = new ListeDashboard(this.idUser);
+            ListeDashboard myDashboards = new ListeDashboard(this.utilisateur);
         }
         else if (source == add_users) {
             AddMates addUsersToDashboard = new AddMates(this.idDashboard);

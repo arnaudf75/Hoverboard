@@ -1,6 +1,8 @@
 package windows;
 
+import windows.dashboards.ListeDashboard;
 import hoverboard.BDD;
+import hoverboard.User;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
@@ -55,7 +57,6 @@ public class Login extends JFrame implements ActionListener {
     public Login() {
         this.setTitle("Fenêtre de connexion");
         this.setSize(400, 400);
-        this.setLocationRelativeTo(null);
         validation.addActionListener(this);
         reset.addActionListener(this);
         password_lost.addActionListener(this);
@@ -82,6 +83,7 @@ public class Login extends JFrame implements ActionListener {
         main_container.add(bottom_container, BorderLayout.SOUTH);
         
         this.setContentPane(main_container);
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -114,7 +116,12 @@ public class Login extends JFrame implements ActionListener {
                             this.creerCookie(login,password);
                         }
                         this.dispose();
-                        ListeDashboard myDashboards = new ListeDashboard(isUser.getInt("idUser"));
+                        int idUser = isUser.getInt("idUser");
+                        String firstName = isUser.getString("firstName");
+                        String lastName = isUser.getString("lastName");
+                        String email = isUser.getString("email");
+                        int isAdmin = isUser.getInt("isAdmin");
+                        ListeDashboard myDashboards = new ListeDashboard(new User(idUser, login, firstName, lastName, email, isAdmin));
                     }
                 }
                 catch (SQLException error) {

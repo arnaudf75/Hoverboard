@@ -76,6 +76,7 @@ public class Register extends JFrame implements ActionListener {
         this.setLocationRelativeTo(null);
         this.setContentPane(main_container);
         this.setVisible(true);
+        this.setLocationRelativeTo(null);
     }
     
     /**
