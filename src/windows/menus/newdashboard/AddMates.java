@@ -25,6 +25,10 @@ public class AddMates extends JFrame implements ActionListener {
     private final JTextField ajouteUserField = new JTextField();
     private final JPanel main_container = new JPanel();
     
+    /**
+     * Affiche une fenêtre contenant l'id du dashboard pour y ajouter un utilisateur.
+     * @param idDashboard L'id du dashboard auquel on souhaite ajouter un utilisateur.
+     */
     @SuppressWarnings("LeakingThisInConstructor")
     public AddMates(int idDashboard) {
         this.setTitle("Ajouter des utilisateurs à ce dashboard");
@@ -41,8 +45,9 @@ public class AddMates extends JFrame implements ActionListener {
     }
     
     /**
-     * Récupère le pseudo de l'utilisateur saisi dans le formulaire
-     * @param event 
+     * Récupère le pseudo de l'utilisateur saisi dans le formulaire et va interroger
+     * la base de données pour savoir si un utilisateur existe avec ce pseudo.
+     * @param event L'action qui vient de se produire, en l'occurence un clic sur le bouton "Valider".
      */
     @Override
     public void actionPerformed (ActionEvent event) {

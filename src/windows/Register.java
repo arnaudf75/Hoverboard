@@ -95,14 +95,12 @@ public class Register extends JFrame implements ActionListener {
             String login = login_field.getText();
             String password = password_field.getText();
             if (login.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Vous devez remplir tous les champs pour continuer !" , "ERREUR",
-                    JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Vous devez remplir tous les champs pour continuer !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
             else {
                 BDD connexion = new BDD();
                 if (connexion.registerUser(firstName, lastName, email, login, password)) {
-                    JOptionPane.showMessageDialog(null, "Votre compte a été crée, vérifiez votre boîte mail pour l'activer." , "Compte créé !",
-                    JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Votre compte a été crée, vérifiez votre boîte mail pour l'activer.", "Compte créé !", JOptionPane.INFORMATION_MESSAGE);
                     try {
                         SendMail send = new SendMail();
                         send.sendRegistrationEmail(email);
@@ -112,8 +110,7 @@ public class Register extends JFrame implements ActionListener {
                     }
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "Ce login ou cet email est déjà pris." , "ERREUR",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Ce login ou cet email est déjà pris.", "ERREUR", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }

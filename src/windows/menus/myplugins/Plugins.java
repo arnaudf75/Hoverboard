@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- *
+ * Plugins est la classe qui affiche dans un JPanel les informations sur chacun des plugins de l'utilisateur.
  * @author Arnaud
  */
 public class Plugins extends JPanel implements ActionListener {
@@ -23,18 +23,17 @@ public class Plugins extends JPanel implements ActionListener {
     private final JLabel labelDescription = new JLabel("");
     
     /**
-     * 
-     * @param idUser
-     * @param idPlugin
-     * @param namePlugin
-     * @param descriptionPlugin
-     * @param statutPlugin 
+     * Crée un JPanel affichant les informations relatives à un plugin.
+     * @param idUser L'id de l'utilisateur connecté.
+     * @param idPlugin L'id du plugin affiché.
+     * @param namePlugin Le nom du plugin affiché.
+     * @param descriptionPlugin La description du plugin affiché.
+     * @param statutPlugin Le statut du plugin : si il est désactivé, en cours de téléchargement ou activé.
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Plugins(int idUser, int idPlugin, String namePlugin, String descriptionPlugin, int statutPlugin) {
         this.idUser = idUser;
         this.idPlugin = idPlugin;
-        this.idUser = idUser;
         this.labelNom.setText(namePlugin);
         this.labelDescription.setText(descriptionPlugin);
         this.labelNom.setForeground(Color.RED);
@@ -57,6 +56,10 @@ public class Plugins extends JPanel implements ActionListener {
         }
     }
     
+    /**
+     * Active ou désactive le plugin sélectionné.
+     * @param event L'action qui vient de se produire (bouton cliqué).
+     */
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();

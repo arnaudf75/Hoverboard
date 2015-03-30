@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 /**
@@ -18,9 +19,9 @@ import javax.swing.JTextField;
  * @author Cavoleau
  */
 public class Forgot_Password extends JFrame implements ActionListener{
+    private final JLabel logo = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/logo.png")));
     private final JPanel grid_container= new JPanel();
     private final JPanel main_container= new JPanel();
-    private final JLabel logo = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/logo.png")));
     private final JLabel use_mail = new JLabel("Entrez votre adresse mail :");
     private final JTextField mail_field = new JTextField();
     private final JButton valider_mail = new JButton ("Valider");
@@ -49,11 +50,9 @@ public class Forgot_Password extends JFrame implements ActionListener{
     }
 
     /**
-     * Envoie un message à l'utilisateur à l'adresse qu'il a renseignée.
-     * @param event
-     * L'action qui vient de se produire, en l'occurence un clic sur le bouton "Valider".
+     * Envoie un message à l'utilisateur pour changer son mot de passe à l'adresse qu'il a renseignée.
+     * @param event L'action qui vient de se produire, en l'occurence un clic sur le bouton "Valider".
      */
-    
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
@@ -65,8 +64,8 @@ public class Forgot_Password extends JFrame implements ActionListener{
                     send.sendPasswordLostEmail(mail_field.getText());
                 }
             }
-            catch (MessagingException e) {
-                System.out.println(e);
+            catch (MessagingException error) {
+                JOptionPane.showMessageDialog(null, "Impossible d'envoyer un message pour changer votre mot de passe ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

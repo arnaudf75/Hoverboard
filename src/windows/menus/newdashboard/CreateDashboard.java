@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -69,22 +70,27 @@ public class CreateDashboard extends JFrame implements ActionListener {
     }
     
     /**
-     * 
-     * @param event L'action qui vient de se produire (bouton cliqué).
+     * Crée un dashboard à partir des informations saisies par l'utilisateur.
+     * @param event L'action qui vient de se produire en l'occurence un clic sur le bouton "Valider".
      */
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source == validate) {
-            if (sharedCheck.isSelected()) {
-                this.isShared = 1;
+            if (titreField.getText().isEmpty() || descriptionArea.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Vous devez donner un titre et une description à votre dashboard pour continuer !" , "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
-            titreDashboard = titreField.getText();
-            descriptionDashboard = descriptionArea.getText();
-            this.dispose();
-            int idDashboard = this.connexion.ajouteDashboard(this.idUser, this.titreDashboard, this.descriptionDashboard, this.isShared);
-            if (sharedCheck.isSelected()) {
-                AddMates addUsersToDashboard = new AddMates(idDashboard);
+            else {
+                if (sharedCheck.isSelected()) {
+                    this.isShared = 1;
+                }
+                titreDashboard = titreField.getText();
+                descriptionDashboard = descriptionArea.getText();
+                this.dispose();
+                int idDashboard = this.connexion.ajouteDashboard(this.idUser, this.titreDashboard, this.descriptionDashboard, this.isShared);
+                if (sharedCheck.isSelected()) {
+                    AddMates addUsersToDashboard = new AddMates(idDashboard);
+                }
             }
         }
     }

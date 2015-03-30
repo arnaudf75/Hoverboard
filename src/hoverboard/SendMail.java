@@ -12,6 +12,7 @@ import javax.mail.Multipart;
 import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.swing.JOptionPane;
 
 /**
  * SendMail est la classe permettant d'envoyer des messages instantanés aux utilisateurs de l'application grâce à l'API Java Mail.
@@ -51,8 +52,7 @@ public class SendMail {
     
     /**
      * Envoie un mail de confirmation d'inscription à l'utilisateur.
-     * @param mailDestinataire
-     * Adresse email du destinataire.
+     * @param mailDestinataire Adresse email du destinataire.
      * @throws MessagingException si l'email n'arrive pas à être envoyé.
      */
     public void sendRegistrationEmail(String mailDestinataire) throws MessagingException {
@@ -71,15 +71,14 @@ public class SendMail {
             System.out.println("Mail Sent Successfully");
             this.transport.close();
         }
-        catch (SendFailedException sfe) {
-            System.out.println(sfe);
+        catch (SendFailedException error) {
+            JOptionPane.showMessageDialog(null, "Impossible d'envoyer le mail d'inscription ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
     }
     
     /**
      * Envoie un mail à l'utilisateur pour qu'il change son mot de passe.
-     * @param mailDestinataire
-     * Adresse email du destinataire.
+     * @param mailDestinataire Adresse email du destinataire.
      * @throws MessagingException si l'email n'arrive pas à être envoyé.
      */
     public void sendPasswordLostEmail(String mailDestinataire) throws MessagingException {
@@ -96,11 +95,10 @@ public class SendMail {
         try {
             this.transport.connect(this.smtp, this.sender, this.password);
             this.transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
-            System.out.println("Mail Sent Successfully");
             this.transport.close();
         }
-        catch (SendFailedException sfe) {
-            System.out.println(sfe);
+        catch (SendFailedException error) {
+            JOptionPane.showMessageDialog(null, "Impossible d'envoyer le message de réinitialisation de mot de passe ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

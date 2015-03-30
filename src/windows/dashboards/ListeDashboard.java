@@ -5,6 +5,7 @@ import hoverboard.User;
 import java.awt.GridLayout;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /**
  * La classe ListeDashboard affiche dans une fenêtre la liste des dashboards d'un utilisateur.
@@ -36,7 +37,7 @@ public class ListeDashboard extends Home {
             this.revalidate();
         }
         catch (SQLException error) {
-            System.out.println("Impossible d'afficher la liste des dashboards ! "+error);
+            JOptionPane.showMessageDialog(null, "Impossible d'afficher la liste des dashboards ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

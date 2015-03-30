@@ -72,6 +72,11 @@ public class DashboardPreview extends JPanel implements ActionListener {
         this.main_panel.add(this.validatePanel, BorderLayout.SOUTH);
         this.add(main_panel);
     }
+    
+    /**
+     * Effectue une action en fonction du bouton cliqué, comme par exemple revenir à la liste des dashboards.
+     * @param event L'action qui vient de se produire (bouton cliqué).
+     */
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();

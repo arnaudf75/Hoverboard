@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import windows.PostIt;
 import windows.ToDoList;
@@ -71,7 +72,7 @@ public class Dashboard extends Home implements ActionListener {
                         break;
                     }
                     default : {
-                        System.out.println("Type de widget non pris en charge");
+                        JOptionPane.showMessageDialog(null, "Type de widget non pris en charge !", "ERREUR", JOptionPane.ERROR_MESSAGE);
                         break;
                     }
                 }
@@ -86,7 +87,7 @@ public class Dashboard extends Home implements ActionListener {
     
     /**
      * En fonction de l'action, peut créer un widget ou revenir à la page d'accueil.
-     * @param event L'action qui vient de se produire (bouton cliqué)
+     * @param event L'action qui vient de se produire (bouton cliqué).
      */
     @Override
     public void actionPerformed(ActionEvent event) {

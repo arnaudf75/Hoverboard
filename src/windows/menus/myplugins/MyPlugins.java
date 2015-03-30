@@ -6,9 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
- *
+ * MyPlugins est la fenêtre affichant la liste des plugins choisis sur le site web de l'application par l'utilisateur.
  * @author Arnaud
  */
 public class MyPlugins extends JFrame {
@@ -19,6 +20,11 @@ public class MyPlugins extends JFrame {
     private String descriptionPlugin = "";
     private final JPanel main_container = new JPanel();
     private final BDD connexion = new BDD();
+    
+    /**
+     * Affiche la liste des plugins de l'utilisateur à partir de son id.
+     * @param idUser L'id de l'utilisateur connecté.
+     */
     public MyPlugins(int idUser) {
         this.idUser = idUser;
         this.setSize(800, 400);
@@ -33,7 +39,7 @@ public class MyPlugins extends JFrame {
             }
         }
         catch (SQLException error) {
-            System.out.println("Impossible d'afficher la liste de vos plugins !" +error);
+            JOptionPane.showMessageDialog(null, "Impossible d'afficher la liste de vos plugins ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
         this.setContentPane(main_container);
         this.setVisible(true);

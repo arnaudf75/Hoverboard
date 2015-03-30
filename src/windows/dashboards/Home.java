@@ -3,8 +3,8 @@ package windows.dashboards;
 import hoverboard.BDD;
 import hoverboard.User;
 import windows.Login;
+import windows.menus.infouser.InfoUser;
 import windows.menus.myplugins.MyPlugins;
-import windows.menus.infosuser.InfoUser;
 import windows.menus.newdashboard.CreateDashboard;
 
 import java.awt.BorderLayout;
@@ -50,7 +50,7 @@ public abstract class Home extends JFrame implements ActionListener {
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Home() {
-        this.setSize(1200, 1000);
+        this.setSize(1200,700);
         main_container.setLayout(new BorderLayout());
         
         newDashboard.addActionListener(this);
@@ -69,7 +69,6 @@ public abstract class Home extends JFrame implements ActionListener {
         menuOptions.add(options_infoUser);
         menuHelp.add(about_help);
         menuHelp.add(about_support);
-
 
         menu.add(new_item);
         menu.add(menuPlugins);
@@ -110,7 +109,7 @@ public abstract class Home extends JFrame implements ActionListener {
                         navigateurWeb.browse(new URI("http://hoverboard.livehost.fr/"));
                     }
                     catch (IOException | URISyntaxException error) {
-                        System.out.println("Impossible d'accèder au site web de l'application !");
+                        JOptionPane.showMessageDialog(null, "Impossible d'accèder au site web de l'application ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
                     } 
                 }
             }
@@ -140,7 +139,7 @@ public abstract class Home extends JFrame implements ActionListener {
                         navigateurWeb.browse(new URI("http://hoverboard.livehost.fr/"));
                     }
                     catch (IOException | URISyntaxException error) {
-                        System.out.println("Impossible d'accèder au site web de l'application !");
+                        JOptionPane.showMessageDialog(null, "Impossible d'accèder au site web de l'application ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
                     } 
                 }
             }
