@@ -15,7 +15,7 @@ import javax.swing.JTextField;
 
 public class EditableText extends JPanel {
 
-    private final JLabel label;
+    final JLabel label;
     private final JTextField text;
     
     public EditableText(String value){

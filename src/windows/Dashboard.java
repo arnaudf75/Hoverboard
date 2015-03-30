@@ -4,12 +4,14 @@ import hoverboard.BDD;
 import windows.newdashboard.AddMates;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDesktopPane;
 import javax.swing.JPanel;
 
 /**
@@ -26,6 +28,7 @@ public class Dashboard extends Home implements ActionListener {
     private final JButton add_users = new JButton("Ajouter des utilisateurs à ce dashboard");
     private final JPanel topRightSide_container = new JPanel();
     private final JPanel top_container = new JPanel();
+    private final JDesktopPane widget_container = new JDesktopPane();
         
     /**
      * Crée le dashboard complet avec les widgets qui y sont associés.
@@ -52,20 +55,22 @@ public class Dashboard extends Home implements ActionListener {
         this.topRightSide_container.add(new_poll);
         this.topRightSide_container.add(add_users);
         this.top_container.add(topRightSide_container, BorderLayout.EAST);
+        this.add(widget_container, BorderLayout.CENTER);
         this.add(homeButton, BorderLayout.SOUTH);
         
         ResultSet listeWidgets = this.connexion.getWidgets(idDashboard);
         try {
+            //Recupere tout les widget du dashboard dans la BDD pour les afficher
             while (listeWidgets.next()){
                 switch (listeWidgets.getInt("idTypeWidget")) {
                     case 1 : {
-                        this.add(new ToDoList(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
-                                              listeWidgets.getInt("positionY"), listeWidgets.getInt("largeur"), listeWidgets.getInt("longueur")));
+                        this.widget_container.add(new ToDoList(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                                            listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur")));
                         break;
                     }
                     case 2 : {
-                        this.add(new PostIt(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
-                                            listeWidgets.getInt("positionY"), listeWidgets.getInt("largeur"), listeWidgets.getInt("longueur")));
+                        this.widget_container.add(new PostIt(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                                listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur")));
                         break;
                     }
                     default : {
@@ -97,15 +102,16 @@ public class Dashboard extends Home implements ActionListener {
             AddMates addUsersToDashboard = new AddMates(this.idDashboard);
         }
         else if (source == new_postit) {
-            this.add(new PostIt(this.idDashboard));
+            this.widget_container.add(new PostIt(this.idDashboard));
             this.revalidate();
         }
         else if (source == new_tasklist) {
-            this.add(new ToDoList(this.idDashboard));
+            this.widget_container.add(new ToDoList(this.idDashboard));
             this.revalidate();
         }
         else if (source == new_poll){
-            
+            this.widget_container.add(new Poll(this.idDashboard));
+            this.revalidate();
         }
     }
     

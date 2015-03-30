@@ -25,6 +25,18 @@ class Task extends JPanel implements ActionListener{
         done.addActionListener(this);
         delTask.addActionListener(this);
     }
+    
+    public Task(String name,boolean checked)
+    {
+        this.add(done);
+        this.add(taskName);    
+        this.add(delTask);
+        done.setSelected(checked);
+        taskName.label.setText(name);
+        done.addActionListener(this);
+        delTask.addActionListener(this);
+    }
+    
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();

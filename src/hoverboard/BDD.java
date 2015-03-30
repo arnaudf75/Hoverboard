@@ -163,6 +163,20 @@ public class BDD {
         return (contentWidget);
     }
     
+    public String getFieldWidget(int idWidget, String field) {
+        String fieldWidget = "NULL";
+        this.requete = "SELECT "+field+" FROM widgets WHERE idWidget ="+idWidget;
+        try {
+            this.result = statement.executeQuery(requete);
+            this.result.next();
+            fieldWidget = result.getString(field);
+        }
+        catch (SQLException error) {
+            System.out.println ("Impossible de récupérer le contenu du widget ! "+error);
+        }
+        return (fieldWidget);
+    }
+    
     /**
      * Récupère les widgets d'un dashboard.
      * @param idDashboard
@@ -177,6 +191,23 @@ public class BDD {
         }
         catch (SQLException error) {
             System.out.println ("Impossible de récupérer les widgets ! "+error);
+        }
+        return (this.result);
+    }
+    /**
+     * Récupère le widget ayant l'id idWidget
+     * @param idWidget
+     * L'id du widget concerné.
+     * @return
+     * Les données de chaque widget (id, contenu, position et dimensions) dans un ResultSet.
+     */
+    public ResultSet getWidget(int idWidget) {
+        this.requete = "SELECT E.*, T.nomTypeWidget FROM widgets E, type_widget T WHERE idWidget = "+idWidget+" AND E.idTypeWidget = T.idTypeWidget";
+        try {
+            this.result = statement.executeQuery(requete);
+        }
+        catch (SQLException error) {
+            System.out.println ("Impossible de récupérer le widget ! "+error);
         }
         return (this.result);
     }
@@ -275,6 +306,21 @@ public class BDD {
      */
     public void updateWidget(int idWidget, String contentWidget) {
         this.requete = "UPDATE widgets SET contentWidget = '"+contentWidget+"' WHERE idWidget = "+idWidget;
+        try {
+            this.statement.executeUpdate(this.requete);
+        }
+        catch (SQLException error) {
+            System.out.println ("Impossible de modifier le widget "+error); 
+        }
+    }
+    public void updateWidget(int idWidget, String contentWidget, int positionX, int positionY, int height, int width) {
+        this.requete = "UPDATE widgets SET "
+                + "contentWidget = '"+contentWidget+"', "
+                + "positionX = "+positionX+", "
+                + "positionY = "+positionY+", "
+                + "longueur = "+height+", "
+                + "largeur = "+width+" "
+                + "WHERE idWidget = "+idWidget;
         try {
             this.statement.executeUpdate(this.requete);
         }

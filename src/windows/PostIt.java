@@ -1,6 +1,5 @@
 package windows;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.Rectangle;
 import javax.swing.JOptionPane;
@@ -15,16 +14,17 @@ public class PostIt extends Widget {
     
     JTextArea postit_text = new JTextArea();
     
+    /**
+     * Constructeur de la classe PostIt
+     * @param idDashboard ID du dashboard dans lequel le postit va être ajouté
+     */
     public PostIt(int idDashboard)
     {
         super();
-        this.height = 250;
-        this.width = 200;
-        this.positionX = 50;
-        this.positionY = 50;
+        this.height = 200;
+        this.width = 250;
+        this.setBounds(this.positionX, this.positionY, this.width, this.height);
         
-        this.setBounds(0, 0, this.height, this.width);
-        this.content.setBackground(Color.YELLOW);
         this.content.add(postit_text);
         postit_text.setRows(9);
         postit_text.setColumns(20);
@@ -36,16 +36,20 @@ public class PostIt extends Widget {
         this.idDashboard = idDashboard;
         
         this.idWidget = this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, 2);
+        this.revalidate();
     }
-    
+    /**
+     * Constructeur de la classe PostIt
+     * @param idWidget ID du widge qui va être crée
+     * @param text Texte dans le postit
+     * @param positionX Position horizontale en pixel
+     * @param positionY Position verticale en pixel
+     * @param height hauteur en pixel
+     * @param width largeur en pixel
+     */
     public PostIt(int idWidget, String text, int positionX, int positionY, int height, int width)
     {
-        super();
-        this.idWidget = idWidget;
-        this.height=250;
-        this.width=200;
-        content.setBackground(Color.YELLOW);
-        this.setBounds(0, 0, height, width);
+        super(idWidget, positionX, positionY, height, width);
         this.content.add(postit_text);
         this.postit_text.setRows(9);
         this.postit_text.setColumns(20);
@@ -55,19 +59,25 @@ public class PostIt extends Widget {
                                                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBounds(new Rectangle(-4, 1, 397, 198)); 
         content.add(scrollPane, null);        
+        this.revalidate();
     }
     
     @Override
+    /**
+     * Action effectués lors d'un clic sur un bouton
+     * @param event evenement du clic
+     */
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
+        //mise a jour sur la BDD
         if (source == save) {
-            String contentPostIt = this.postit_text.getText();
-            this.connexion.updateWidget(idWidget, contentPostIt);
+            this.save();
         }
+        //rechercher la derniere version sur la BDD
         else if (source == refresh) {
-            String contentWidget = this.connexion.getContentWidget(idWidget);
-            this.postit_text.setText(contentWidget);
+            this.refresh();
         }
+        //suppression du postit
         else if (source == del){
             int option = JOptionPane.showConfirmDialog(null, "Êtes vous sûr de bien vouloir supprimer ce post-it ?",
             "Confirmez la suppression", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -77,6 +87,18 @@ public class PostIt extends Widget {
                 this.connexion.deleteWidget(this.idWidget);
             }
         }
+    }
+    
+    @Override
+    public void refresh(){
+        super.refresh();
+        this.postit_text.setText(this.connexion.getContentWidget(idWidget));
+        this.revalidate();
+    }
+    @Override
+    public void save(){
+        String WidgetContent = this.postit_text.getText();
+        this.connexion.updateWidget(idWidget, WidgetContent,positionX,positionY,height,width);
     }
     
     
