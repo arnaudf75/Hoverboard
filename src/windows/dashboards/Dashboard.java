@@ -2,29 +2,25 @@ package windows.dashboards;
 
 import hoverboard.User;
 import windows.menus.newdashboard.AddMates;
+import windows.widgets.Poll;
+import windows.widgets.PostIt;
+import windows.widgets.ToDoList;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-<<<<<<< HEAD:src/windows/Dashboard.java
 import javax.swing.JDesktopPane;
-=======
 import javax.swing.JOptionPane;
->>>>>>> feature/menu:src/windows/dashboards/Dashboard.java
 import javax.swing.JPanel;
-import windows.PostIt;
-import windows.ToDoList;
 
 /**
  * Dashboard est la classe qui permet d'afficher et de créer les widgets.
  * @author Arnaud
  */
-
 public class Dashboard extends Home implements ActionListener {
     private int idDashboard = -1;
     private final JButton homeButton = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/home.png")));

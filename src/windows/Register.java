@@ -2,9 +2,10 @@ package windows;
 
 import hoverboard.BDD;
 import hoverboard.SendMail;
+
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.mail.MessagingException;
 import javax.swing.JButton;
@@ -23,8 +24,7 @@ import javax.swing.JTextField;
 public class Register extends JFrame implements ActionListener {
 
     private final JButton validation = new JButton ("Valider");
-    private final JButton reset = new JButton ("Annuler");
-    private final JLabel logo = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/logo.png")));
+    private final JLabel logo = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/logo.png")));
     private final JLabel email_label = new JLabel ("Adresse email");
     private final JLabel firstName_label = new JLabel("Prénom :");
     private final JLabel lastName_label = new JLabel("Nom de famille :");
@@ -48,10 +48,9 @@ public class Register extends JFrame implements ActionListener {
     @SuppressWarnings("LeakingThisInConstructor")
     public Register() {
         this.setTitle("Inscription");
-        this.setSize(400, 400);
+        this.setSize(500, 200);
 
         validation.addActionListener(this);
-        reset.addActionListener(this);
 
         center_container.setLayout(new GridLayout(6, 6));
 
@@ -67,7 +66,6 @@ public class Register extends JFrame implements ActionListener {
         center_container.add(password_field); 
 
         bottom_container.add(validation);
-        bottom_container.add(reset);
 
         main_container.add(logo, BorderLayout.NORTH);
         main_container.add(center_container, BorderLayout.CENTER);
@@ -76,6 +74,7 @@ public class Register extends JFrame implements ActionListener {
         this.setLocationRelativeTo(null);
         this.setContentPane(main_container);
         this.setVisible(true);
+        this.setLocationRelativeTo(null);
     }
     
     /**
@@ -94,30 +93,24 @@ public class Register extends JFrame implements ActionListener {
             String login = login_field.getText();
             String password = password_field.getText();
             if (login.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Vous devez remplir tous les champs pour continuer !" , "ERREUR",
-                    JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Vous devez remplir tous les champs pour continuer !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
             else {
                 BDD connexion = new BDD();
                 if (connexion.registerUser(firstName, lastName, email, login, password)) {
-                    JOptionPane.showMessageDialog(null, "Votre compte a été crée, vérifiez votre boîte mail pour l'activer." , "Compte créé !",
-                    JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Votre compte a été crée, vérifiez votre boîte mail pour l'activer.", "Compte créé !", JOptionPane.INFORMATION_MESSAGE);
                     try {
                         SendMail send = new SendMail();
                         send.sendRegistrationEmail(email);
                     }
-                    catch (MessagingException e) {
-                        System.out.println(e);
+                    catch (MessagingException error) {
+                        JOptionPane.showMessageDialog(null, "Impossible d'envoyer le mail d'inscription ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
                     }
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "Ce login ou cet email est déjà pris." , "ERREUR",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Ce login ou cet email est déjà pris.", "ERREUR", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        }
-        if(source == reset) {
-        
         }
     }    
 }

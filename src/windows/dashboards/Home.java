@@ -95,12 +95,10 @@ public abstract class Home extends JFrame implements ActionListener {
         if (source == newDashboard) {
             CreateDashboard createDash = new CreateDashboard(this.utilisateur.getIdUser());
         }
-        
         else if (source == menu_myPlugins) {
             MyPlugins myPlugins = new MyPlugins(this.utilisateur.getIdUser());
             
         }
-        
         else if (source == plugins_library) {
             if (Desktop.isDesktopSupported() ) {
                 Desktop navigateurWeb = Desktop.getDesktop();
@@ -114,15 +112,12 @@ public abstract class Home extends JFrame implements ActionListener {
                 }
             }
         }
-        
         else if (source == options_preferences) {
             
         }
-        
         else if (source == options_infoUser) {
             InfoUser myInfos = new InfoUser(this.utilisateur);
         }
-        
         else if (source == about_help) {
             JOptionPane.showMessageDialog(null, "Hoverboard est une application réalisée dans le cadre du projet annuel"
                     + "de troisième année d'Architecture des Logiciels de l'école ESGI (École Supérieure du Génie Informatique).\n"
@@ -130,7 +125,6 @@ public abstract class Home extends JFrame implements ActionListener {
                     + "des listes de tâches ou encore des sondages auxquels d'autres utilisateurs pourront répondre.\n Cette application doit être codée en Java et sera accompagnée"
                     + " d'un site web avec lequel elle interagira par le biais d'une base de données.", "A propos", JOptionPane.INFORMATION_MESSAGE);
         }
-        
         else if (source == about_support) {
             if (Desktop.isDesktopSupported() ) {
                 Desktop navigateurWeb = Desktop.getDesktop();
@@ -144,7 +138,6 @@ public abstract class Home extends JFrame implements ActionListener {
                 }
             }
         }
-        
         else if (source == menuDisconnect) {
             File cookie = new File("userData/cookie_login.xml");
             cookie.delete();

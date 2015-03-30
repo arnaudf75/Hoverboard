@@ -1,12 +1,13 @@
 package hoverboard;
 
+import windows.dashboards.ListeDashboard;
 import windows.Login;
-import windows.ListeDashboard;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
@@ -21,8 +22,7 @@ public class MainApp {
     /**
      * Fonction principale appellée au lancement du programme. Elle lance une fenêtre de connexion ou, si un cookie existe et est valide,
      * connecte l'utilisateur et affiche sa fenêtre d'accueil.
-     * @param args
-     * Les paramètres éventuellement saisis depuis la console.
+     * @param args Les paramètres éventuellement saisis depuis la console.
      */
     public static void main(String[] args) {
         
@@ -36,12 +36,17 @@ public class MainApp {
                 String password = racine.getChild("password").getText();
                 ResultSet isUser = connexion.connect_user(login,password);
                 if (!isUser.isBeforeFirst()) {
-                    System.out.println("Aucun utilisateur avec ce login et ce mot de passe.");
+                    JOptionPane.showMessageDialog(null, "Aucun utilisateur avec ce login et ce mot de passe !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                    Login login_window = new Login();
                 }
                 else {
                     isUser.next();
                     int idUser = isUser.getInt("idUser");
-                    ListeDashboard myDashboards = new ListeDashboard(idUser);
+                    String firstName = isUser.getString("firstName");
+                    String lastName = isUser.getString("lastName");
+                    String email = isUser.getString("email");
+                    int isAdmin = isUser.getInt("isAdmin");
+                    ListeDashboard myDashboards = new ListeDashboard(new User(idUser, login, firstName, lastName, email, isAdmin));
                 }
             }
             else {
@@ -49,7 +54,7 @@ public class MainApp {
             }
         }
         catch (IOException | JDOMException | SQLException error) {
-            System.out.println("Le cookie de login n'existe pas !"+ error);
+            JOptionPane.showMessageDialog(null, "Le cookie de login n'existe pas ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
             Login login_window = new Login();
         }
     }

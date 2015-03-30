@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
-
  * DashboardPreview est la classe qui affiche dans un panneau un aperçu d'un dashboard avec des informations le concernant : si il est partagé ou non,
  * si l'utilisateur en est l'administrateur, son titre et sa description.
  * @author Arnaud

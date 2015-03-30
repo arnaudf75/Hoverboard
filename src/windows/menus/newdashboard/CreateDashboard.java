@@ -27,7 +27,6 @@ public class CreateDashboard extends JFrame implements ActionListener {
     private String descriptionDashboard = "";
     protected BDD connexion = new BDD();
     private final JButton validate = new JButton("Valider");
-    private final JButton reset = new JButton("Annuler");
     private final JCheckBox sharedCheck = new JCheckBox();
     private final JLabel titreLabel = new JLabel("Titre du dashboard");
     private final JLabel descriptionLabel = new JLabel("Description du dashboard");
@@ -49,7 +48,6 @@ public class CreateDashboard extends JFrame implements ActionListener {
         this.main_container.setLayout(new BorderLayout());
         
         this.validate.addActionListener(this);
-        this.reset.addActionListener(this);
 
         this.center_container.add(titreLabel);        
         this.center_container.add(titreField);
@@ -59,7 +57,6 @@ public class CreateDashboard extends JFrame implements ActionListener {
         this.center_container.add(sharedCheck);
 
         this.bottom_container.add(validate, BorderLayout.WEST);
-        this.bottom_container.add(reset, BorderLayout.EAST);
 
         this.main_container.add(center_container, BorderLayout.CENTER);
         this.main_container.add(bottom_container, BorderLayout.SOUTH);

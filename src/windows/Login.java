@@ -1,9 +1,12 @@
 package windows;
 
 import hoverboard.BDD;
+import hoverboard.User;
+import windows.dashboards.ListeDashboard;
+
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.io.File;
 import java.io.FileWriter;
@@ -31,7 +34,6 @@ import org.jdom2.output.XMLOutputter;
 public class Login extends JFrame implements ActionListener {
     private final BDD connexion = new BDD();
     private final JButton validation = new JButton ("Valider");
-    private final JButton reset = new JButton ("Annuler");
     private final JButton password_lost = new JButton("J'ai perdu mon mot de passe");
     private final JButton register = new JButton ("Créer un compte");
     private final JCheckBox check_cookie = new JCheckBox ();
@@ -55,9 +57,7 @@ public class Login extends JFrame implements ActionListener {
     public Login() {
         this.setTitle("Fenêtre de connexion");
         this.setSize(400, 400);
-        this.setLocationRelativeTo(null);
         validation.addActionListener(this);
-        reset.addActionListener(this);
         password_lost.addActionListener(this);
         register.addActionListener(this);
 
@@ -72,7 +72,6 @@ public class Login extends JFrame implements ActionListener {
         center_container.add(check_label);
         center_container.add(check_cookie);
         center_container.add(validation);
-        center_container.add(reset);
 
         bottom_container.add(register, BorderLayout.WEST);
         bottom_container.add(password_lost, BorderLayout.EAST);
@@ -82,6 +81,7 @@ public class Login extends JFrame implements ActionListener {
         main_container.add(bottom_container, BorderLayout.SOUTH);
         
         this.setContentPane(main_container);
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -98,15 +98,13 @@ public class Login extends JFrame implements ActionListener {
             String login = login_field.getText();
             String password = password_field.getText();
             if (login.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Vous devez entrer votre login et votre mot de passe pour vous connecter !" , "ERREUR",
-                    JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Vous devez entrer votre login et votre mot de passe pour vous connecter !" , "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
             else {
                 ResultSet isUser = this.connexion.connect_user(login, password);
                 try {
                     if (!isUser.isBeforeFirst()) {
-                        JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec ce login et ce mot de passe !" , "ERREUR",
-                        JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec ce login et ce mot de passe !" , "ERREUR", JOptionPane.ERROR_MESSAGE);
                     }
                     else {
                         isUser.next();
@@ -114,16 +112,18 @@ public class Login extends JFrame implements ActionListener {
                             this.creerCookie(login,password);
                         }
                         this.dispose();
-                        ListeDashboard myDashboards = new ListeDashboard(isUser.getInt("idUser"));
+                        int idUser = isUser.getInt("idUser");
+                        String firstName = isUser.getString("firstName");
+                        String lastName = isUser.getString("lastName");
+                        String email = isUser.getString("email");
+                        int isAdmin = isUser.getInt("isAdmin");
+                        ListeDashboard myDashboards = new ListeDashboard(new User(idUser, login, firstName, lastName, email, isAdmin));
                     }
                 }
                 catch (SQLException error) {
-                    System.out.println("Impossible de vous connecter, connexion à la base de données impossible"+ error);
+                    JOptionPane.showMessageDialog(null, "Impossible de vous connecter ! " +error, "ERREUR", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
-        }
-        else if(source == reset) {
-
         }
         else if (source == password_lost) {
             Forgot_Password forgot_psw = new Forgot_Password();
@@ -136,10 +136,8 @@ public class Login extends JFrame implements ActionListener {
     /**
      * Créer un fichier cookie pour connecter l'utilisateur automatiquement la prochain fois qu'il utilisera l'application.
      * Les informations saisies dans la fenêtre de login sont récupérées pour les insérées dans le fichier cookie_login.xml.
-     * @param loginField
-     * Le login saisi par l'utilisateur lors de la connexion
-     * @param passwordField
-     * Le mot de passe saisi par l'utilisateur lors de la connexion
+     * @param loginField Le login saisi par l'utilisateur lors de la connexion
+     * @param passwordField Le mot de passe saisi par l'utilisateur lors de la connexion
      */
     public void creerCookie(String loginField, String passwordField) {
         try {
@@ -152,8 +150,7 @@ public class Login extends JFrame implements ActionListener {
             cookie_login.output(cookie, new FileWriter(new File("userData/cookie_login.xml")));
         }
         catch (IOException error) {
-            JOptionPane.showMessageDialog(null, error, "ERREUR", JOptionPane.INFORMATION_MESSAGE);
-            System.out.println("Erreur lors de la création du cookie ! "+error);
+            JOptionPane.showMessageDialog(null, "Erreur lors de la création du cookie ! " +error, "ERREUR", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 }

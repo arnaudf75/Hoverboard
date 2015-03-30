@@ -5,6 +5,7 @@ import hoverboard.BDD;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GridLayout;
+import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -36,8 +37,8 @@ public class ModifPassword extends JFrame implements ActionListener {
     public ModifPassword(int idUser) {
         this.setTitle("Vos informations");
         this.setSize(500, 200);
-        this.validate.addActionListener(this);
         this.idUser = idUser;
+        this.validate.addActionListener(this);
         this.main_container.setLayout(new GridLayout(4,2));
         this.main_container.add(old_password_label);
         this.main_container.add(old_password_field);
@@ -66,6 +67,8 @@ public class ModifPassword extends JFrame implements ActionListener {
             }
             else {
                 this.connexion.setNewPassword(this.idUser, old_password_field.getText(), new_password_field.getText());
+                File cookie = new File("userData/cookie_login.xml");
+                cookie.delete();
             }
         }
     }
