@@ -1,4 +1,4 @@
-package windows.widgets;
+package windows;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -90,7 +90,7 @@ public class ToDoList extends Widget {
             Document doc = saxBuilder.build(new StringReader(contenuWidget));
             List<Element> tasklist = doc.getRootElement().getChildren();
             for(int cpt=0;cpt<tasklist.size();cpt++){
-                this.taskList.add(new Task(tasklist.get(cpt).getChild("name").getText(),Boolean.valueOf(tasklist.get(cpt).getChild("done").getText())));
+                this.taskList.add(new Task(tasklist.get(cpt).getChild("name").getText(),Boolean.valueOf(tasklist.get(cpt).getAttributeValue("done"))));
             }
         } 
         catch (JDOMException e) {
@@ -120,8 +120,7 @@ public class ToDoList extends Widget {
             String content = "";
             content=content.concat("<tasklist>");
             for(int cpt=0;cpt<comps.length;cpt++){
-                content=content.concat("<task>");
-                content=content.concat("<done>"+((Task)comps[cpt]).done.isSelected()+"</done>");
+                content=content.concat("<task done=\""+((Task)comps[cpt]).done.isSelected()+"\">");
                 content=content.concat("<name>"+((Task)comps[cpt]).taskName.label.getText()+"</name>");
                 content=content.concat("</task>");
             }
@@ -138,7 +137,7 @@ public class ToDoList extends Widget {
                 Document doc = saxBuilder.build(new StringReader(contenuWidget));
                 List<Element> tasklist = doc.getRootElement().getChildren();
                 for(int cpt=0;cpt<tasklist.size();cpt++){
-                    this.taskList.add(new Task(tasklist.get(cpt).getChild("name").getText(),Boolean.valueOf(tasklist.get(cpt).getChild("done").getText())));
+                    this.taskList.add(new Task(tasklist.get(cpt).getChild("name").getText(),Boolean.valueOf(tasklist.get(cpt).getAttributeValue("done"))));
                 }
             } 
             catch (JDOMException e) {
