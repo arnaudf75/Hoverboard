@@ -1,4 +1,4 @@
-package windows;
+package windows.widgets;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
