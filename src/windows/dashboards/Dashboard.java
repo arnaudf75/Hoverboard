@@ -75,6 +75,11 @@ public class Dashboard extends Home implements ActionListener {
                                 listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur")));
                         break;
                     }
+                    case 3 : {
+                        this.widget_container.add(new Poll(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                                listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
+                        break;
+                    }
                     default : {
                         JOptionPane.showMessageDialog(null, "Type de widget non pris en charge !", "ERREUR", JOptionPane.ERROR_MESSAGE);
                         break;
@@ -87,6 +92,7 @@ public class Dashboard extends Home implements ActionListener {
         }
         
         this.add(top_container, BorderLayout.NORTH);
+        this.revalidate();
     }
     
     /**
