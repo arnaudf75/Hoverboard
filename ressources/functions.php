@@ -1,33 +1,28 @@
 <?php
-    $bdd = new PDO('mysql:host=localhost;dbname=hoverboard_jx90','hoverboard_jx90','esgi_hoverboard');
+    $bdd = new PDO('mysql:host=localhost;dbname=hoverboard_esgi','103876','esgi_hoverboard');
     
-    function addUser($bdd,$userLastName,$userFirstName,$emailUser,$userLogin,$userPassword) {
-        $requete = 'SELECT email, login FROM users WHERE email = "'.$emailUser.'" OR login = "'.$userLogin;
-        $resultat = $bdd->query($requete);
-        if ($resultat->fetchColumn()==0) {
-            echo $resultat;
-            $requete = "INSERT INTO users VALUES ('','$userLastName','$userFirstName','$emailUser','$userLogin','$userPassword',0,0)";
-            $bdd->exec($requete);
-            sendMailNewUser($emailUser);
-        }
-        else {
-            echo '<script> alert("User existant"); </script>';
-        }
+    function addPlugin($bdd, $idPlugin, $idUser) {
+        $bdd->exec('INSERT INTO telecharge VALUES('.$idPlugin.','.$idUser.',2)');
     }
     
-    function isConnected() {
-        if (isset($_SESSION['idUser'])) {
-            return ($_SESSION['idUser']);
+    function addUser($bdd,$userLastName,$userFirstName,$emailUser,$userLogin,$userPassword) {
+        $requete = 'SELECT email, login FROM users WHERE email = "'.$emailUser.'" OR login = "'.$userLogin.'"';
+        $resultat = $bdd->query($requete);
+        if ($resultat->rowCount()==0) {
+            $requete = "INSERT INTO users VALUES ('','$userLastName','$userFirstName','$emailUser','$userLogin','$userPassword',0,0)";
+            $bdd->exec($requete);
+            //sendMailNewUser($emailUser);
+            return (1);
         }
         else {
-            return (false);
+            return (0);
         }
     }
     
     function connect($lastName,$firstName,$idUser,$login,$isAdmin) {
+        $_SESSION['idUser'] = $idUser;
         $_SESSION['lastName'] = $lastName;
         $_SESSION['firstName'] = $firstName;
-        $_SESSION['idUser'] = $idUser;
         $_SESSION['login'] = $login;
         $_SESSION['isAdmin'] = $isAdmin;
     }
@@ -73,10 +68,23 @@
         return ($resultat);
     }
     
-    function getUsers($bdd,$login,$password) {
+    function getUser($bdd,$login,$password) {
         $requete = 'SELECT * FROM users WHERE login = "'.$login.'" AND password ="'.$password.'" AND isActive = 1';
         $resultat = $bdd->query($requete)->fetch();
         return ($resultat);
+    }
+    
+    function isConnected() {
+        if (isset($_SESSION['idUser'])) {
+            return ($_SESSION['idUser']);
+        }
+        else {
+            return (false);
+        }
+    }
+    
+    function removePlugin($bdd, $idPlugin, $idUser) {
+        $bdd->exec('DELETE FROM telecharge WHERE idPlugin = '.$idPlugin.' AND idUser = '.$idUser.' ');
     }
     
     function sendMailNewUser($emailUser) {

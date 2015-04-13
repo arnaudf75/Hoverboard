@@ -11,7 +11,7 @@
             break;
         }
         case 'login' : {
-            $userInfo = getUsers($bdd, $_POST['login'], $_POST['password']);
+            $userInfo = getUser($bdd, $_POST['login'], $_POST['password']);
             connect($userInfo['lastName'],$userInfo['firstName'],$userInfo['idUser'],$userInfo['login'],$userInfo['isAdmin']);
             Header("Location:index.php");
             break;
@@ -22,3 +22,4 @@
             break;
         }
     }
+?>

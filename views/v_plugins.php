@@ -17,7 +17,7 @@
                                     <td>'.$plugin['dateRelease'].'</td>
                                     <td>'.$plugin['namePlugin'].'</td>
                                     <td>'.$plugin['descriptionPlugin'].'</td>
-                                    <td> <a class="button small alert round" onclick="removePlugin('.$idUser.','.$plugin['idPlugin'].');">Désinstaller</a> </td>
+                                    <td> <a href="index.php?control=plugins&action=removePlugin&idPlugin='.$plugin['idPlugin'].'" class="button small alert round">Désinstaller</a> </td>
                                 </tr>';
                         }
                     echo '</table>';
@@ -45,7 +45,7 @@
                                     <td>'.$plugin['dateRelease'].'</td>
                                     <td>'.$plugin['namePlugin'].'</td>
                                     <td>'.$plugin['descriptionPlugin'].'</td>
-                                    <td> <a class="success button round" onclick="installPlugin('.$idUser.','.$plugin['idPlugin'].');">Installer</a> </td>
+                                    <td> <a href="index.php?control=plugins&action=addPlugin&idPlugin='.$plugin['idPlugin'].'" class="success button round">Installer</a> </td>
                                  </tr>';
                         }
                     echo '</table>';

@@ -12,8 +12,8 @@
             break;
         }
         case 'application' : {
-            mkdir('content/application/0/'.$_FILES['application']['numVersion'].'/ ', 0777, true);
-            $directory = 'contenu/application/0/'.$_FILES['application']['numVersion'].'/';
+            mkdir('content/application/'.$_FILES['application']['numVersion'].'/ ', 0777, true);
+            $directory = 'contenu/application/'.$_FILES['application']['numVersion'].'/';
             move_uploaded_file ($_FILES['application']['tmp_name'],$directory);
             //ajouteEpisode($bdd, $_POST['serie'], $_POST['nom'], $_POST['saison'], $_POST['episode'], $directory, $_POST['audio'], $_POST['subs']);
             break;

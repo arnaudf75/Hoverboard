@@ -28,7 +28,7 @@
             break;
         }
         case 'plugins' : {
-            include_once 'views/v_plugins.php';
+            include_once 'controlers/c_plugins.php';
             break;
         }
         case 'register' : {

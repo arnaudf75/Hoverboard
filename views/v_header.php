@@ -7,7 +7,6 @@
         <link rel="icon" type = "image/png" href="content/images/logo.png" /> 
         <link rel="stylesheet" href="ressources/foundation/css/foundation.css" type="text/css">
         <link rel="stylesheet" href="ressources/style.css" type="text/css">
-        <script src="ressources/scripts.js"></script>
         <script src="ressources/foundation/js/vendor/modernizr.js"></script>
     </head>
 

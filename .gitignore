@@ -1,1 +1,15 @@
+Hoverboard/build/
+Hoverboard/manifest.mf
+Hoverboard/nbproject/
+/build/
 /nbproject/private/
+build.xml
+manifest.mf
+/dist/
+Scripts/MPD.mwb.bak
+/src/nbproject/private/
+src/ressources/cookie_login.xml
+src/ressources/dashboard_3/
+userData/cookie_login.xml
+nbproject/build-impl.xml
+nbproject/genfiles.properties
