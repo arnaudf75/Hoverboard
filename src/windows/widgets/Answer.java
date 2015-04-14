@@ -8,7 +8,6 @@ package windows.widgets;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JLabel;
@@ -21,24 +20,46 @@ import javax.swing.JRadioButton;
  */
 public class Answer extends JPanel{
     JLabel name=new JLabel();
+    JLabel stat=new JLabel();
     JRadioButton select = new JRadioButton();
-    int count;
     
-    public Answer(String answer,int count){
+    int count;
+    boolean answered;
+    
+    public Answer(String answer,int count, boolean answered){
         this.setLayout(new BorderLayout());
         this.name=new JLabel(answer);
-        this.add(select, BorderLayout.WEST);
         this.add(name, BorderLayout.CENTER);
         this.count=count;
+        if(answered){
+            this.stat.setText(" ( "+String.valueOf(count)+" )  ");
+            this.add(stat, BorderLayout.WEST);
+        }
+        else{
+            this.add(select, BorderLayout.WEST);
+        
         this.name.addMouseListener(
-        new MouseAdapter(){
-            @Override
+        new MouseListener(){
+            
             public void mouseClicked(MouseEvent event) {
                 select.setSelected(true);
                 System.out.println(count);
             }
+
+                @Override
+                public void mousePressed(MouseEvent e) {}
+
+                @Override
+                public void mouseReleased(MouseEvent e) {}
+
+                @Override
+                public void mouseEntered(MouseEvent e) {}
+
+                @Override
+                public void mouseExited(MouseEvent e) {}
         }
         );
+        }
     }
 
 }

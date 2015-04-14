@@ -9,6 +9,8 @@ import windows.widgets.ToDoList;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.StringReader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
@@ -16,6 +18,11 @@ import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import windows.widgets.PollCreator;
 
 /**
  * Dashboard est la classe qui permet d'afficher et de créer les widgets.
@@ -76,8 +83,26 @@ public class Dashboard extends Home implements ActionListener {
                         break;
                     }
                     case 3 : {
-                        this.widget_container.add(new Poll(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
-                                listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
+                        String XMLContent = listeWidgets.getString("contentWidget");
+                        org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
+                        try {
+                           Document doc = saxBuilder.build(new StringReader(XMLContent));
+                           Element poll = doc.getRootElement();
+                           if(Boolean.valueOf(poll.getAttributeValue("published"))){
+                               this.widget_container.add(new Poll(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                               listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
+                           }
+                           else{
+                               this.widget_container.add(new PollCreator(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                               listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
+                           }
+                        }
+                        catch (JDOMException e) {
+                            System.out.println("handle JDOMException"+e);
+                        } 
+                        catch (IOException e) {
+                            System.out.println("andle IOException"+e);
+                        }
                         break;
                     }
                     default : {
@@ -118,7 +143,7 @@ public class Dashboard extends Home implements ActionListener {
             this.revalidate();
         }
         else if (source == new_poll){
-            this.widget_container.add(new Poll(this.idDashboard));
+            this.widget_container.add(new PollCreator(this.idDashboard, idUser));
             this.revalidate();
         }
     }

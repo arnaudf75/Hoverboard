@@ -5,7 +5,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -65,12 +64,16 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
         ((javax.swing.plaf.basic.BasicInternalFrameUI)this.getUI()).setNorthPane(null); 
         settings.addMouseMotionListener(this);
         settings.addMouseListener(
-        new MouseAdapter(){
+        new MouseListener(){
             @Override
             public void mousePressed(MouseEvent event) {
                 oldX=event.getX();
                 oldY=event.getY();
             }
+            @Override public void mouseClicked(MouseEvent e) {}
+            @Override public void mouseReleased(MouseEvent e) {}
+            @Override public void mouseEntered(MouseEvent e) {}
+            @Override public void mouseExited(MouseEvent e) {}
         }
         );
     }
@@ -103,12 +106,16 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
         ((javax.swing.plaf.basic.BasicInternalFrameUI)this.getUI()).setNorthPane(null); 
         settings.addMouseMotionListener(this);
         settings.addMouseListener(
-        new MouseAdapter(){
+        new MouseListener(){
             @Override
             public void mousePressed(MouseEvent event) {
                 oldX=event.getX();
                 oldY=event.getY();
             }
+            @Override public void mouseClicked(MouseEvent e) {}
+            @Override public void mouseReleased(MouseEvent e) {}
+            @Override public void mouseEntered(MouseEvent e) {}
+            @Override public void mouseExited(MouseEvent e) {}
         }
         );
     }
