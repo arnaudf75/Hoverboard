@@ -10,6 +10,8 @@ import windows.widgets.ToDoList;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.StringReader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
@@ -17,6 +19,11 @@ import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import windows.widgets.PollCreator;
 
 
 /**
@@ -76,6 +83,29 @@ public class Dashboard extends Home implements ActionListener {
                                 listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur")));
                         break;
                     }
+                    case 3 : {
+                        String XMLContent = listeWidgets.getString("contentWidget");
+                        org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
+                        try {
+                           Document doc = saxBuilder.build(new StringReader(XMLContent));
+                           Element poll = doc.getRootElement();
+                           if(Boolean.valueOf(poll.getAttributeValue("published"))){
+                               this.widget_container.add(new Poll(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                               listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
+                           }
+                           else{
+                               this.widget_container.add(new PollCreator(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                               listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
+                           }
+                        }
+                        catch (JDOMException e) {
+                            System.out.println("handle JDOMException"+e);
+                        } 
+                        catch (IOException e) {
+                            System.out.println("andle IOException"+e);
+                        }
+                        break;
+                    }
                     default : {
                         JOptionPane.showMessageDialog(null, "Type de widget non pris en charge !", "ERREUR", JOptionPane.ERROR_MESSAGE);
                         break;
@@ -88,7 +118,9 @@ public class Dashboard extends Home implements ActionListener {
         }
         
         this.add(top_container, BorderLayout.NORTH);
+
         this.setTitle(titreDashboard);
+        this.revalidate();
     }
     
     /**
@@ -114,7 +146,7 @@ public class Dashboard extends Home implements ActionListener {
             this.revalidate();
         }
         else if (source == new_poll){
-            this.widget_container.add(new Poll(this.idDashboard));
+            this.widget_container.add(new PollCreator(this.idDashboard, idUser));
             this.revalidate();
         }
     }

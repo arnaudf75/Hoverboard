@@ -32,9 +32,10 @@ public class QuestionCreator extends JPanel implements ActionListener {
         this.add(questionName, BorderLayout.NORTH);  
         
         answerList.setLayout(new BoxLayout(answerList, BoxLayout.PAGE_AXIS));
-        this.add(answerList, BorderLayout.SOUTH);
-        answerList.add(new AnswerCreator("ReponseA"));
-        answerList.add(new AnswerCreator("ReponseB"));
+        this.add(answerList, BorderLayout.CENTER);
+        this.answerList.add(new AnswerCreator("ReponseA"));
+        this.answerList.add(new AnswerCreator("ReponseB"));
+        this.answerList.revalidate();
         
         actionList.setLayout(new BorderLayout());
         this.add(actionList, BorderLayout.SOUTH);
@@ -42,6 +43,24 @@ public class QuestionCreator extends JPanel implements ActionListener {
         actionList.add(delQuestion, BorderLayout.EAST);
         delQuestion.addActionListener(this);
         newAnswer.addActionListener(this);
+    }
+    
+    public QuestionCreator(String name)
+    {
+        this.setLayout(new BorderLayout());
+        this.add(questionName, BorderLayout.NORTH);  
+        
+        answerList.setLayout(new BoxLayout(answerList, BoxLayout.PAGE_AXIS));
+        this.add(answerList, BorderLayout.CENTER);
+        this.answerList.revalidate();
+        
+        actionList.setLayout(new BorderLayout());
+        this.add(actionList, BorderLayout.SOUTH);
+        actionList.add(newAnswer, BorderLayout.WEST);
+        actionList.add(delQuestion, BorderLayout.EAST);
+        delQuestion.addActionListener(this);
+        newAnswer.addActionListener(this);
+        this.questionName.label.setText(name);
     }
     @Override
     public void actionPerformed(ActionEvent event) {

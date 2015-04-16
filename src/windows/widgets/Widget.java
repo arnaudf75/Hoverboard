@@ -38,6 +38,8 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
     @SuppressWarnings("LeakingThisInConstructor")
     public Widget(){
         super();
+        this.positionX = 0;
+        this.positionY = 0;
         this.save.setPreferredSize(buttonSize);
         this.refresh.setPreferredSize(buttonSize);
         this.del.setPreferredSize(buttonSize);
@@ -55,6 +57,62 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
         this.setVisible(true);
         ((javax.swing.plaf.basic.BasicInternalFrameUI)this.getUI()).setNorthPane(null); 
         settings.addMouseMotionListener(this);
+        settings.addMouseListener(
+        new MouseListener(){
+            @Override
+            public void mousePressed(MouseEvent event) {
+                oldX=event.getX();
+                oldY=event.getY();
+            }
+            @Override public void mouseClicked(MouseEvent e) {}
+            @Override public void mouseReleased(MouseEvent e) {}
+            @Override public void mouseEntered(MouseEvent e) {}
+            @Override public void mouseExited(MouseEvent e) {}
+        }
+        );
+    }
+    
+    public Widget(int idWidget, int positionX, int positionY, int height, int width)
+    {
+        super();
+        this.idWidget = idWidget;
+        this.height=height;
+        this.width=width;
+        this.positionX=positionX;
+        this.positionY=positionY;
+        this.setBounds(positionX, positionY, this.width, this.height);
+        
+        this.save.setPreferredSize(buttonSize);
+        this.refresh.setPreferredSize(buttonSize);
+        this.del.setPreferredSize(buttonSize);
+        save.addActionListener(this);
+        refresh.addActionListener(this);
+        del.addActionListener(this);
+        buttons.add(save);
+        buttons.add(refresh);
+        buttons.add(del);
+        settings.setLayout(new BorderLayout());
+        settings.add(buttons, BorderLayout.EAST);
+        this.add(settings, BorderLayout.NORTH);
+        this.add(content, BorderLayout.CENTER);
+        this.setResizable(true);
+        this.setVisible(true);
+        ((javax.swing.plaf.basic.BasicInternalFrameUI)this.getUI()).setNorthPane(null); 
+        settings.addMouseMotionListener(this);
+
+        settings.addMouseListener(
+        new MouseListener(){
+            @Override
+            public void mousePressed(MouseEvent event) {
+                oldX=event.getX();
+                oldY=event.getY();
+            }
+            @Override public void mouseClicked(MouseEvent e) {}
+            @Override public void mouseReleased(MouseEvent e) {}
+            @Override public void mouseEntered(MouseEvent e) {}
+            @Override public void mouseExited(MouseEvent e) {}
+        }
+        );
     }
     
     /**

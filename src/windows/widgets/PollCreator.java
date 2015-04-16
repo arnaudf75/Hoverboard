@@ -7,7 +7,6 @@ package windows.widgets;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.StringReader;
@@ -16,7 +15,6 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,16 +27,53 @@ import org.jdom2.input.SAXBuilder;
  *
  * @author Cavoleau
  */
-public class Poll extends Widget{
-    JButton sendAnswers = new JButton("Repondre au Sondage");
+public class PollCreator extends Widget{
+    JButton newQuestion = new JButton("Ajouter Question");
+    JButton publishPoll = new JButton("Publier Sondage");
+    
     int published;
-    List<Integer> contribList = new ArrayList();
     int user;
     
     JPanel questionList = new JPanel();
     JPanel bottom_container = new JPanel();
     JPanel button_container = new JPanel();
     
+    /**
+     * Constructeur de la classe Poll
+     * @param idDashboard Dashboard dans lequel le Poll sera ajouté
+     */
+    public PollCreator(int idDashboard, int idUser)
+    {
+        super();
+        user=idUser;
+        published=0;
+        
+        this.height=400;
+        this.width=300;
+        this.setBounds(positionX, positionY, width, height);
+        
+        questionList.setLayout(new BoxLayout(questionList, BoxLayout.PAGE_AXIS));
+        content.setLayout(new BorderLayout());
+        bottom_container.setLayout(new BorderLayout());
+        button_container.setLayout(new BorderLayout());
+        questionList.add(new QuestionCreator());
+        content.add(questionList, BorderLayout.CENTER);  
+        content.add(bottom_container, BorderLayout.SOUTH);
+        bottom_container.add(button_container, BorderLayout.CENTER);
+        
+        button_container.add(newQuestion, BorderLayout.NORTH);
+        button_container.add(publishPoll, BorderLayout.SOUTH);
+        newQuestion.addActionListener(this);
+        publishPoll.addActionListener(this);
+        //ajout du scroll
+        JScrollPane scrollPane = new JScrollPane(questionList,
+                                                    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                                                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        content.add(scrollPane);
+        this.idDashboard = idDashboard;
+        this.idWidget=this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, 3);
+        this.revalidate();
+    }
     
     /**
      * Constructeur de la classe Poll
@@ -48,17 +83,17 @@ public class Poll extends Widget{
      * @param positionY Position verticale en pixel
      * @param height hauteur en pixel
      * @param width largeur en pixel
-     * @param idUser utilisateur actuel
+      * @param idUser utilisateur actuel
      */
-    public Poll(int idWidget, String contenuWidget, int positionX, int positionY, int height, int width,int idUser)
+    public PollCreator(int idWidget, String contenuWidget, int positionX, int positionY, int height, int width, int idUser)
     {
         super(idWidget, positionX, positionY, height, width);
-        
         user=idUser;
         
         questionList.setLayout(new BoxLayout(questionList, BoxLayout.PAGE_AXIS));
         content.setLayout(new BorderLayout());
         bottom_container.setLayout(new BorderLayout());
+        button_container.setLayout(new BorderLayout());
         content.add(questionList, BorderLayout.CENTER);
         content.add(bottom_container, BorderLayout.SOUTH);
         //ajout du scroll
@@ -71,39 +106,21 @@ public class Poll extends Widget{
         try {
                 Document doc = saxBuilder.build(new StringReader(contenuWidget));
                 Element poll = doc.getRootElement();
-                this.published=1;
-                List<Element> contriblist = poll.getChild("contriblist").getChildren();
-                for(int cpt=0;cpt<contriblist.size();cpt++){
-                    this.contribList.add(Integer.valueOf(contriblist.get(cpt).getText()));
-                }
-                //On verifie si l'utilisateur a répondu au questionnaire
-                for(int cpt=0;cpt<contribList.size();cpt++){
-                    if(this.user==this.contribList.get(cpt)){
-                        this.published=2;
-                    }
-                }
+                this.published=0;
                 List<Element> questionlist = poll.getChild("questionlist").getChildren();
                 for(int cpt=0;cpt<questionlist.size();cpt++){
-                    Question newone =new Question(questionlist.get(cpt).getAttributeValue("name"));
+                    QuestionCreator newone =new QuestionCreator(questionlist.get(cpt).getAttributeValue("name"));
                     this.questionList.add(newone);
                     List<Element> answerlist = questionlist.get(cpt).getChild("answerlist").getChildren();
-                    ButtonGroup group = new ButtonGroup();
                     for(int cpt2=0;cpt2<answerlist.size();cpt2++){
-                        Answer newAnswer;
-                        if(published==1){
-                            newAnswer = new Answer(answerlist.get(cpt2).getText(),Integer.valueOf(answerlist.get(cpt2).getAttributeValue("count")),false);
-                        }
-                        else{
-                            newAnswer = new Answer(answerlist.get(cpt2).getText(),Integer.valueOf(answerlist.get(cpt2).getAttributeValue("count")),true);
-                        }
-                        
-                        newone.answerList.add(newAnswer);
-                        group.add(newAnswer.select);
-                        newAnswer.select.setSelected(true);
+                        newone.answerList.add(new AnswerCreator(answerlist.get(cpt2).getText()));
                     }
                 }
-                bottom_container.add(sendAnswers, BorderLayout.CENTER);
-                sendAnswers.addActionListener(this);                
+                bottom_container.add(button_container, BorderLayout.CENTER);
+                button_container.add(newQuestion, BorderLayout.NORTH);
+                button_container.add(publishPoll, BorderLayout.SOUTH);
+                newQuestion.addActionListener(this);
+                publishPoll.addActionListener(this);               
             } 
             catch (JDOMException e) {
                 // handle JDOMException
@@ -120,10 +137,18 @@ public class Poll extends Widget{
      */
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        //Envoie les réponse au sondage
-        if(source == sendAnswers){
-            this.send();
-            this.refresh();
+        //Ajout d'une tache a la liste
+        if (source == newQuestion){
+            this.questionList.add(new QuestionCreator());
+            this.questionList.revalidate();//pour qu'elle s'affiche bien sans avoir a deplacer le widget
+        }
+        //Ferme les modification des questions/réponse et perme aux utilisateurs de repondre au sondage
+        if(source == publishPoll){
+            this.publish();
+            Poll pollPublished = new Poll(this.idWidget, "", 0,0,0,0,user);
+            pollPublished.refresh();
+            this.getParent().add(pollPublished);
+            this.dispose();
         }
         //sauvegarde dans la BDD
         else if (source == save){
@@ -145,62 +170,25 @@ public class Poll extends Widget{
         }
     }
     
-    public void send(){
-        Component[] compsQuestion = this.questionList.getComponents();
-        Component[] compsAnswer;
-        for(int cpt=0;cpt<compsQuestion.length;cpt++){
-            compsAnswer = ((Question)compsQuestion[cpt]).answerList.getComponents();
-            for(int cpt2=0;cpt2<compsAnswer.length;cpt2++){
-                if(((Answer)compsAnswer[cpt2]).select.isSelected())
-                {
-                    ((Answer)compsAnswer[cpt2]).count++;
-                }
-            }
-        }
-        this.contribList.add(this.user);
-        this.save();
-    }
-    @Override
     public void refresh(){
         super.refresh();
             //accès à la BDD
             String contenuWidget = this.connexion.getContentWidget(idWidget);
             //Clean du widget avant réecriture
             this.questionList.removeAll();
-            this.contribList=new ArrayList();
             //réecriture
             org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
             try {
                 Document doc = saxBuilder.build(new StringReader(contenuWidget));
                 Element poll = doc.getRootElement();
-                this.published=1;
-                List<Element> contriblist = poll.getChild("contriblist").getChildren();
-                for(int cpt=0;cpt<contriblist.size();cpt++){
-                    this.contribList.add(Integer.valueOf(contriblist.get(cpt).getText()));
-                }
-                //On verifie si l'utilisateur a répondu au questionnaire
-                for(int cpt=0;cpt<contribList.size();cpt++){
-                    if(this.user==this.contribList.get(cpt)){
-                        this.published=2;
-                    }
-                }
+                this.published=0;
                 List<Element> questionlist = poll.getChild("questionlist").getChildren();
                 for(int cpt=0;cpt<questionlist.size();cpt++){
-                    Question newone =new Question(questionlist.get(cpt).getAttributeValue("name"));
+                    QuestionCreator newone =new QuestionCreator(questionlist.get(cpt).getAttributeValue("name"));
                     this.questionList.add(newone);
                     List<Element> answerlist = questionlist.get(cpt).getChild("answerlist").getChildren();
-                    ButtonGroup group = new ButtonGroup();
                     for(int cpt2=0;cpt2<answerlist.size();cpt2++){
-                        Answer newAnswer;
-                        if(published==1){
-                            newAnswer = new Answer(answerlist.get(cpt2).getText(),Integer.valueOf(answerlist.get(cpt2).getAttributeValue("count")),false);
-                        }
-                        else{
-                            newAnswer = new Answer(answerlist.get(cpt2).getText(),Integer.valueOf(answerlist.get(cpt2).getAttributeValue("count")),true);
-                        }
-                        newone.answerList.add(newAnswer);
-                        group.add(newAnswer.select);
-                        newAnswer.select.setSelected(true);
+                        newone.answerList.add(new AnswerCreator(answerlist.get(cpt2).getText()));
                     }
                 }
             } 
@@ -211,28 +199,26 @@ public class Poll extends Widget{
                 System.out.println("andle IOException"+e);
             }
             this.bottom_container.removeAll();
-            bottom_container.add(sendAnswers, BorderLayout.CENTER);
-            sendAnswers.addActionListener(this);
+            bottom_container.add(newQuestion, BorderLayout.CENTER);
+            newQuestion.addActionListener(this);
+            bottom_container.add(publishPoll, BorderLayout.CENTER);
+            publishPoll.addActionListener(this);
             this.revalidate();
     }
+    
     @Override
     public void save(){
         Component[] compsQuestion = this.questionList.getComponents();
         Component[] compsAnswer;
             String content = "";
-            content=content.concat("<poll published=\"true\">");
-            content=content.concat("<contriblist>");
-            for(int cpt=0;cpt<this.contribList.size();cpt++){
-                content=content.concat("<contrib>"+contribList.get(cpt)+"</contrib>");
-            }
-            content=content.concat("</contriblist>");
+            content=content.concat("<poll published=\"false\">");
             content=content.concat("<questionlist>");
             for(int cpt=0;cpt<compsQuestion.length;cpt++){
-                content=content.concat("<question name=\""+((Question)compsQuestion[cpt]).questionName.getText()+"\">");
-                compsAnswer = ((Question)compsQuestion[cpt]).answerList.getComponents();
+                content=content.concat("<question name=\""+((QuestionCreator)compsQuestion[cpt]).questionName.label.getText()+"\">");
+                compsAnswer = ((QuestionCreator)compsQuestion[cpt]).answerList.getComponents();
                 content=content.concat("<answerlist>");
                 for(int cpt2=0;cpt2<compsAnswer.length;cpt2++){
-                    content=content.concat("<answer count=\""+((Answer)compsAnswer[cpt2]).count+"\">"+((Answer)compsAnswer[cpt2]).name.getText()+"</answer>");
+                    content=content.concat("<answer>"+((AnswerCreator)compsAnswer[cpt2]).name.label.getText()+"</answer>");
                 }
                 content=content.concat("</answerlist>");
                 content=content.concat("</question>");
@@ -241,4 +227,27 @@ public class Poll extends Widget{
             content=content.concat("</poll>");
             this.connexion.updateWidget(idWidget, content,positionX,positionY,height,width);
     }
+    
+    public void publish(){
+        Component[] compsQuestion = this.questionList.getComponents();
+        Component[] compsAnswer;
+        String content = "";
+        content=content.concat("<poll published=\"true\">");
+        content=content.concat("<contriblist></contriblist>");
+        content=content.concat("<questionlist>");
+        for(int cpt=0;cpt<compsQuestion.length;cpt++){
+            content=content.concat("<question name=\""+((QuestionCreator)compsQuestion[cpt]).questionName.label.getText()+"\">");
+            compsAnswer = ((QuestionCreator)compsQuestion[cpt]).answerList.getComponents();
+            content=content.concat("<answerlist>");
+            for(int cpt2=0;cpt2<compsAnswer.length;cpt2++){
+                content=content.concat("<answer count=\"0\">"+((AnswerCreator)compsAnswer[cpt2]).name.label.getText()+"</answer>");
+            }
+            content=content.concat("</answerlist>");
+            content=content.concat("</question>");
+        }
+        content=content.concat("</questionlist>");
+        content=content.concat("</poll>");
+        this.connexion.updateWidget(idWidget, content,positionX,positionY,height,width);
+    }
+    
 }
