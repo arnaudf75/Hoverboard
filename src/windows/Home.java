@@ -1,20 +1,27 @@
-package windows.dashboards;
+package windows;
 
 import hoverboard.BDD;
 import hoverboard.User;
-import windows.Login;
 import windows.menus.infouser.InfoUser;
-import windows.menus.myplugins.MyPlugins;
+import windows.menus.myplugins.ListeMyPlugins;
 import windows.menus.newdashboard.CreateDashboard;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -30,6 +37,7 @@ public abstract class Home extends JFrame implements ActionListener {
     protected BDD connexion = new BDD();
     protected User utilisateur = null;
     protected int idUser = -1;
+    protected final Dimension windowSize = Toolkit.getDefaultToolkit().getScreenSize();
     protected final JMenuBar menu = new JMenuBar();
     protected final JMenu new_item = new JMenu("Nouveau");
     protected final JMenuItem newDashboard = new JMenuItem("Dashboard");
@@ -50,7 +58,7 @@ public abstract class Home extends JFrame implements ActionListener {
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Home() {
-        this.setSize(1200,700);
+        
         main_container.setLayout(new BorderLayout());
         
         newDashboard.addActionListener(this);
@@ -76,9 +84,29 @@ public abstract class Home extends JFrame implements ActionListener {
         menu.add(menuHelp);
         menu.add(menuDisconnect);
         
-        setJMenuBar(menu);  
+        setJMenuBar(menu);
+        
+        ResultSet myPlugins = connexion.getMyPlugins(idUser);
+        try {
+            while (myPlugins.next()) {
+                try {
+                    //if(myPlugins.getInt())
+                    new File("plugins").mkdirs();
+                    Files.copy(new URL(myPlugins.getString("pathToVersion")).openStream(), new File("plugins/"+myPlugins.getString("namePlugin")+myPlugins.getString("numVersion")+".jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
+                }
+                catch (IOException error) {
+                    JOptionPane.showMessageDialog(null, "Impossible d'afficher la liste de vos plugins ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+        catch (SQLException error) {
+            JOptionPane.showMessageDialog(null, "Impossible d'accèder à vos plugins ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+        }
         
         this.setContentPane(main_container);
+        this.setSize(windowSize);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -97,8 +125,7 @@ public abstract class Home extends JFrame implements ActionListener {
         }
         
         else if (source == menu_myPlugins) {
-            MyPlugins myPlugins = new MyPlugins(this.utilisateur.getIdUser());
-            
+            ListeMyPlugins myPlugins = new ListeMyPlugins(this.utilisateur.getIdUser());
         }
         
         else if (source == plugins_library) {
@@ -106,7 +133,7 @@ public abstract class Home extends JFrame implements ActionListener {
                 Desktop navigateurWeb = Desktop.getDesktop();
                 if (navigateurWeb.isSupported(Desktop.Action.BROWSE)) {
                     try {
-                        navigateurWeb.browse(new URI("http://hoverboard.livehost.fr/"));
+                        navigateurWeb.browse(new URI("http://hoverboard.livehost.fr/index.php?control=plugins"));
                     }
                     catch (IOException | URISyntaxException error) {
                         JOptionPane.showMessageDialog(null, "Impossible d'accèder au site web de l'application ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
@@ -136,7 +163,7 @@ public abstract class Home extends JFrame implements ActionListener {
                 Desktop navigateurWeb = Desktop.getDesktop();
                 if (navigateurWeb.isSupported(Desktop.Action.BROWSE)) {
                     try {
-                        navigateurWeb.browse(new URI("http://hoverboard.livehost.fr/"));
+                        navigateurWeb.browse(new URI("http://hoverboard.livehost.fr/index.php?control=support"));
                     }
                     catch (IOException | URISyntaxException error) {
                         JOptionPane.showMessageDialog(null, "Impossible d'accèder au site web de l'application ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);

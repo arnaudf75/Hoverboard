@@ -28,9 +28,7 @@ public class Forgot_Password extends JFrame implements ActionListener{
     
     @SuppressWarnings("LeakingThisInConstructor")
     public Forgot_Password(){
-
-        this.setTitle("Mot de passe perdu");
-        this.setSize(600,180);
+        
 
         valider_mail.addActionListener(this);
 
@@ -42,11 +40,13 @@ public class Forgot_Password extends JFrame implements ActionListener{
 
         main_container.add(logo);
         main_container.add(grid_container);
-
-        this.add(main_container);
         
-        this.setVisible(true);
+        this.setTitle("Mot de passe perdu");
+        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
+        this.add(main_container);
+        this.pack();
         this.setLocationRelativeTo(null);
+        this.setVisible(true);
     }
 
     /**

@@ -23,8 +23,7 @@ import javax.swing.JTextField;
 public class Register extends JFrame implements ActionListener {
 
     private final JButton validation = new JButton ("Valider");
-    private final JButton reset = new JButton ("Annuler");
-    private final JLabel logo = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/logo.png")));
+    private final JLabel logo = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/logo.png")));
     private final JLabel email_label = new JLabel ("Adresse email");
     private final JLabel firstName_label = new JLabel("Prénom :");
     private final JLabel lastName_label = new JLabel("Nom de famille :");
@@ -47,11 +46,8 @@ public class Register extends JFrame implements ActionListener {
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Register() {
-        this.setTitle("Inscription");
-        this.setSize(400, 400);
 
         validation.addActionListener(this);
-        reset.addActionListener(this);
 
         center_container.setLayout(new GridLayout(6, 6));
 
@@ -67,14 +63,15 @@ public class Register extends JFrame implements ActionListener {
         center_container.add(password_field); 
 
         bottom_container.add(validation);
-        bottom_container.add(reset);
 
         main_container.add(logo, BorderLayout.NORTH);
         main_container.add(center_container, BorderLayout.CENTER);
         main_container.add(bottom_container, BorderLayout.SOUTH);
-
-        this.setLocationRelativeTo(null);
+        
+        this.setTitle("Inscription");
+        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
         this.setContentPane(main_container);
+        this.pack();
         this.setVisible(true);
         this.setLocationRelativeTo(null);
     }
@@ -105,17 +102,14 @@ public class Register extends JFrame implements ActionListener {
                         SendMail send = new SendMail();
                         send.sendRegistrationEmail(email);
                     }
-                    catch (MessagingException e) {
-                        System.out.println(e);
+                    catch (MessagingException error) {
+                        JOptionPane.showMessageDialog(null, "Impossible d'envoyer le mail d'inscription ! " + error, "erreur", JOptionPane.ERROR_MESSAGE);
                     }
                 }
                 else {
                     JOptionPane.showMessageDialog(null, "Ce login ou cet email est déjà pris.", "ERREUR", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        }
-        if(source == reset) {
-        
         }
     }    
 }

@@ -1,4 +1,4 @@
-package windows;
+package windows.widgets;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;

@@ -34,7 +34,6 @@ import org.jdom2.output.XMLOutputter;
 public class Login extends JFrame implements ActionListener {
     private final BDD connexion = new BDD();
     private final JButton validation = new JButton ("Valider");
-    private final JButton reset = new JButton ("Annuler");
     private final JButton password_lost = new JButton("J'ai perdu mon mot de passe");
     private final JButton register = new JButton ("Créer un compte");
     private final JCheckBox check_cookie = new JCheckBox ();
@@ -42,8 +41,6 @@ public class Login extends JFrame implements ActionListener {
     private final JLabel check_label = new JLabel ("Se souvenir de moi");
     private final JLabel login_label = new JLabel("Saisissez votre login :");
     private final JLabel password_label = new JLabel("Saisissez votre mot de passe :");
-    
-    
     private final JPanel main_container = new JPanel();
     private final JPanel center_container = new JPanel();
     private final JPanel bottom_container = new JPanel();
@@ -56,10 +53,8 @@ public class Login extends JFrame implements ActionListener {
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Login() {
-        this.setTitle("Fenêtre de connexion");
-        this.setSize(400, 400);
+        
         validation.addActionListener(this);
-        reset.addActionListener(this);
         password_lost.addActionListener(this);
         register.addActionListener(this);
 
@@ -74,7 +69,6 @@ public class Login extends JFrame implements ActionListener {
         center_container.add(check_label);
         center_container.add(check_cookie);
         center_container.add(validation);
-        center_container.add(reset);
 
         bottom_container.add(register, BorderLayout.WEST);
         bottom_container.add(password_lost, BorderLayout.EAST);
@@ -83,7 +77,10 @@ public class Login extends JFrame implements ActionListener {
         main_container.add(center_container, BorderLayout.CENTER);
         main_container.add(bottom_container, BorderLayout.SOUTH);
         
+        this.setTitle("Fenêtre de connexion");
+        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
         this.setContentPane(main_container);
+        this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -127,9 +124,6 @@ public class Login extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Impossible de vous connecter ! " +error, "ERREUR", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
-        }
-        else if(source == reset) {
-
         }
         else if (source == password_lost) {
             Forgot_Password forgot_psw = new Forgot_Password();

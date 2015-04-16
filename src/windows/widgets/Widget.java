@@ -1,4 +1,4 @@
-package windows;
+package windows.widgets;
 
 import hoverboard.BDD;
 import java.awt.BorderLayout;

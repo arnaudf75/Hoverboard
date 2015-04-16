@@ -6,6 +6,7 @@ import hoverboard.User;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GridLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -39,9 +40,6 @@ public class InfoUser extends JFrame implements ActionListener {
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public InfoUser(User utilisateur) {
-        this.setTitle("Vos informations");
-        this.setSize(500, 200);
-        
         this.validate.addActionListener(this);
         this.changePassword.addActionListener(this);
         this.deleteAccount.addActionListener(this);
@@ -72,7 +70,10 @@ public class InfoUser extends JFrame implements ActionListener {
         this.main_container.add(validate);
         this.main_container.add(deleteAccount);
         
+        this.setTitle("Vos informations");
+        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
         this.setContentPane(main_container);
+        this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }

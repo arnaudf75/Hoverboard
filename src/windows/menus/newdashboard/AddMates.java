@@ -5,6 +5,7 @@ import hoverboard.BDD;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,18 +31,20 @@ public class AddMates extends JFrame implements ActionListener {
      * @param idDashboard L'id du dashboard auquel on souhaite ajouter un utilisateur.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public AddMates(int idDashboard) {
-        this.setTitle("Ajouter des utilisateurs à ce dashboard");
-        this.setSize(500, 130);
+    public AddMates(int idDashboard) { 
         this.idDashboard = idDashboard;
         this.ajouteUserField.setPreferredSize(new Dimension (450,30));
         this.validate.addActionListener(this);
         this.main_container.add(ajouteUserLabel);
         this.main_container.add(ajouteUserField);
         this.main_container.add(validate);
+        
+        this.setTitle("Ajouter des utilisateurs à ce dashboard");
+        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
         this.setContentPane(main_container);
-        this.setVisible(true);
+        this.pack();
         this.setLocationRelativeTo(null);
+        this.setVisible(true);
     }
     
     /**
