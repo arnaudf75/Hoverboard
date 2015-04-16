@@ -1,5 +1,6 @@
 package windows.dashboards;
 
+import windows.Home;
 import hoverboard.User;
 import windows.menus.newdashboard.AddMates;
 import windows.widgets.Poll;
@@ -16,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
 
 /**
  * Dashboard est la classe qui permet d'afficher et de créer les widgets.
@@ -42,7 +44,6 @@ public class Dashboard extends Home implements ActionListener {
     public Dashboard(int idDashboard, String titreDashboard, User utilisateur) {
         this.utilisateur = utilisateur;
         this.idDashboard = idDashboard;
-        this.setTitle(titreDashboard);
         this.setLayout(new BorderLayout());
         this.top_container.setLayout(new BorderLayout());
         
@@ -87,6 +88,7 @@ public class Dashboard extends Home implements ActionListener {
         }
         
         this.add(top_container, BorderLayout.NORTH);
+        this.setTitle(titreDashboard);
     }
     
     /**

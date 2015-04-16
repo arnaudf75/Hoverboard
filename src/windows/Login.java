@@ -41,8 +41,6 @@ public class Login extends JFrame implements ActionListener {
     private final JLabel check_label = new JLabel ("Se souvenir de moi");
     private final JLabel login_label = new JLabel("Saisissez votre login :");
     private final JLabel password_label = new JLabel("Saisissez votre mot de passe :");
-    
-    
     private final JPanel main_container = new JPanel();
     private final JPanel center_container = new JPanel();
     private final JPanel bottom_container = new JPanel();
@@ -55,8 +53,7 @@ public class Login extends JFrame implements ActionListener {
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Login() {
-        this.setTitle("Fenêtre de connexion");
-        this.setSize(400, 400);
+        
         validation.addActionListener(this);
         password_lost.addActionListener(this);
         register.addActionListener(this);
@@ -80,7 +77,10 @@ public class Login extends JFrame implements ActionListener {
         main_container.add(center_container, BorderLayout.CENTER);
         main_container.add(bottom_container, BorderLayout.SOUTH);
         
+        this.setTitle("Fenêtre de connexion");
+        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
         this.setContentPane(main_container);
+        this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

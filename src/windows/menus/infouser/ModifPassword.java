@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GridLayout;
 import java.io.File;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -35,8 +37,7 @@ public class ModifPassword extends JFrame implements ActionListener {
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public ModifPassword(int idUser) {
-        this.setTitle("Vos informations");
-        this.setSize(500, 200);
+
         this.idUser = idUser;
         this.validate.addActionListener(this);
         this.main_container.setLayout(new GridLayout(4,2));
@@ -49,7 +50,10 @@ public class ModifPassword extends JFrame implements ActionListener {
         
         this.main_container.add(validate);
         
+        this.setTitle("Vos informations");
+        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
         this.setContentPane(main_container);
+        this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }

@@ -47,9 +47,6 @@ public class Register extends JFrame implements ActionListener {
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Register() {
-        this.setTitle("Inscription");
-        this.setSize(500, 200);
-
         validation.addActionListener(this);
 
         center_container.setLayout(new GridLayout(6, 6));
@@ -70,9 +67,11 @@ public class Register extends JFrame implements ActionListener {
         main_container.add(logo, BorderLayout.NORTH);
         main_container.add(center_container, BorderLayout.CENTER);
         main_container.add(bottom_container, BorderLayout.SOUTH);
-
-        this.setLocationRelativeTo(null);
+        
+        this.setTitle("Inscription");
+        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
         this.setContentPane(main_container);
+        this.pack();
         this.setVisible(true);
         this.setLocationRelativeTo(null);
     }
@@ -104,7 +103,7 @@ public class Register extends JFrame implements ActionListener {
                         send.sendRegistrationEmail(email);
                     }
                     catch (MessagingException error) {
-                        JOptionPane.showMessageDialog(null, "Impossible d'envoyer le mail d'inscription ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Impossible d'envoyer le mail d'inscription ! " + error, "erreur", JOptionPane.ERROR_MESSAGE);
                     }
                 }
                 else {

@@ -3,7 +3,7 @@ package hoverboard;
 import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.Connection;
-import java.sql.Statement;      
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
@@ -49,11 +49,10 @@ public class BDD {
      * @param idUser L'id de l'utilisateur qui a crée le dashboard et qui en est donc l'administrateur.
      * @param titreDashboard Le titre du dashboard saisi par l'utilisateur.
      * @param descriptionDashboard La description du dashboard saisie par l'utilisateur.
-     * @param isShared Vaut 1 si l'utilisateur a choisi de partager le dashboard, 0 sinon.
      * @return L'id du dashboard si il a bien été ajouté à la base de données, -1 sinon.
      */
-    public int ajouteDashboard(int idUser, String titreDashboard, String descriptionDashboard, int isShared) {
-        this.requete = "INSERT INTO dashboard VALUES(NULL, '"+titreDashboard+"', '"+descriptionDashboard+"', "+isShared+")";
+    public int ajouteDashboard(int idUser, String titreDashboard, String descriptionDashboard) {
+        this.requete = "INSERT INTO dashboard VALUES(NULL, '"+titreDashboard+"', '"+descriptionDashboard+"')";
         int idDashboard = -1;
         try {
             this.statement.executeUpdate(this.requete, Statement.RETURN_GENERATED_KEYS);
@@ -207,11 +206,13 @@ public class BDD {
      * @return L'id, le nom, la description et le statut pour chaque plugin.
      */
     public ResultSet getMyPlugins(int idUser) {
-        this.requete = "SELECT T.idPlugin, T.idStatutPlugin, P.namePlugin, P.descriptionPlugin FROM telecharge T"
-                    + " RIGHT JOIN plugins P ON T.idPlugin = P.idPlugin"
-                    + " WHERE idUser = " + idUser
-                    + " AND P.isValid = 1"
-                    + " ORDER BY T.idStatutPlugin DESC";
+        this.requete = "SELECT I.idVersion, V.idPlugin, I.idStatutPlugin, P.namePlugin, P.descriptionPlugin, V.numVersion, V.dateUpdate, V.pathToVersion" +
+                       " FROM installe I,version V, plugins P" +
+                       " WHERE I.idVersion = V.idVersion" +
+                       " AND V.idPlugin = P.idPlugin" +
+                       " AND P.isValid = 1" +
+                       " AND I.idUser = "+idUser+
+                       " ORDER BY I.idStatutPlugin DESC";
         try {
             this.result = this.statement.executeQuery(this.requete);
         }
@@ -366,7 +367,7 @@ public class BDD {
      * @param statut Le statut choisi par l'utilisateur (1 pour désactivé, 3 pour activé).
      */
     public void setStatutPlugin(int idUser, int idPlugin, int statut) {
-        this.requete = "UPDATE telecharge SET idStatutPlugin = " +statut
+        this.requete = "UPDATE installe SET idStatutPlugin = " +statut
                      + " WHERE idPlugin = " +idPlugin
                      + " AND idUser = " +idUser;
         try {
@@ -375,6 +376,15 @@ public class BDD {
         catch (SQLException error) {
             JOptionPane.showMessageDialog(null, "Impossible de modifier le statut du plugin ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+    /**
+     * Est appellée lorsqu'un utilisateur cherche à mettre à jour un plugin installé. A partir de la date de version, la fonction
+     * va aller chercher si il en existe une plus récente et l'installer.
+     * @param idVersion 
+     */
+    public void updatePlugin(int idVersion) {
+        
     }
     
     /**

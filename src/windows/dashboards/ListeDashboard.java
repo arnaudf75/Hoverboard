@@ -1,5 +1,6 @@
 package windows.dashboards;
 
+import windows.Home;
 import hoverboard.User;
 
 import java.awt.GridLayout;
@@ -19,7 +20,7 @@ public class ListeDashboard extends Home {
      */
     public ListeDashboard(User utilisateur) {
         this.utilisateur = utilisateur;
-        this.setTitle("Choisissez un dashboard");
+        
         ResultSet listeDashboard = connexion.getDashboards(this.utilisateur.getIdUser());
         try {
             listeDashboard.last();
@@ -39,5 +40,7 @@ public class ListeDashboard extends Home {
         catch (SQLException error) {
             JOptionPane.showMessageDialog(null, "Impossible d'afficher la liste des dashboards ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
+        
+        this.setTitle("Choisissez un dashboard");
     }
 }
