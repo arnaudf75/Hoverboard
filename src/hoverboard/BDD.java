@@ -30,7 +30,7 @@ public class BDD {
      */ 
     public BDD() {
         try {
-            Document data_jdbc = new SAXBuilder().build(this.getClass().getClassLoader().getResource("ressources/data_jdbc_online.xml"));
+            Document data_jdbc = new SAXBuilder().build(this.getClass().getClassLoader().getResource("ressources/data_jdbc_local.xml"));
             Element racine = data_jdbc.getRootElement();
             this.databaseUrl= racine.getChild("dbUrl").getText();
             this.user =  racine.getChild("login").getText();
@@ -103,8 +103,8 @@ public class BDD {
      * @param typeWidget Le type du widget (post-it, liste de tâches ou sondage). 
      * @return L'id du widget issu de l'insertion dans la base de données. Si cette dernière échoue, la fonction renvoie -1.
      */
-    public int ajouteWidget(int positionX, int positionY, int height, int width, int idDashboard, int typeWidget) {
-        this.requete = "INSERT INTO widgets VALUES (NULL, '', "+positionX+", "+positionY+", "+height+", "+width+", "+idDashboard+", "+typeWidget+") ";
+    public int ajouteWidget(int positionX, int positionY, int height, int width, int idDashboard, String typeWidget) {
+        this.requete = "INSERT INTO widgets VALUES (NULL, '', "+positionX+", "+positionY+", "+height+", "+width+", '"+typeWidget+"', "+idDashboard+", NULL ) ";
         int idWidget = -1;
         try {
             this.statement.executeUpdate(this.requete, Statement.RETURN_GENERATED_KEYS);
@@ -189,7 +189,7 @@ public class BDD {
      * @return Un ResultSet contenant les données de chaque dashboard : id, droits (administrateur ou non), si il est partagé ou non, le titre et la description.
      */
     public ResultSet getDashboards(int idUser) {
-        this.requete = "SELECT U.idUser, U.idDashboard, U.isDashboardAdmin, D.titleDashboard, D.descriptionDashboard, D.isShared"
+        this.requete = "SELECT U.idUser, U.idDashboard, U.isDashboardAdmin, D.titleDashboard, D.descriptionDashboard "
                     + " FROM utilise U RIGHT JOIN dashboard D ON D.idDashboard = U.idDashboard WHERE idUser = "+idUser;
         try {
             this.result = statement.executeQuery(requete);
@@ -243,7 +243,7 @@ public class BDD {
      * @return Les données de chaque widget (id, contenu, position et dimensions) dans un ResultSet.
      */
     public ResultSet getWidgets(int idDashboard) {
-        this.requete = "SELECT E.*, T.nomTypeWidget FROM widgets E, type_widget T WHERE idDashboard = "+idDashboard+" AND E.idTypeWidget = T.idTypeWidget";
+        this.requete = "SELECT * FROM widgets WHERE idDashboard = "+idDashboard;
         try {
             this.result = statement.executeQuery(requete);
         }
@@ -388,20 +388,16 @@ public class BDD {
     }
     
     /**
-     * La fonction est appellée lorsque l'utilisateur clique sur le bouton "Enregistrer" (îcone de disquete) sur un widget.
+     * Cette fonction est appellée lorsque l'utilisateur clique sur le bouton "Enregistrer" (îcone de disquete) sur un widget.
      * Elle modifie le contenu d'un widget dans la base de données.
-     * @param idWidget L'id du widget concerné.
-     * @param contentWidget Le contenu du widget modifié.
+     * @param idWidget L'ID du widget concerné.
+     * @param contentWidget Le contenu du widget (une chaîne de caractère simple pour les post-it, une URL pour les images ou une chaine
+     * de caractères au format .xml pour les liste de tâches et les sondages).
+     * @param positionX La position horizontale du widget.
+     * @param positionY La position verticale du widget.
+     * @param height La hauteur du widget.
+     * @param width La largeur du widget.
      */
-    public void updateWidget(int idWidget, String contentWidget) {
-        this.requete = "UPDATE widgets SET contentWidget = '"+contentWidget+"' WHERE idWidget = "+idWidget;
-        try {
-            this.statement.executeUpdate(this.requete);
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de modifier le widget ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        }
-    }
     public void updateWidget(int idWidget, String contentWidget, int positionX, int positionY, int height, int width) {
         this.requete = "UPDATE widgets SET "
                 + "contentWidget = '"+contentWidget+"', "

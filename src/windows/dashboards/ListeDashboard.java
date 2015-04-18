@@ -29,18 +29,16 @@ public class ListeDashboard extends Home {
             this.setLayout(new GridLayout(numberRows,2));
             while (listeDashboard.next()) {
                 int idDashboard = listeDashboard.getInt("idDashboard");
-                int isShared = listeDashboard.getInt("isShared");
                 int isAdmin = listeDashboard.getInt("isDashboardAdmin");
                 String titleDashboard = listeDashboard.getString("titleDashboard");
                 String descriptionDashboard = listeDashboard.getString("descriptionDashboard");
-                this.add(new DashboardPreview(this.utilisateur, idDashboard, titleDashboard, descriptionDashboard, isAdmin, isShared));
+                this.add(new DashboardPreview(this.utilisateur, idDashboard, titleDashboard, descriptionDashboard, isAdmin));
             }
             this.revalidate();
         }
         catch (SQLException error) {
             JOptionPane.showMessageDialog(null, "Impossible d'afficher la liste des dashboards ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
-        
         this.setTitle("Choisissez un dashboard");
     }
 }

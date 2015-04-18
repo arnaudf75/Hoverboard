@@ -86,7 +86,7 @@ public abstract class Home extends JFrame implements ActionListener {
         
         setJMenuBar(menu);
         
-        ResultSet myPlugins = connexion.getMyPlugins(idUser);
+       /* ResultSet myPlugins = connexion.getMyPlugins(idUser);
         try {
             while (myPlugins.next()) {
                 try {
@@ -101,7 +101,7 @@ public abstract class Home extends JFrame implements ActionListener {
         }
         catch (SQLException error) {
             JOptionPane.showMessageDialog(null, "Impossible d'accèder à vos plugins ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        }
+        }*/
         
         this.setContentPane(main_container);
         this.setSize(windowSize);
@@ -172,27 +172,4 @@ public abstract class Home extends JFrame implements ActionListener {
             Login login = new Login();
         }
     }
-    
-    /**
-     * FONCTION PAS ENCORE UTILISEE
-     * Synchronise les widgets stockés EN LOCAL avec ceux stockés dans la base de données.
-     * @param idDashboard 
-     */
-    /*
-    public void refreshWidgets(int idDashboard) {
-        // Todo -> Avec l'id du dashboard, je fais une requête vers la BDD pour voir si jamais un widget aurait été rajouté
-        HashMap dicto = new HashMap();
-        ResultSet resultWidgets = this.connexion.getWidgets(idDashboard);
-        System.out.println(resultWidgets);
-        // ET enregistrer dans la BDD les nouveaux widgets ajoutés en local
-        /*File directory = new File("src/ressources/dashboard_"+idDashboard);
-        // Avec l'id du dashboard, je vais voir en local pour récupérer les fichiers post it
-        String [] listeFichiers = directory.list();
-        // Pour chaque post it récupéré (au format Hashmap), je crée un nouveau post it (new PostIt) et à la fin je fais un revalidate()
-        for (int i=0; i<directory.listFiles().length; i++) {
-            //dicto = myParser.getDataPost("src/ressources/dashboard_"+idDashboard+"/"+listeFichiers[i]);
-            //this.main_container.add(new PostIt(899898,dicto.get("content").toString()));
-        }*/
-        /*this.main_container.revalidate();
-    }*/
 }

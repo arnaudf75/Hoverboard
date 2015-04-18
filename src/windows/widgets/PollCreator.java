@@ -71,7 +71,7 @@ public class PollCreator extends Widget{
                                                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         content.add(scrollPane);
         this.idDashboard = idDashboard;
-        this.idWidget=this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, 3);
+        this.idWidget=this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "POLL");
         this.revalidate();
     }
     
@@ -83,7 +83,7 @@ public class PollCreator extends Widget{
      * @param positionY Position verticale en pixel
      * @param height hauteur en pixel
      * @param width largeur en pixel
-      * @param idUser utilisateur actuel
+     * @param idUser utilisateur actuel
      */
     public PollCreator(int idWidget, String contenuWidget, int positionX, int positionY, int height, int width, int idUser)
     {

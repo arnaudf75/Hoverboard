@@ -26,12 +26,11 @@ public class ToDoList extends Widget {
     JPanel taskList = new JPanel();
     JPanel bottom_container = new JPanel();
     
-    
-    @SuppressWarnings("LeakingThisInConstructor")
     /**
      * Constructeur de la classe ToDoList
      * @param idDashboard Dashboard dans lequel le ToDoList sera ajouté
      */
+    @SuppressWarnings("LeakingThisInConstructor")
     public ToDoList(int idDashboard)
     {
         super();
@@ -54,11 +53,10 @@ public class ToDoList extends Widget {
                                                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         content.add(scrollPane);
         this.idDashboard = idDashboard;
-        this.idWidget=this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, 1);
+        this.idWidget=this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "TODOLIST");
         this.revalidate();
     }
     
-    @SuppressWarnings("LeakingThisInConstructor")
     /**
      * Constructeur de la classe ToDoList
      * @param idWidget ID du widget qui va être crée
@@ -68,6 +66,7 @@ public class ToDoList extends Widget {
      * @param height hauteur en pixel
      * @param width largeur en pixel
      */
+    @SuppressWarnings("LeakingThisInConstructor")
     public ToDoList(int idWidget, String contenuWidget, int positionX, int positionY, int height, int width)
     {
         super(idWidget, positionX, positionY, height, width);
@@ -102,11 +101,11 @@ public class ToDoList extends Widget {
         this.revalidate();
     }
     
-    @Override
     /**
      * Action effectués lors d'un clic sur un bouton
      * @param event evenement du clic
      */
+    @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         //Ajout d'une tache a la liste

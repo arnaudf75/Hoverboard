@@ -134,7 +134,7 @@ public class Login extends JFrame implements ActionListener {
     }
     
     /**
-     * Créer un fichier cookie pour connecter l'utilisateur automatiquement la prochain fois qu'il utilisera l'application.
+     * Créer un fichier cookie pour connecter l'utilisateur automatiquement la prochaine fois qu'il utilisera l'application.
      * Les informations saisies dans la fenêtre de login sont récupérées pour les insérées dans le fichier cookie_login.xml.
      * @param loginField Le login saisi par l'utilisateur lors de la connexion
      * @param passwordField Le mot de passe saisi par l'utilisateur lors de la connexion

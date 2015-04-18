@@ -38,6 +38,7 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
     protected JPanel settings = new JPanel();
     protected JPanel content = new JPanel();
     
+    
     @SuppressWarnings("LeakingThisInConstructor")
     /**
      * Constructeur de la classe abstraite Widget
@@ -120,13 +121,12 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
         );
     }
     
-    @Override
+    
     /**
      * Modifie la position du widget lorsque l'utilisateur clique sur la barre du haut et bouge le pointeur de la souris.
-     * @param event
-     * L'action qui vient de se produire, en l'occurence le déplacement du pointeur de la souris
-     * après que l'utilisateur ait cliqué sur le haut du widget.
+     * @param event L'action qui vient de se produire, en l'occurence le déplacement du pointeur de la souris après que l'utilisateur ait cliqué sur le haut du widget.
      */
+    @Override
     public void mouseDragged(MouseEvent event) {
        // if (contains(e.getX(),e.getY())) { A utiliser pour que le post it reste dans le cadre
             //System.out.println(oldX+"  --- "+oldY);
@@ -158,13 +158,13 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
     }
     
     public void refresh(){
-        System.out.println("id:"+this.idWidget+"positionX:"+this.connexion.getFieldWidget(this.idWidget, "positionX"));
         this.positionX=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "positionX"));
         this.positionY=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "positionY"));
         this.height=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "longueur"));
         this.width=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "largeur"));
         this.setBounds(positionX, positionY, width, height);
     }
+    
     public void save(){
         
     }
@@ -176,7 +176,4 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
     @Override
     public void mouseMoved(MouseEvent event) {}
 
-        //System.out.println ("Ici update"); 
-        // POUR LE LOCAL : Je récupère le nouveau contenu du JTextField, je l'envoie au fichier .xml correspondant
-        // POUR LE ONLINE : Ensuite je fais un Update BDD SET content = content
 }

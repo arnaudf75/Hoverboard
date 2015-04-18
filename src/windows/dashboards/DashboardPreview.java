@@ -39,10 +39,9 @@ public class DashboardPreview extends JPanel implements ActionListener {
      * @param titleDashboard Le titre du dashboard.
      * @param descriptionDashboard La description du dashboard.
      * @param isAdmin Vaut 1 si l'utilisateur administre le dashboard, 0 sinon.
-     * @param isShared Vaut 1 si le dashboard est partagé, 0 sinon.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public DashboardPreview(User utilisateur, int idDashboard, String titleDashboard, String descriptionDashboard, int isAdmin, int isShared) {
+    public DashboardPreview(User utilisateur, int idDashboard, String titleDashboard, String descriptionDashboard, int isAdmin) {
         this.utilisateur = utilisateur;
         this.idDashboard = idDashboard;
         this.titleDashboard = titleDashboard;
@@ -54,12 +53,7 @@ public class DashboardPreview extends JPanel implements ActionListener {
         this.top_container.setLayout(new BorderLayout());
         this.homeButton.addActionListener(this);
         this.validatePanel.addActionListener(this);
-        if (isShared == 1) {
-            this.topRightSide_container.add(sharedIcon);
-        }
-        else {
-            this.topRightSide_container.add(persoIcon);
-        }
+
         if (isAdmin == 1) {
             this.topRightSide_container.add(adminIcon);
         }

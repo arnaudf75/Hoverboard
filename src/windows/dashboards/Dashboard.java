@@ -3,11 +3,13 @@ package windows.dashboards;
 import windows.Home;
 import hoverboard.User;
 import windows.menus.newdashboard.AddMates;
+import windows.widgets.ImagePostIt;
 import windows.widgets.Poll;
 import windows.widgets.PostIt;
 import windows.widgets.ToDoList;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -32,11 +34,13 @@ import windows.widgets.PollCreator;
  */
 public class Dashboard extends Home implements ActionListener {
     private int idDashboard = -1;
+    protected Dimension buttonSize = new Dimension(32,32);
     private final JButton homeButton = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/home.png")));
-    private final JButton new_postit = new JButton("Nouveau Post-it");
-    private final JButton new_tasklist = new JButton("Nouvelle liste de tâches");
-    private final JButton new_poll = new JButton("Nouveau sondage");
-    private final JButton add_users = new JButton("Ajouter des utilisateurs à ce dashboard");
+    private final JButton new_postit = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/postit_icon.png")));
+    private final JButton new_imagePostIt = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/image_icon.png")));
+    private final JButton new_tasklist = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/tasklist_icon.png")));
+    private final JButton new_poll = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/poll_icon.png")));
+    private final JButton add_users = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/addMates.png")));
     private final JPanel topRightSide_container = new JPanel();
     private final JPanel top_container = new JPanel();
     private final JDesktopPane widget_container = new JDesktopPane();
@@ -54,17 +58,31 @@ public class Dashboard extends Home implements ActionListener {
         this.setLayout(new BorderLayout());
         this.top_container.setLayout(new BorderLayout());
         
-        homeButton.addActionListener(this);
-        add_users.addActionListener(this);
-        new_postit.addActionListener(this);
-        new_tasklist.addActionListener(this);
-        new_poll.addActionListener(this);
+        this.homeButton.addActionListener(this);
+        this.add_users.addActionListener(this);
+        this.new_postit.addActionListener(this);
+        this.new_imagePostIt.addActionListener(this);
+        this.new_tasklist.addActionListener(this);
+        this.new_poll.addActionListener(this);
+        
+        this.new_postit.setPreferredSize(buttonSize);
+        this.new_imagePostIt.setPreferredSize(buttonSize);
+        this.new_tasklist.setPreferredSize(buttonSize);
+        this.new_poll.setPreferredSize(buttonSize);
+        this.add_users.setPreferredSize(buttonSize);
+        
+        this.new_postit.setToolTipText("Nouveau post-it");
+        this.new_imagePostIt.setToolTipText("Nouvelle image");
+        this.new_tasklist.setToolTipText("Nouvelle liste de tâches");
+        this.new_poll.setToolTipText("Nouveau sondage");
+        this.add_users.setToolTipText("Ajouter des utilisateurs à ce dashboard");
         
         this.topRightSide_container.add(new_postit);
+        this.topRightSide_container.add(new_imagePostIt);
         this.topRightSide_container.add(new_tasklist);
         this.topRightSide_container.add(new_poll);
         this.topRightSide_container.add(add_users);
-        this.top_container.add(topRightSide_container, BorderLayout.EAST);
+        this.top_container.add(topRightSide_container, BorderLayout.WEST);
         this.add(widget_container, BorderLayout.CENTER);
         this.add(homeButton, BorderLayout.SOUTH);
         
@@ -72,18 +90,18 @@ public class Dashboard extends Home implements ActionListener {
         try {
             //Recupere tout les widget du dashboard dans la BDD pour les afficher
             while (listeWidgets.next()){
-                switch (listeWidgets.getInt("idTypeWidget")) {
-                    case 1 : {
+                switch (listeWidgets.getString("typeWidget")) {
+                    case "TODOLIST" : {
                         this.widget_container.add(new ToDoList(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
-                                            listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur")));
+                                                    listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur")));
                         break;
                     }
-                    case 2 : {
+                    case "POSTIT" : {
                         this.widget_container.add(new PostIt(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
-                                listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur")));
+                                                                listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur")));
                         break;
                     }
-                    case 3 : {
+                    case "POLL" : {
                         String XMLContent = listeWidgets.getString("contentWidget");
                         org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
                         try {
@@ -98,12 +116,17 @@ public class Dashboard extends Home implements ActionListener {
                                listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
                            }
                         }
-                        catch (JDOMException e) {
-                            System.out.println("handle JDOMException"+e);
+                        catch (JDOMException error) {
+                            JOptionPane.showMessageDialog(null, "handle JDOMException " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
                         } 
-                        catch (IOException e) {
-                            System.out.println("andle IOException"+e);
+                        catch (IOException error) {
+                            JOptionPane.showMessageDialog(null, "handle IOException " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
                         }
+                        break;
+                    }
+                    case "IMAGE" : {
+                        this.widget_container.add(new ImagePostIt(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                                                    listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur")));
                         break;
                     }
                     default : {
@@ -114,7 +137,7 @@ public class Dashboard extends Home implements ActionListener {
             }
         }
         catch (SQLException error) {
-            System.out.println("Impossible d'afficher les widgets ! "+error);
+            JOptionPane.showMessageDialog(null, "Impossible d'afficher les widgets ! "+error, "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
         
         this.add(top_container, BorderLayout.NORTH);
@@ -137,36 +160,20 @@ public class Dashboard extends Home implements ActionListener {
         else if (source == add_users) {
             AddMates addUsersToDashboard = new AddMates(this.idDashboard);
         }
-        else if (source == new_postit) {
-            this.widget_container.add(new PostIt(this.idDashboard));
-            this.revalidate();
-        }
-        else if (source == new_tasklist) {
-            this.widget_container.add(new ToDoList(this.idDashboard));
-            this.revalidate();
-        }
-        else if (source == new_poll){
-            this.widget_container.add(new PollCreator(this.idDashboard, idUser));
+        else {
+            if (source == new_postit) {
+                this.widget_container.add(new PostIt(this.idDashboard));
+            }
+            else if (source == new_imagePostIt) {
+                this.widget_container.add(new ImagePostIt(this.idDashboard));
+            }
+            else if (source == new_tasklist) {
+                this.widget_container.add(new ToDoList(this.idDashboard));
+            }
+            else if (source == new_poll){
+                this.widget_container.add(new PollCreator(this.idDashboard, idUser));
+            }
             this.revalidate();
         }
     }
-    
-    // Code pour l'affichage de widgets depuis un dossier local avec des fichiers .xml
-    /*
-    
-    // Je crée un nouveau fichier .xml
-    ParserXml myParser = new ParserXml();
-    this.idDashboard = 3; // Variable rentrée en dur, à enlever
-    //myParser.creePostIt(idDashboard, this.height, this.width, this.positionX, this.positionY);
-    HashMap dicto = new HashMap();
-    File directory = new File("src/ressources/dashboard_"+idDashboard);        
-    // Avec l'id du dashboard, je vais voir en local pour récupérer les fichiers post it
-    String [] listeFichiers = directory.list();
-    // Pour chaque post it récupéré (au format Hashmap), je crée un nouveau post it (new PostIt) et à la fin je fais un revalidate()
-    for (int i=0; i<directory.listFiles().length; i++) {
-        dicto = myParser.getDataPost("src/ressources/dashboard_"+idDashboard+"/"+listeFichiers[i]);
-        this.add(new PostIt(99999,dicto.get("content").toString()));
-    }
-    
-    */
  }

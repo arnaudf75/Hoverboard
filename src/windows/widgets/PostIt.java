@@ -11,7 +11,6 @@ import javax.swing.JTextArea;
  * @author Cavoleau
  */
 public class PostIt extends Widget {
-    
     JTextArea postit_text = new JTextArea();
     
     /**
@@ -24,7 +23,6 @@ public class PostIt extends Widget {
         this.height = 200;
         this.width = 250;
         this.setBounds(this.positionX, this.positionY, this.width, this.height);
-        
         this.content.add(postit_text);
         postit_text.setRows(9);
         postit_text.setColumns(20);
@@ -35,9 +33,10 @@ public class PostIt extends Widget {
         this.content.add(scrollPane, null);
         this.idDashboard = idDashboard;
         
-        this.idWidget = this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, 2);
+        this.idWidget = this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "POSTIT");
         this.revalidate();
     }
+    
     /**
      * Constructeur de la classe PostIt
      * @param idWidget ID du widge qui va être crée
@@ -63,10 +62,22 @@ public class PostIt extends Widget {
     }
     
     @Override
+    public void refresh(){
+        super.refresh();
+        this.postit_text.setText(this.connexion.getContentWidget(idWidget));
+        this.revalidate();
+    }
+    
+    @Override
+    public void save(){
+        this.connexion.updateWidget(idWidget, this.postit_text.getText(), positionX,positionY,height,width);
+    }
+    
     /**
      * Action effectués lors d'un clic sur un bouton
      * @param event evenement du clic
      */
+    @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         //mise a jour sur la BDD
@@ -87,71 +98,5 @@ public class PostIt extends Widget {
                 this.connexion.deleteWidget(this.idWidget);
             }
         }
-    }
-    
-    @Override
-    public void refresh(){
-        super.refresh();
-        this.postit_text.setText(this.connexion.getContentWidget(idWidget));
-        this.revalidate();
-    }
-    @Override
-    public void save(){
-        String WidgetContent = this.postit_text.getText();
-        this.connexion.updateWidget(idWidget, WidgetContent,positionX,positionY,height,width);
-    }
-    
-    
-    
-    
-    /**
-     * PAS ENCORE UTILISEE, A IMPLEMENTER QUAND LA PARTIE EN LIGNE DE L'APPLICATION SERA TERMINEE
-     * USAGE LOCAL : Crée un fichier .xml contenant les données du post-it.
-     * @param idDashboard
-     * @param height
-     * @param width
-     * @param positionX
-     * @param positionY 
-     */
-    /*public void creePostIt(int idDashboard, int height, int width, int positionX, int positionY) {
-        try {
-            Element postIt = new Element("postIt");
-            this.document = new Document();
-            this.document.setRootElement(postIt);
-            this.document.getRootElement().addContent(new Element("height").addContent(Integer.toString(height)));
-            this.document.getRootElement().addContent(new Element("width").addContent(Integer.toString(width)));
-            this.document.getRootElement().addContent(new Element("positionX").addContent(Integer.toString(positionX)));
-            this.document.getRootElement().addContent(new Element("positionY").addContent(Integer.toString(positionY)));
-            this.document.getRootElement().addContent(new Element("content"));
-            XMLOutputter xmlOutput = new XMLOutputter();
-            xmlOutput.setFormat(Format.getPrettyFormat());
-            File directory = new File ("src/ressources/dashboard_"+idDashboard+"/");
-            xmlOutput.output(this.document, new FileWriter(directory+"/"+Integer.toString(directory.listFiles().length)+".xml"));
-        }
-        catch (IOException error) {
-            System.out.println("Erreur : Impossible de créer le post-it "+error);
-        }
-    }*/
-
-    /**
-     * PAS ENCORE UTILISEE, A IMPLEMENTER QUAND LA PARTIE EN LIGNE DE L'APPLICATION SERA TERMINEE
-     * USAGE LOCAL : Récupère les données des fichiers de post-it au format .xml pour les afficher.
-     * @param postIt
-     * Un fichier .xml contenant les données d'un post-it.
-     * @return 
-     * Dictionnaire contenant les données d'un post-it.
-     */
-    /*public HashMap getDataPost(String postIt) {
-        try {
-            this.document = sax.build(new File(postIt));
-        }
-        catch(IOException | JDOMException error) {
-            System.out.println(error);
-        }
-        Element racine = document.getRootElement();
-        HashMap dicto = new HashMap();
-        dicto.put("content", racine.getChild("content").getText());
-        return (dicto);
-    }*/
-    
+    } 
 }
