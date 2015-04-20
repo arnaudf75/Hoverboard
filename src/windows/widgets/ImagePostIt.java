@@ -1,5 +1,7 @@
 package windows.widgets;
 
+import windows.dashboards.Dashboard;
+
 import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
@@ -45,6 +47,7 @@ public class ImagePostIt extends Widget {
         this.content.add(middle_container);
         this.idDashboard = idDashboard;
         this.idWidget = this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "IMAGE");
+        Dashboard.listWidgets.add(this);
         this.revalidate();
     }
     
@@ -79,6 +82,7 @@ public class ImagePostIt extends Widget {
                 JOptionPane.showMessageDialog(null, "Impossible de mettre à jour l'image de ce widget ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
         }
+        Dashboard.listWidgets.add(this);
         this.revalidate();
     }
     
@@ -89,7 +93,7 @@ public class ImagePostIt extends Widget {
     public void refresh(){
         super.refresh();
         this.pathToImage = this.connexion.getContentWidget(this.idWidget);
-        if (this.pathToImage.equals("")) {
+        if (!this.pathToImage.equals("")) {
             try {
                 BufferedImage image = ImageIO.read(new URL(this.pathToImage));
                 this.content.removeAll();
@@ -108,6 +112,7 @@ public class ImagePostIt extends Widget {
      */
     @Override
     public void save() {
+        super.save();
         if (!this.pathToImage.equals("")) {
             this.connexion.updateWidget(this.idWidget, this.pathToImage, this.positionX, this.positionY, this.height, this.width);
         }
@@ -130,7 +135,7 @@ public class ImagePostIt extends Widget {
                 this.imageLabel.setIcon(new ImageIcon(image));
                 this.content.remove(middle_container);
                 this.content.add(imageLabel);
-                this.repaint();
+                this.revalidate();
             }
             catch (NullPointerException | IllegalArgumentException | IOException error) {
                 JOptionPane.showMessageDialog(null, "Impossible d'ajouter une image à ce widget ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);

@@ -1,5 +1,7 @@
 package windows.widgets;
 
+import windows.dashboards.Dashboard;
+
 import java.awt.event.ActionEvent;
 import java.awt.Rectangle;
 import javax.swing.JOptionPane;
@@ -17,6 +19,7 @@ public class PostIt extends Widget {
      * Constructeur de la classe PostIt
      * @param idDashboard ID du dashboard dans lequel le postit va être ajouté
      */
+    @SuppressWarnings("LeakingThisInConstructor")
     public PostIt(int idDashboard)
     {
         super();
@@ -34,6 +37,7 @@ public class PostIt extends Widget {
         this.idDashboard = idDashboard;
         
         this.idWidget = this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "POSTIT");
+        Dashboard.listWidgets.add(this);
         this.revalidate();
     }
     
@@ -46,6 +50,7 @@ public class PostIt extends Widget {
      * @param height hauteur en pixel
      * @param width largeur en pixel
      */
+    @SuppressWarnings("LeakingThisInConstructor")
     public PostIt(int idWidget, String text, int positionX, int positionY, int height, int width)
     {
         super(idWidget, positionX, positionY, height, width);
@@ -58,6 +63,7 @@ public class PostIt extends Widget {
                                                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBounds(new Rectangle(-4, 1, 397, 198)); 
         content.add(scrollPane, null);        
+        Dashboard.listWidgets.add(this);
         this.revalidate();
     }
     
