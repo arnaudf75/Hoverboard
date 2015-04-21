@@ -109,7 +109,7 @@ public class ImagePostIt extends Widget {
     @Override
     public void save() {
         if (!this.pathToImage.equals("")) {
-            this.connexion.updateWidget(this.idWidget, this.pathToImage, this.positionX, this.positionY, this.height, this.width);
+            this.connexion.updateWidget(idWidget, name.label.getText(), this.pathToImage,positionX,positionY,height,width);
         }
         else {
             JOptionPane.showMessageDialog(null, "Vous devez saisir une URL valide pour sauvegarder ce widget ! ", "ERREUR", JOptionPane.ERROR_MESSAGE);

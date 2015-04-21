@@ -239,6 +239,6 @@ public class Poll extends Widget{
             }
             content=content.concat("</questionlist>");
             content=content.concat("</poll>");
-            this.connexion.updateWidget(idWidget, content,positionX,positionY,height,width);
+            this.connexion.updateWidget(idWidget, name.label.getText(), content,positionX,positionY,height,width);
     }
 }

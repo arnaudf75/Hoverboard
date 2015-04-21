@@ -70,7 +70,7 @@ public class PostIt extends Widget {
     
     @Override
     public void save(){
-        this.connexion.updateWidget(idWidget, this.postit_text.getText(), positionX,positionY,height,width);
+        this.connexion.updateWidget(idWidget, name.label.getText(), this.postit_text.getText(),positionX,positionY,height,width);
     }
     
     /**

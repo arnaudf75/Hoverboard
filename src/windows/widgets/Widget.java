@@ -29,6 +29,7 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
     protected int oldX;
     protected int oldY;
     
+    protected EditableText name = new EditableText("widget"+idWidget);
     protected BDD connexion = new BDD();
     protected Dimension buttonSize = new Dimension(16,15);
     protected JButton save = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/save.png")));
@@ -53,6 +54,7 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
         save.addActionListener(this);
         refresh.addActionListener(this);
         del.addActionListener(this);
+        buttons.add(name);
         buttons.add(save);
         buttons.add(refresh);
         buttons.add(del);
@@ -95,6 +97,7 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
         save.addActionListener(this);
         refresh.addActionListener(this);
         del.addActionListener(this);
+        buttons.add(name);
         buttons.add(save);
         buttons.add(refresh);
         buttons.add(del);
@@ -162,6 +165,7 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
         this.positionY=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "positionY"));
         this.height=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "longueur"));
         this.width=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "largeur"));
+        this.name.label.setText(this.connexion.getFieldWidget(this.idWidget, "namewidget"));
         this.setBounds(positionX, positionY, width, height);
     }
     

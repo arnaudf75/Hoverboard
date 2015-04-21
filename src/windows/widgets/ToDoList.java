@@ -124,7 +124,7 @@ public class ToDoList extends Widget {
                 content=content.concat("</task>");
             }
             content=content.concat("</tasklist>");
-            this.connexion.updateWidget(idWidget, content,positionX,positionY,height,width);
+            this.connexion.updateWidget(idWidget, name.label.getText(), content,positionX,positionY,height,width);
         }
         //Recherche la derniere version sur la BDD
         else if (source == refresh) {

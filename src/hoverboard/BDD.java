@@ -398,8 +398,9 @@ public class BDD {
      * @param height La hauteur du widget.
      * @param width La largeur du widget.
      */
-    public void updateWidget(int idWidget, String contentWidget, int positionX, int positionY, int height, int width) {
+    public void updateWidget(int idWidget, String namewidget, String contentWidget, int positionX, int positionY, int height, int width) {
         this.requete = "UPDATE widgets SET "
+                + "namewidget = '"+namewidget+"', "
                 + "contentWidget = '"+contentWidget+"', "
                 + "positionX = "+positionX+", "
                 + "positionY = "+positionY+", "
