@@ -29,7 +29,7 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
     protected int oldX;
     protected int oldY;
     
-    protected EditableText name = new EditableText("widget"+idWidget);
+    protected EditableText name = new EditableText("nouveau widget");
     protected BDD connexion = new BDD();
     protected Dimension buttonSize = new Dimension(16,15);
     protected JButton save = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/save.png")));
