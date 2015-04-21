@@ -1,9 +1,0 @@
-java driver bdd a mettre dans fichier ini et non en dur dans le java
-
-Indiquer toutes les API (driver java = API), et developper sur leur utilité, donner le site officiel
-Faire tous les IHM
-Diagramme de GANT
-
-Fait :
-- faire TOUS les usecase (chaque fonctionnalité de l'application notemment chargement,
-  activation/descativation de plugin)

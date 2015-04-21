@@ -3,17 +3,20 @@ package windows.dashboards;
 import hoverboard.User;
 import windows.Home;
 import windows.menus.newdashboard.AddMates;
-import windows.widgets.Widget;
 import windows.widgets.ImagePostIt;
 import windows.widgets.Poll;
 import windows.widgets.PollCreator;
 import windows.widgets.PostIt;
 import windows.widgets.ToDoList;
+import windows.widgets.Widget;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.io.IOException;
 import java.io.StringReader;
 import java.sql.ResultSet;
@@ -37,7 +40,7 @@ import org.jdom2.input.SAXBuilder;
 public class Dashboard extends Home implements ActionListener {
     private int idDashboard = -1;
     public static final ArrayList<Widget> listWidgets = new ArrayList();
-    private Dimension buttonSize = new Dimension(32,32);
+    private final Dimension buttonSize = new Dimension(32,32);
     private final JButton homeButton = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/home.png")));
     private final JButton new_postit = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/postit_icon.png")));
     private final JButton new_imagePostIt = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/image_icon.png")));
@@ -46,7 +49,15 @@ public class Dashboard extends Home implements ActionListener {
     private final JButton add_users = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/addMates.png")));
     private final JButton refreshAllWidgets = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/refreshAll.png")));
     private final JButton saveAllWidgets = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/saveAll.png")));
-    private final JDesktopPane widget_container = new JDesktopPane();
+    private final JDesktopPane widget_container = new JDesktopPane() {
+        @Override
+        public void paintComponent(Graphics graphics) {    
+            super.paintComponent(graphics);
+            Graphics2D graphic2D = (Graphics2D) graphics;
+            Image image = new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/background.png")).getImage();
+            graphic2D.drawImage(image, 0, 0, getSize().width, getSize().height, this);
+        }
+    };
     private final JPanel topLeftSide_container = new JPanel();
     private final JPanel topRightSide_container = new JPanel();
     private final JPanel top_container = new JPanel();
