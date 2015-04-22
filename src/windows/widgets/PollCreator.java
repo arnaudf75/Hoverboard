@@ -5,6 +5,8 @@
  */
 package windows.widgets;
 
+import windows.dashboards.Dashboard;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -22,6 +24,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+
 
 /**
  *
@@ -72,6 +75,7 @@ public class PollCreator extends Widget{
         content.add(scrollPane);
         this.idDashboard = idDashboard;
         this.idWidget=this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "POLL");
+        Dashboard.listWidgets.add(this);
         this.revalidate();
     }
     
@@ -85,6 +89,7 @@ public class PollCreator extends Widget{
      * @param width largeur en pixel
      * @param idUser utilisateur actuel
      */
+    @SuppressWarnings("LeakingThisInConstructor")
     public PollCreator(int idWidget, String contenuWidget, int positionX, int positionY, int height, int width, int idUser)
     {
         super(idWidget, positionX, positionY, height, width);
@@ -104,30 +109,31 @@ public class PollCreator extends Widget{
         //Creation en fonction du XML du contenu du widget
         org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
         try {
-                Document doc = saxBuilder.build(new StringReader(contenuWidget));
-                Element poll = doc.getRootElement();
-                this.published=0;
-                List<Element> questionlist = poll.getChild("questionlist").getChildren();
-                for(int cpt=0;cpt<questionlist.size();cpt++){
-                    QuestionCreator newone =new QuestionCreator(questionlist.get(cpt).getAttributeValue("name"));
-                    this.questionList.add(newone);
-                    List<Element> answerlist = questionlist.get(cpt).getChild("answerlist").getChildren();
-                    for(int cpt2=0;cpt2<answerlist.size();cpt2++){
-                        newone.answerList.add(new AnswerCreator(answerlist.get(cpt2).getText()));
-                    }
+            Document doc = saxBuilder.build(new StringReader(contenuWidget));
+            Element poll = doc.getRootElement();
+            this.published=0;
+            List<Element> questionlist = poll.getChild("questionlist").getChildren();
+            for(int cpt=0;cpt<questionlist.size();cpt++){
+                QuestionCreator newone =new QuestionCreator(questionlist.get(cpt).getAttributeValue("name"));
+                this.questionList.add(newone);
+                List<Element> answerlist = questionlist.get(cpt).getChild("answerlist").getChildren();
+                for(int cpt2=0;cpt2<answerlist.size();cpt2++){
+                    newone.answerList.add(new AnswerCreator(answerlist.get(cpt2).getText()));
                 }
-                bottom_container.add(button_container, BorderLayout.CENTER);
-                button_container.add(newQuestion, BorderLayout.NORTH);
-                button_container.add(publishPoll, BorderLayout.SOUTH);
-                newQuestion.addActionListener(this);
-                publishPoll.addActionListener(this);               
-            } 
-            catch (JDOMException e) {
-                // handle JDOMException
-            } 
-            catch (IOException e) {
-                // handle IOException
             }
+            bottom_container.add(button_container, BorderLayout.CENTER);
+            button_container.add(newQuestion, BorderLayout.NORTH);
+            button_container.add(publishPoll, BorderLayout.SOUTH);
+            newQuestion.addActionListener(this);
+            publishPoll.addActionListener(this);               
+        } 
+        catch (JDOMException e) {
+            // handle JDOMException
+        } 
+        catch (IOException e) {
+            // handle IOException
+        }
+        Dashboard.listWidgets.add(this);
         this.revalidate();
     }
     
@@ -208,6 +214,7 @@ public class PollCreator extends Widget{
     
     @Override
     public void save(){
+        super.save();
         Component[] compsQuestion = this.questionList.getComponents();
         Component[] compsAnswer;
             String content = "";

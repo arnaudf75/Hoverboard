@@ -135,7 +135,9 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
             //System.out.println(oldX+"  --- "+oldY);
             positionX += event.getX()-oldX;
             positionY += event.getY()-oldY;
-            setBounds(positionX,positionY,width,height);
+            this.height = this.getHeight();
+            this.width = this.getWidth();
+            setBounds(positionX,positionY,this.getWidth(),this.getHeight());
        //} 
     }
     public void actionPerformed(ActionEvent event) {
@@ -170,7 +172,8 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
     }
     
     public void save(){
-        
+        this.height = this.getHeight();
+        this.width = this.getWidth();
     }
     
     /**

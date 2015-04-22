@@ -1,5 +1,7 @@
 package windows.widgets;
 
+import windows.dashboards.Dashboard;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -15,6 +17,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+
 
 /**
  *
@@ -54,6 +57,7 @@ public class ToDoList extends Widget {
         content.add(scrollPane);
         this.idDashboard = idDashboard;
         this.idWidget=this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "TODOLIST");
+        Dashboard.listWidgets.add(this);
         this.revalidate();
     }
     
@@ -98,6 +102,7 @@ public class ToDoList extends Widget {
         catch (IOException e) {
             // handle IOException
         }
+        Dashboard.listWidgets.add(this);
         this.revalidate();
     }
     
@@ -115,6 +120,7 @@ public class ToDoList extends Widget {
         }
         //
         else if (source == save){
+            super.save();
             Component[] comps = this.taskList.getComponents();
             String content = "";
             content=content.concat("<tasklist>");
