@@ -104,7 +104,7 @@ public class BDD {
      * @return L'id du widget issu de l'insertion dans la base de données. Si cette dernière échoue, la fonction renvoie -1.
      */
     public int ajouteWidget(int positionX, int positionY, int height, int width, int idDashboard, String typeWidget) {
-        this.requete = "INSERT INTO widgets VALUES (NULL, '', "+positionX+", "+positionY+", "+height+", "+width+", '"+typeWidget+"', "+idDashboard+", NULL ) ";
+        this.requete = "INSERT INTO widgets VALUES (NULL, 'nouveau widget', '', "+positionX+", "+positionY+", "+height+", "+width+", '"+typeWidget+"',0, "+idDashboard+", NULL ) ";
         int idWidget = -1;
         try {
             this.statement.executeUpdate(this.requete, Statement.RETURN_GENERATED_KEYS);
@@ -141,7 +141,9 @@ public class BDD {
      * @param idWidget L'id du widget que l'utilisateur veut supprimer.
      */
     public void deleteWidget(int idWidget) {
-        this.requete = "DELETE FROM widgets WHERE idWidget =" +idWidget;
+        this.requete = "UPDATE widgets SET "
+                + "isDeleted = 1 "
+                + "WHERE idWidget = "+idWidget;
         try {
             this.statement.executeUpdate(requete);
         }
@@ -243,7 +245,7 @@ public class BDD {
      * @return Les données de chaque widget (id, contenu, position et dimensions) dans un ResultSet.
      */
     public ResultSet getWidgets(int idDashboard) {
-        this.requete = "SELECT * FROM widgets WHERE idDashboard = "+idDashboard;
+        this.requete = "SELECT * FROM widgets WHERE idDashboard = "+idDashboard+" AND isDeleted = 0";
         try {
             this.result = statement.executeQuery(requete);
         }
@@ -400,7 +402,7 @@ public class BDD {
      */
     public void updateWidget(int idWidget, String namewidget, String contentWidget, int positionX, int positionY, int height, int width) {
         this.requete = "UPDATE widgets SET "
-                + "namewidget = '"+namewidget+"', "
+                + "nameWidget = '"+namewidget+"', "
                 + "contentWidget = '"+contentWidget+"', "
                 + "positionX = "+positionX+", "
                 + "positionY = "+positionY+", "

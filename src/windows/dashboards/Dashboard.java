@@ -143,24 +143,32 @@ public class Dashboard extends Home implements ActionListener {
                     }
                     case "POLL" : {
                         String XMLContent = listeWidgets.getString("contentWidget");
-                        org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
-                        try {
-                           Document doc = saxBuilder.build(new StringReader(XMLContent));
-                           Element poll = doc.getRootElement();
-                           if(Boolean.valueOf(poll.getAttributeValue("published"))){
-                               this.widget_container.add(new Poll(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
-                               listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
-                           }
-                           else {
-                               this.widget_container.add(new PollCreator(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
-                               listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
-                           }
+                        if(XMLContent.isEmpty())
+                        {
+                            this.widget_container.add(new PollCreator(listeWidgets.getInt("idWidget"), "<poll published='false'><questionlist></questionlist></poll>", listeWidgets.getInt("positionX"),
+                                   listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
                         }
-                        catch (JDOMException error) {
-                            JOptionPane.showMessageDialog(null, "handle JDOMException " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-                        } 
-                        catch (IOException error) {
-                            JOptionPane.showMessageDialog(null, "handle IOException " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                        else
+                        {
+                            org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
+                            try {
+                               Document doc = saxBuilder.build(new StringReader(XMLContent));
+                               Element poll = doc.getRootElement();
+                               if(Boolean.valueOf(poll.getAttributeValue("published"))){
+                                   this.widget_container.add(new Poll(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                                   listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
+                               }
+                               else {
+                                   this.widget_container.add(new PollCreator(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                                   listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
+                               }
+                            }
+                            catch (JDOMException error) {
+                                JOptionPane.showMessageDialog(null, "handle JDOMException " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                            } 
+                            catch (IOException error) {
+                                JOptionPane.showMessageDialog(null, "handle IOException " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                            }
                         }
                         break;
                     }
