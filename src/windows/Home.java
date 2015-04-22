@@ -1,16 +1,20 @@
 package windows;
 
+import hoverboard.AppProperties;
 import hoverboard.BDD;
 import hoverboard.User;
 import windows.menus.infouser.InfoUser;
 import windows.menus.myplugins.ListeMyPlugins;
 import windows.menus.newdashboard.CreateDashboard;
+import windows.menus.themes.MenuTheme;
+import windows.menus.themes.Theme;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +32,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.plaf.FontUIResource;
 
 /**
  * Home est la page d'accueil de l'utilisateur, elle contient tous les widgets du dashboard.
@@ -46,10 +51,12 @@ public abstract class Home extends JFrame implements ActionListener {
     protected final JMenuItem plugins_library = new JMenuItem("Aller à la bibliothèque de plugins en ligne");
     protected final JMenu menuOptions = new JMenu("Options");
     protected final JMenuItem options_preferences = new JMenuItem("Préférences");
+    protected final JMenuItem options_themes = new JMenuItem("Apparence et thèmes");
     protected final JMenuItem options_infoUser = new JMenuItem("Mes informations");
     protected final JMenu menuHelp = new JMenu("Aide");
     protected final JMenuItem about_help = new JMenuItem("A propos d'Hoverboard");
     protected final JMenuItem about_support = new JMenuItem("Accèder au support en ligne");
+    protected final JMenu menuQuit = new JMenu("Quitter");
     protected final JMenuItem menuDisconnect = new JMenuItem("Se déconnecter");
     protected final JPanel main_container = new JPanel();
     
@@ -58,13 +65,18 @@ public abstract class Home extends JFrame implements ActionListener {
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Home() {
-        
+        AppProperties.getProperties();
+        if (AppProperties.themeSelected.equals("DEFAULT")) {
+            Theme.setTheme(new File("/themes/"+AppProperties.themeSelected+".xml"));
+        }
+        Theme.setUIFont(new FontUIResource(Theme.nomFont, Font.BOLD, Theme.fontSize));
         main_container.setLayout(new BorderLayout());
         
         newDashboard.addActionListener(this);
         menu_myPlugins.addActionListener(this);
         plugins_library.addActionListener(this);
         options_preferences.addActionListener(this);
+        options_themes.addActionListener(this);
         options_infoUser.addActionListener(this);
         about_help.addActionListener(this);
         about_support.addActionListener(this);
@@ -74,15 +86,17 @@ public abstract class Home extends JFrame implements ActionListener {
         menuPlugins.add(menu_myPlugins);
         menuPlugins.add(plugins_library);
         menuOptions.add(options_preferences);
+        menuOptions.add(options_themes);
         menuOptions.add(options_infoUser);
         menuHelp.add(about_help);
         menuHelp.add(about_support);
+        menuQuit.add(menuDisconnect);
 
         menu.add(new_item);
         menu.add(menuPlugins);
         menu.add(menuOptions);
         menu.add(menuHelp);
-        menu.add(menuDisconnect);
+        menu.add(menuQuit);
         
         setJMenuBar(menu);
         
@@ -142,6 +156,9 @@ public abstract class Home extends JFrame implements ActionListener {
         else if (source == options_preferences) {
             
         }
+        else if (source == options_themes) {
+            MenuTheme menuTheme = new MenuTheme();
+        }
         else if (source == options_infoUser) {
             InfoUser myInfos = new InfoUser(this.utilisateur);
         }
@@ -171,5 +188,5 @@ public abstract class Home extends JFrame implements ActionListener {
             this.dispose();
             Login login = new Login();
         }
-    }
+    } 
 }

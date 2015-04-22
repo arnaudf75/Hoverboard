@@ -4,6 +4,7 @@ import windows.dashboards.Dashboard;
 
 import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -16,13 +17,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 /**
- * Image est la classe affichant une image dans un widget après sélection de celle-ci depuis une URL. L'image doit être hébergée sur un site en ligne pour l'afficher sur
+ * Image est la classe affichant une image dans un widget après sélection de celle-ci depuis une URL.
+ * L'image doit être hébergée sur un site en ligne pour l'afficher sur
  * tous les postes des utilisateurs du dashboard.
  * @author Arnaud
  */
 public class ImagePostIt extends Widget {
     
     private String pathToImage = "";
+    private ImageIcon image = new ImageIcon();
     private final JButton validate = new JButton("Valider");
     private final JLabel imageLabel = new JLabel();
     private final JLabel linkLabel = new JLabel("Lien HTTP vers l'image :");
@@ -73,9 +76,10 @@ public class ImagePostIt extends Widget {
         }
         else {
             try {
-                BufferedImage image = ImageIO.read(new URL(pathToImage));
+                BufferedImage bufferedImage = ImageIO.read(new URL(pathToImage));
                 this.content.add(imageLabel);
-                this.imageLabel.setIcon(new ImageIcon(image));
+                this.image = new ImageIcon(new ImageIcon(bufferedImage).getImage().getScaledInstance(this.width, this.height, Image.SCALE_DEFAULT));
+                this.imageLabel.setIcon(image);
                 this.pathToImage = pathToImage;
             }
             catch (IOException error) {
@@ -95,10 +99,11 @@ public class ImagePostIt extends Widget {
         this.pathToImage = this.connexion.getContentWidget(this.idWidget);
         if (!this.pathToImage.equals("")) {
             try {
-                BufferedImage image = ImageIO.read(new URL(this.pathToImage));
+                BufferedImage bufferedImage = ImageIO.read(new URL(this.pathToImage));
                 this.content.removeAll();
                 this.content.add(imageLabel);
-                this.imageLabel.setIcon(new ImageIcon(image));
+                this.image = new ImageIcon(new ImageIcon(bufferedImage).getImage().getScaledInstance(this.width, this.height, Image.SCALE_DEFAULT));
+                this.imageLabel.setIcon(image);
                 this.repaint();
             }
             catch (IllegalArgumentException | IOException | NullPointerException error) {
@@ -131,8 +136,9 @@ public class ImagePostIt extends Widget {
         if (source == validate) {
             this.pathToImage = this.imageField.getText();
             try {
-                BufferedImage image = ImageIO.read(new URL(this.pathToImage));
-                this.imageLabel.setIcon(new ImageIcon(image));
+                BufferedImage bufferedImage = ImageIO.read(new URL(this.pathToImage));
+                this.image = new ImageIcon(new ImageIcon(bufferedImage).getImage().getScaledInstance(this.width, this.height, Image.SCALE_DEFAULT));
+                this.imageLabel.setIcon(image);
                 this.content.remove(middle_container);
                 this.content.add(imageLabel);
                 this.revalidate();

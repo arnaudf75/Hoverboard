@@ -31,6 +31,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import windows.menus.themes.Theme;
 
 
 /**
@@ -54,7 +55,7 @@ public class Dashboard extends Home implements ActionListener {
         public void paintComponent(Graphics graphics) {    
             super.paintComponent(graphics);
             Graphics2D graphic2D = (Graphics2D) graphics;
-            Image image = new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/background.png")).getImage();
+            Image image = Theme.background.getImage();
             graphic2D.drawImage(image, 0, 0, getSize().width, getSize().height, this);
         }
     };
@@ -222,4 +223,4 @@ public class Dashboard extends Home implements ActionListener {
             this.revalidate();
         }
     }
- }
+}
