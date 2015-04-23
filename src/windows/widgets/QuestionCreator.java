@@ -74,6 +74,7 @@ public class QuestionCreator extends JPanel implements ActionListener {
             Container parent =this.getParent();
             parent.remove(this);//retire la tache de la lsite de tache
             parent.revalidate();
+            parent.repaint();
         }
         else if (source == newAnswer){
             this.answerList.add(new AnswerCreator("Nouvelle Réponse"));

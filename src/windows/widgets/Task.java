@@ -62,6 +62,7 @@ class Task extends JPanel implements ActionListener{
             Container parent =this.getParent();
             parent.remove(this);//retire la tache de la lsite de tache
             parent.revalidate();
+            parent.repaint();
         }
     }
 }

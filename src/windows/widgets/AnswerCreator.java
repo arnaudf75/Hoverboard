@@ -36,6 +36,9 @@ public class AnswerCreator extends JPanel implements ActionListener{
             Container parent =this.getParent();
             parent.remove(this);//retire la réponse
             parent.revalidate();
+            parent.repaint();
+            parent.getParent().setMaximumSize( parent.getParent().getPreferredSize() );
+            //Pour que la taille de la liste retrecisse
         }
     }
     
