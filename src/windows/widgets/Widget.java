@@ -2,9 +2,12 @@ package windows.widgets;
 
 import hoverboard.BDD;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -79,6 +82,14 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
             @Override public void mouseExited(MouseEvent e) {}
         }
         );
+        this.addComponentListener(new ComponentAdapter() 
+{  
+        public void componentResized(ComponentEvent evt) {
+            Component c = (Component)evt.getSource();
+            ((Widget)c).setSavedHeight(c.getHeight());
+            ((Widget)c).setSavedWidth(c.getHeight());
+        }
+});
     }
     
     public Widget(int idWidget, int positionX, int positionY, int height, int width)
@@ -182,5 +193,21 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
      */
     @Override
     public void mouseMoved(MouseEvent event) {}
+    
+    public int getSavedHeight(){
+        return this.height;
+    }
+    
+    public int getSavedWidth(){
+        return this.height;
+    }
+    
+    public void setSavedHeight(int i){
+        this.height=i;
+    }
+    
+    public void setSavedWidth(int i){
+        this.width=i;
+    }
 
 }
