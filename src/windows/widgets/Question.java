@@ -6,6 +6,7 @@
 package windows.widgets;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,5 +29,7 @@ public class Question extends JPanel{
         this.answerList.revalidate();
         
         this.questionName.setText(name);
+        this.setMaximumSize( this.getPreferredSize() );
+        this.setAlignmentX( Component.LEFT_ALIGNMENT );//0.0
     }
 }

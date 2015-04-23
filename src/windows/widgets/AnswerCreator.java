@@ -6,6 +6,7 @@
 package windows.widgets;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +26,8 @@ public class AnswerCreator extends JPanel implements ActionListener{
         this.add(delAnswer, BorderLayout.EAST);
         delAnswer.addActionListener(this);
         this.add(name, BorderLayout.WEST);
+        this.setMaximumSize( this.getPreferredSize() );
+        this.setAlignmentX( Component.LEFT_ALIGNMENT );//0.0
     }
     @Override
     public void actionPerformed(ActionEvent event) {

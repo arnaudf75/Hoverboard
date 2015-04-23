@@ -1,6 +1,7 @@
 package windows.widgets;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Container;
@@ -25,6 +26,8 @@ class Task extends JPanel implements ActionListener{
         this.add(delTask);
         done.addActionListener(this);
         delTask.addActionListener(this);
+        this.setMaximumSize( this.getPreferredSize() );
+        this.setAlignmentX( Component.LEFT_ALIGNMENT );//0.0
     }
     
     public Task(String name,boolean checked)
@@ -38,6 +41,8 @@ class Task extends JPanel implements ActionListener{
         delTask.addActionListener(this);
         if(checked == true)
             taskName.label.setForeground(Color.LIGHT_GRAY);
+        this.setMaximumSize( this.getPreferredSize() );
+        this.setAlignmentX( Component.LEFT_ALIGNMENT );//0.0
     }
     
     @Override

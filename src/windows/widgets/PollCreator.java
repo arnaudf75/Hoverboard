@@ -120,6 +120,7 @@ public class PollCreator extends Widget{
                 for(int cpt2=0;cpt2<answerlist.size();cpt2++){
                     newone.answerList.add(new AnswerCreator(answerlist.get(cpt2).getText()));
                 }
+                newone.setMaximumSize( newone.getPreferredSize() );
             }
             bottom_container.add(button_container, BorderLayout.CENTER);
             button_container.add(newQuestion, BorderLayout.NORTH);
@@ -196,6 +197,7 @@ public class PollCreator extends Widget{
                     for(int cpt2=0;cpt2<answerlist.size();cpt2++){
                         newone.answerList.add(new AnswerCreator(answerlist.get(cpt2).getText()));
                     }
+                    newone.setMaximumSize( newone.getPreferredSize() );
                 }
             } 
             catch (JDOMException e) {

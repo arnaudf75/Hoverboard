@@ -6,6 +6,7 @@
 package windows.widgets;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,6 +44,8 @@ public class QuestionCreator extends JPanel implements ActionListener {
         actionList.add(delQuestion, BorderLayout.EAST);
         delQuestion.addActionListener(this);
         newAnswer.addActionListener(this);
+        this.setMaximumSize( this.getPreferredSize() );
+        this.setAlignmentX( Component.LEFT_ALIGNMENT );//0.0
     }
     
     public QuestionCreator(String name)
@@ -61,6 +64,8 @@ public class QuestionCreator extends JPanel implements ActionListener {
         delQuestion.addActionListener(this);
         newAnswer.addActionListener(this);
         this.questionName.label.setText(name);
+        this.setMaximumSize( this.getPreferredSize() );
+        this.setAlignmentX( Component.LEFT_ALIGNMENT );//0.0
     }
     @Override
     public void actionPerformed(ActionEvent event) {
@@ -72,6 +77,7 @@ public class QuestionCreator extends JPanel implements ActionListener {
         }
         else if (source == newAnswer){
             this.answerList.add(new AnswerCreator("Nouvelle Réponse"));
+            this.setMaximumSize( this.getPreferredSize() );
             this.answerList.revalidate();//pour qu'elle s'affiche bien sans avoir a deplacer le widget
         }
     }

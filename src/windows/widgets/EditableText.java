@@ -77,5 +77,6 @@ public class EditableText extends JPanel {
         label.revalidate();//met a jour la taille en fonction du nouveau texte
         validate();//met a jour les changements de layout sinon le nouveau champs est decalé
         repaint();//reaffiche apres les changement sinon l'ancien champ reste affiché en arriere plan
+        this.getParent().setMaximumSize( this.getParent().getPreferredSize() );//Met a jour la taille du parent
     }
 }

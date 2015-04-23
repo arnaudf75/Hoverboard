@@ -103,7 +103,9 @@ public class Poll extends Widget{
                     newone.answerList.add(newAnswer);
                     group.add(newAnswer.select);
                     newAnswer.select.setSelected(true);
+                    newAnswer.setMaximumSize( newAnswer.getPreferredSize() );
                 }
+                newone.setMaximumSize( newone.getPreferredSize() );
             }
             bottom_container.add(sendAnswers, BorderLayout.CENTER);
             sendAnswers.addActionListener(this);                
@@ -205,7 +207,9 @@ public class Poll extends Widget{
                         newone.answerList.add(newAnswer);
                         group.add(newAnswer.select);
                         newAnswer.select.setSelected(true);
+                        newAnswer.setMaximumSize( newAnswer.getPreferredSize() );
                     }
+                    newone.setMaximumSize( newone.getPreferredSize() );
                 }
             } 
             catch (JDOMException e) {

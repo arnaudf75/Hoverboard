@@ -6,6 +6,7 @@
 package windows.widgets;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -60,6 +61,8 @@ public class Answer extends JPanel{
         }
         );
         }
+        this.setMaximumSize( this.getPreferredSize() );
+        this.setAlignmentX( Component.LEFT_ALIGNMENT );//0.0
     }
 
 }
