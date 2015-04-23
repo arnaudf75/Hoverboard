@@ -120,21 +120,27 @@ public class ToDoList extends Widget {
         }
         //
         else if (source == save){
-            super.save();
-            Component[] comps = this.taskList.getComponents();
-            String content = "";
-            content=content.concat("<tasklist>");
-            for(int cpt=0;cpt<comps.length;cpt++){
-                content=content.concat("<task done=\""+((Task)comps[cpt]).done.isSelected()+"\">");
-                content=content.concat("<name>"+((Task)comps[cpt]).taskName.label.getText()+"</name>");
-                content=content.concat("</task>");
-            }
-            content=content.concat("</tasklist>");
-            this.connexion.updateWidget(idWidget, name.label.getText(), content,positionX,positionY,height,width);
+            this.save();
         }
         //Recherche la derniere version sur la BDD
         else if (source == refresh) {
-            super.refresh();
+            this.refresh();
+            this.revalidate();
+        }
+        //Supprime le widget
+        else if (source == del){
+            int option = JOptionPane.showConfirmDialog(null, "Êtes vous sûr de bien vouloir supprimer cette liste de tâches ?",
+            "Confirmez la suppression", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            
+            if (option == JOptionPane.OK_OPTION) {
+                this.dispose();
+                this.connexion.deleteWidget(this.idWidget);
+            }
+        }
+    }
+    
+    public void refresh(){
+        super.refresh();
             String contenuWidget = this.connexion.getContentWidget(idWidget);
             this.taskList.removeAll();
             org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
@@ -151,17 +157,18 @@ public class ToDoList extends Widget {
             catch (IOException e) {
                 // handle IOException
             }
-                this.revalidate();
-            }
-        //Supprime le widget
-        else if (source == del){
-            int option = JOptionPane.showConfirmDialog(null, "Êtes vous sûr de bien vouloir supprimer cette liste de tâches ?",
-            "Confirmez la suppression", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            
-            if (option == JOptionPane.OK_OPTION) {
-                this.dispose();
-                this.connexion.deleteWidget(this.idWidget);
-            }
+    }
+    public void save(){
+        super.save();
+        Component[] comps = this.taskList.getComponents();
+        String content = "";
+        content=content.concat("<tasklist>");
+        for(int cpt=0;cpt<comps.length;cpt++){
+            content=content.concat("<task done=\""+((Task)comps[cpt]).done.isSelected()+"\">");
+            content=content.concat("<name>"+((Task)comps[cpt]).taskName.label.getText()+"</name>");
+            content=content.concat("</task>");
         }
+        content=content.concat("</tasklist>");
+        this.connexion.updateWidget(idWidget, name.label.getText(), content,positionX,positionY,height,width);
     }
 }
