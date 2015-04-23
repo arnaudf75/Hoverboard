@@ -1,5 +1,6 @@
 package windows.widgets;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Container;
@@ -35,13 +36,22 @@ class Task extends JPanel implements ActionListener{
         taskName.label.setText(name);
         done.addActionListener(this);
         delTask.addActionListener(this);
+        if(checked == true)
+            taskName.label.setForeground(Color.LIGHT_GRAY);
     }
     
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source == done) {
-
+            if(done.isSelected())
+            {
+                taskName.label.setForeground(Color.LIGHT_GRAY);
+            }
+            else
+            {
+                taskName.label.setForeground(Color.BLACK);
+            }
         }
         else if (source == delTask){
             Container parent =this.getParent();
