@@ -2,6 +2,8 @@ package windows;
 
 import hoverboard.BDD;
 import hoverboard.User;
+import windows.dashboards.Dashboard;
+import windows.dashboards.DashboardPreview;
 import windows.menus.infouser.InfoUser;
 import windows.menus.myplugins.ListeMyPlugins;
 import windows.menus.newdashboard.CreateDashboard;
@@ -9,6 +11,10 @@ import windows.menus.newdashboard.CreateDashboard;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Toolkit;
@@ -22,6 +28,7 @@ import java.nio.file.StandardCopyOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -33,42 +40,55 @@ import javax.swing.JPanel;
  * Home est la page d'accueil de l'utilisateur, elle contient tous les widgets du dashboard.
  * @author Arnaud
  */
-public abstract class Home extends JFrame implements ActionListener {
+public class Home extends JFrame implements ActionListener {
     protected BDD connexion = new BDD();
     protected User utilisateur = null;
-    protected int idUser = -1;
-    protected final Dimension windowSize = Toolkit.getDefaultToolkit().getScreenSize();
-    protected final JMenuBar menu = new JMenuBar();
-    protected final JMenu new_item = new JMenu("Nouveau");
-    protected final JMenuItem newDashboard = new JMenuItem("Dashboard");
-    protected final JMenu menuPlugins = new JMenu("Plugins");
-    protected final JMenuItem menu_myPlugins = new JMenuItem("Afficher mes plugins");
-    protected final JMenuItem plugins_library = new JMenuItem("Aller à la bibliothèque de plugins en ligne");
-    protected final JMenu menuOptions = new JMenu("Options");
-    protected final JMenuItem options_preferences = new JMenuItem("Préférences");
-    protected final JMenuItem options_infoUser = new JMenuItem("Mes informations");
-    protected final JMenu menuHelp = new JMenu("Aide");
-    protected final JMenuItem about_help = new JMenuItem("A propos d'Hoverboard");
-    protected final JMenuItem about_support = new JMenuItem("Accèder au support en ligne");
-    protected final JMenuItem menuDisconnect = new JMenuItem("Se déconnecter");
-    protected final JPanel main_container = new JPanel();
+    private final JButton homeButton = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/home.png")));
+    private final Dimension windowSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private final JMenuBar menu = new JMenuBar();
+    private final JMenu new_item = new JMenu("Nouveau");
+    private final JMenuItem newDashboard = new JMenuItem("Dashboard");
+    private final JMenu menuPlugins = new JMenu("Plugins");
+    private final JMenuItem menu_myPlugins = new JMenuItem("Afficher mes plugins");
+    private final JMenuItem plugins_library = new JMenuItem("Aller à la bibliothèque de plugins en ligne");
+    private final JMenu menuOptions = new JMenu("Options");
+    private final JMenuItem options_preferences = new JMenuItem("Préférences");
+    private final JMenuItem options_infoUser = new JMenuItem("Mes informations");
+    private final JMenu menuHelp = new JMenu("Aide");
+    private final JMenuItem about_help = new JMenuItem("A propos d'Hoverboard");
+    private final JMenuItem about_support = new JMenuItem("Accèder au support en ligne");
+    private final JMenuItem menuDisconnect = new JMenuItem("Se déconnecter");
+    private final JPanel center_container = new JPanel();
+    private final JPanel bottom_container = new JPanel();
+    private final JPanel main_container = new JPanel() {
+        @Override
+        public void paintComponent(Graphics graphics) {    
+            super.paintComponent(graphics);
+            Graphics2D graphic2D = (Graphics2D) graphics;
+            Image image = new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/background.png")).getImage();
+            graphic2D.drawImage(image, 0, 0, getSize().width, getSize().height, this);
+        }
+    };
     
     /**
      * Crée la fenêtre d'accueil de l'utilisateur, comportant les menus lui permettant d'accéder à ses options, etc.
+     * @param user
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public Home() {
-        
-        main_container.setLayout(new BorderLayout());
-        
-        newDashboard.addActionListener(this);
-        menu_myPlugins.addActionListener(this);
-        plugins_library.addActionListener(this);
-        options_preferences.addActionListener(this);
-        options_infoUser.addActionListener(this);
-        about_help.addActionListener(this);
-        about_support.addActionListener(this);
-        menuDisconnect.addActionListener(this);
+    public Home(User user) {
+
+        this.main_container.setLayout(new BorderLayout());
+
+        this.center_container.setPreferredSize(new Dimension(400,400));
+        this.homeButton.addActionListener(this);
+        this.newDashboard.addActionListener(this);
+        this.menu_myPlugins.addActionListener(this);
+        this.plugins_library.addActionListener(this);
+        this.options_preferences.addActionListener(this);
+        this.options_infoUser.addActionListener(this);
+        this.about_help.addActionListener(this);
+        this.about_support.addActionListener(this);
+        this.menuDisconnect.addActionListener(this);
 
         new_item.add(newDashboard);
         menuPlugins.add(menu_myPlugins);
@@ -84,7 +104,14 @@ public abstract class Home extends JFrame implements ActionListener {
         menu.add(menuHelp);
         menu.add(menuDisconnect);
         
-        setJMenuBar(menu);
+        this.setJMenuBar(menu);
+        
+        this.getDashboards(User.getIdUser());
+         
+
+        this.bottom_container.add(homeButton);
+        this.main_container.add(center_container, BorderLayout.CENTER);
+        this.main_container.add(bottom_container, BorderLayout.SOUTH);
         
        /* ResultSet myPlugins = connexion.getMyPlugins(idUser);
         try {
@@ -102,7 +129,8 @@ public abstract class Home extends JFrame implements ActionListener {
         catch (SQLException error) {
             JOptionPane.showMessageDialog(null, "Impossible d'accèder à vos plugins ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
         }*/
-        
+
+        this.setTitle("Hoverboard");
         this.setContentPane(main_container);
         this.setSize(windowSize);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -119,12 +147,17 @@ public abstract class Home extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-
-        if (source == newDashboard) {
-            CreateDashboard createDash = new CreateDashboard(this.utilisateur.getIdUser());
+        if (source == homeButton) {
+            Dashboard.listWidgets.clear();
+            this.center_container.removeAll();
+            this.getDashboards(User.getIdUser());
+            this.revalidate();
+        }
+        else if (source == newDashboard) {
+            CreateDashboard createDash = new CreateDashboard(User.getIdUser());
         }
         else if (source == menu_myPlugins) {
-            ListeMyPlugins myPlugins = new ListeMyPlugins(this.utilisateur.getIdUser());
+            ListeMyPlugins myPlugins = new ListeMyPlugins(User.getIdUser());
         }
         else if (source == plugins_library) {
             if (Desktop.isDesktopSupported() ) {
@@ -170,6 +203,27 @@ public abstract class Home extends JFrame implements ActionListener {
             cookie.delete();
             this.dispose();
             Login login = new Login();
+        }
+    }
+    
+    public void getDashboards(int idUser) {
+        ResultSet listeDashboard = connexion.getDashboards(idUser);
+        try {
+            listeDashboard.last();
+            int numberRows = listeDashboard.getRow()/5;
+            listeDashboard.beforeFirst();
+            this.center_container.setLayout(new GridLayout(numberRows,1));
+            while (listeDashboard.next()) {
+                int idDashboard = listeDashboard.getInt("idDashboard");
+                int isAdmin = listeDashboard.getInt("isDashboardAdmin");
+                String titleDashboard = listeDashboard.getString("titleDashboard");
+                String descriptionDashboard = listeDashboard.getString("descriptionDashboard");
+                this.center_container.add(new DashboardPreview(idDashboard, titleDashboard, descriptionDashboard, isAdmin));
+            }
+            this.revalidate();
+        }
+        catch (SQLException error) {
+            JOptionPane.showMessageDialog(null, "Impossible d'afficher la liste des dashboards ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

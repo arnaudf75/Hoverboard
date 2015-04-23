@@ -86,6 +86,9 @@ public class BDD {
                 this.statement.executeUpdate(this.requete);
                 return (true);
             }
+            else {
+                JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec ce pseudo !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
         }
         catch (SQLException error) {
             JOptionPane.showMessageDialog(null, "Impossible d'ajouter '"+pseudoUser+"' au dashboard ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
@@ -190,12 +193,24 @@ public class BDD {
      */
     public ResultSet getDashboards(int idUser) {
         this.requete = "SELECT U.idUser, U.idDashboard, U.isDashboardAdmin, D.titleDashboard, D.descriptionDashboard "
-                    + " FROM utilise U RIGHT JOIN dashboard D ON D.idDashboard = U.idDashboard WHERE idUser = "+idUser;
+                    + " FROM utilise U RIGHT JOIN dashboard D ON D.idDashboard = U.idDashboard WHERE idUser = "+idUser +" ORDER BY titleDashboard ASC";
         try {
             this.result = statement.executeQuery(requete);
         }
         catch (SQLException error) {
             JOptionPane.showMessageDialog(null, "Impossible de récupérer la liste des dashboards ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+        } 
+        return (this.result);
+    }
+    
+    public ResultSet getDashboardUser(int idDashboard) {
+        this.requete = "SELECT U.login FROM users U RIGHT JOIN utilise UT ON UT.idUser = U.idUser "+
+                       "WHERE idDashboard = "+idDashboard+" ORDER BY login ASC";
+        try {
+            this.result = statement.executeQuery(requete);
+        }
+        catch (SQLException error) {
+            JOptionPane.showMessageDialog(null, "Impossible de récupérer la liste des utilisateurs du dashboard ! ", "ERREUR", JOptionPane.ERROR_MESSAGE);
         } 
         return (this.result);
     }

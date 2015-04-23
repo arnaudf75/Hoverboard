@@ -1,7 +1,7 @@
 package windows.dashboards;
 
+import hoverboard.BDD;
 import hoverboard.User;
-import windows.Home;
 import windows.menus.newdashboard.AddMates;
 import windows.widgets.ImagePostIt;
 import windows.widgets.Poll;
@@ -37,11 +37,11 @@ import org.jdom2.input.SAXBuilder;
  * Dashboard est la classe qui permet d'afficher et de créer les widgets.
  * @author Arnaud
  */
-public class Dashboard extends Home implements ActionListener {
+public class Dashboard extends JPanel implements ActionListener {
     private int idDashboard = -1;
+    private final BDD connexion = new BDD();
     public static final ArrayList<Widget> listWidgets = new ArrayList();
     private final Dimension buttonSize = new Dimension(32,32);
-    private final JButton homeButton = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/home.png")));
     private final JButton new_postit = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/postit_icon.png")));
     private final JButton new_imagePostIt = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/image_icon.png")));
     private final JButton new_tasklist = new JButton(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/tasklist_icon.png")));
@@ -66,16 +66,16 @@ public class Dashboard extends Home implements ActionListener {
      * Crée le dashboard complet avec les widgets qui y sont associés.
      * @param idDashboard L'id du dashboard choisi dans la liste des dashboards de la page d'accueil.
      * @param titreDashboard Le titre affiché en haut de la fenêtre.
-     * @param utilisateur L'objet User qui contient les informations de l'utilisateur connecté.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public Dashboard(int idDashboard, String titreDashboard, User utilisateur) {
-        this.utilisateur = utilisateur;
+    public Dashboard(int idDashboard, String titreDashboard) {
         this.idDashboard = idDashboard;
         this.setLayout(new BorderLayout());
         this.top_container.setLayout(new BorderLayout());
         
-        this.homeButton.addActionListener(this);
+        
+        
+        this.add(new JButton("test"),BorderLayout.EAST);
         this.add_users.addActionListener(this);
         this.new_postit.addActionListener(this);
         this.new_imagePostIt.addActionListener(this);
@@ -112,13 +112,11 @@ public class Dashboard extends Home implements ActionListener {
         this.top_container.add(topLeftSide_container, BorderLayout.WEST);
         this.top_container.add(topRightSide_container, BorderLayout.EAST);
         this.add(widget_container, BorderLayout.CENTER);
-        this.add(homeButton, BorderLayout.SOUTH);
         
         this.afficheWidgets(this.idDashboard);
         
         this.add(top_container, BorderLayout.NORTH);
 
-        this.setTitle(titreDashboard);
         this.revalidate();
     }
     
@@ -149,11 +147,11 @@ public class Dashboard extends Home implements ActionListener {
                            Element poll = doc.getRootElement();
                            if(Boolean.valueOf(poll.getAttributeValue("published"))){
                                this.widget_container.add(new Poll(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
-                               listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
+                               listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), User.getIdUser()));
                            }
                            else {
                                this.widget_container.add(new PollCreator(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
-                               listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), idUser));
+                               listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), User.getIdUser()));
                            }
                         }
                         catch (JDOMException error) {
@@ -188,12 +186,7 @@ public class Dashboard extends Home implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        if (source == homeButton) {
-            Dashboard.listWidgets.clear();
-            this.dispose();
-            ListeDashboard myDashboards = new ListeDashboard(this.utilisateur);
-        }
-        else if (source == add_users) {
+        if (source == add_users) {
             AddMates addUsersToDashboard = new AddMates(this.idDashboard);
         }
         else {
@@ -207,7 +200,7 @@ public class Dashboard extends Home implements ActionListener {
                 this.widget_container.add(new ToDoList(this.idDashboard));
             }
             else if (source == new_poll){
-                this.widget_container.add(new PollCreator(this.idDashboard, idUser));
+                this.widget_container.add(new PollCreator(this.idDashboard, User.getIdUser()));
             }
             else if (source == refreshAllWidgets) {
                 for (Widget widget : listWidgets) {
