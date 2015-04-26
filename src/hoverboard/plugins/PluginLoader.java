@@ -12,4 +12,20 @@ package hoverboard.plugins;
  */
 public class PluginLoader {
     
+    public enum PluginLoaderOperation{
+        LoadPlugin,
+        UnloadPlugin;
+    }
+    
+    private PluginFile file;
+    private PluginLoaderOperation operation;
+    
+    public PluginLoader(PluginFile file, PluginLoaderOperation operation){
+        this.operation = operation;
+        this.file = file;
+    }
+    
+    public void loadFileOnBoard(){
+        // do stuff
+    }
 }
