@@ -36,3 +36,7 @@ src/ressources/cookie_login.xml
 src/ressources/dashboard_3/
 userData/cookie_login.xml
 plugins/
+/target/
+dependency-reduced-pom.xml
+nb-configuration.xml
+nbactions.xml
