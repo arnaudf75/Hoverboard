@@ -2,7 +2,6 @@ package windows;
 
 import hoverboard.BDD;
 import hoverboard.User;
-import windows.dashboards.ListeDashboard;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -117,7 +116,7 @@ public class Login extends JFrame implements ActionListener {
                         String lastName = isUser.getString("lastName");
                         String email = isUser.getString("email");
                         int isAdmin = isUser.getInt("isAdmin");
-                        ListeDashboard myDashboards = new ListeDashboard(new User(idUser, login, firstName, lastName, email, isAdmin));
+                        Home homeWindow = new Home(new User(idUser, login, firstName, lastName, email, isAdmin));
                     }
                 }
                 catch (SQLException error) {

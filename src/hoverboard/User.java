@@ -5,12 +5,12 @@ package hoverboard;
  * @author Arnaud
  */
 public class User {
-    private int idUser = -1;
-    private String login_user = "";
-    private String firstName_user = "";
-    private String lastName_user = "";
-    private String email = "";
-    private boolean isAdmin = false;
+    private static int idUser = -1;
+    private static String login_user = "";
+    private static String firstName_user = "";
+    private static String lastName_user = "";
+    private static String email = "";
+    private static boolean isAdmin = false;
     
     /**
      * Crée un objet User à partir des informations récupérées dans la base de données après la connexion de l'utilisateur.
@@ -22,13 +22,13 @@ public class User {
      * @param isAdmin Vaut 1 si l'utilisateur est un administeur, 0 sinon.
      */
     public User(int idUser, String login_user, String firstName, String lastName, String email, int isAdmin) {
-        this.idUser = idUser;
-        this.login_user = login_user;
-        this.firstName_user = firstName;
-        this.lastName_user = lastName;
-        this.email = email;
+        User.idUser = idUser;
+        User.login_user = login_user;
+        User.firstName_user = firstName;
+        User.lastName_user = lastName;
+        User.email = email;
         if (isAdmin == 1) {
-            this.isAdmin = true;
+            User.isAdmin = true;
         }
     }
     
@@ -36,71 +36,71 @@ public class User {
      * Renvoie l'id de l'utilisateur connecté.
      * @return L'id de l'utilisateur.
      */
-    public int getIdUser() {
-        return (this.idUser);
+    public static int getIdUser() {
+        return (User.idUser);
     }
     
     /**
      * Renvoie le login de l'utilisateur connecté.
      * @return Le login de l'utilisateur.
      */
-    public String getLogin() {
-        return (this.login_user);
+    public static String getLogin() {
+        return (User.login_user);
     }
     
     /**
      * Renvoie le prénom de l'utilisateur connecté.
      * @return Le prénom de l'utilisateur.
      */
-    public String getFirstName() {
-        return (this.firstName_user);
+    public static String getFirstName() {
+        return (User.firstName_user);
     }
     
     /**
      * Renvoie le nom de l'utilisateur connecté.
      * @return Le nom de l'utilisateur.
      */
-    public String getLastName() {
-        return (this.lastName_user);
+    public static String getLastName() {
+        return (User.lastName_user);
     }
     
     /**
      * Renvoie l'email de l'utilisateur connecté.
      * @return L'email de l'utilisateur.
      */
-    public String getEmail() {
-        return (this.email);
+    public static String getEmail() {
+        return (User.email);
     }
     
     /**
      * Renvoie les droits d'administration de l'utilisateur connecté.
      * @return True si l'utilisateur est administrateur, False sinon.
      */
-    public boolean getAdminRights() {
-        return (this.isAdmin);
+    public static boolean getAdminRights() {
+        return (User.isAdmin);
     }
     
     /**
      * Modifie le prénom de l'utilisateur connecté.
      * @param firstName Le nouveau prénom.
      */
-    public void setFirstName(String firstName) {
-        this.firstName_user = firstName;
+    public static void setFirstName(String firstName) {
+        User.firstName_user = firstName;
     }
     
     /**
      * Modifie le nom de famille de l'utlisateur connecté.
      * @param lastName Le nouveau nom de famille.
      */
-    public void setLastName(String lastName) {
-        this.lastName_user = lastName;
+    public static void setLastName(String lastName) {
+        User.lastName_user = lastName;
     }
     
     /**
      * Modifie l'email de l'utilisateur connecté.
      * @param email Le nouvel email.
      */
-    public void setEmail(String email) {
-        this.email = email;
+    public static void setEmail(String email) {
+        User.email = email;
     }
 }

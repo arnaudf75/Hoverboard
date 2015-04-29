@@ -1,6 +1,6 @@
 package hoverboard;
 
-import windows.dashboards.ListeDashboard;
+import windows.Home;
 import windows.Login;
 
 import java.io.File;
@@ -46,7 +46,7 @@ public class MainApp {
                     String lastName = isUser.getString("lastName");
                     String email = isUser.getString("email");
                     int isAdmin = isUser.getInt("isAdmin");
-                    ListeDashboard myDashboards = new ListeDashboard(new User(idUser, login, firstName, lastName, email, isAdmin));
+                    Home homeWindow = new Home(new User(idUser, login, firstName, lastName, email, isAdmin));
                 }
             }
             else {

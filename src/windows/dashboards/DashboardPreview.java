@@ -1,7 +1,5 @@
 package windows.dashboards;
 
-import hoverboard.User;
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -17,7 +15,6 @@ import javax.swing.JPanel;
  * @author Arnaud
  */
 public class DashboardPreview extends JPanel implements ActionListener {
-    private User utilisateur = null;
     private int idDashboard = -1;
     private String titleDashboard = "";
     private String descriptionDashboard = "";
@@ -34,15 +31,13 @@ public class DashboardPreview extends JPanel implements ActionListener {
      /**
      * Crée un aperçu d'un dashboard. Ce constructeur est appellé dans la classe ListeDashboard pour afficher les dashboards
      * appartenant ou auquel participe un utilisateur.
-     * @param utilisateur Les informations concernant l'utilisateur connecté.
      * @param idDashboard L'id du dashboard concerné.
      * @param titleDashboard Le titre du dashboard.
      * @param descriptionDashboard La description du dashboard.
      * @param isAdmin Vaut 1 si l'utilisateur administre le dashboard, 0 sinon.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public DashboardPreview(User utilisateur, int idDashboard, String titleDashboard, String descriptionDashboard, int isAdmin) {
-        this.utilisateur = utilisateur;
+    public DashboardPreview(int idDashboard, String titleDashboard, String descriptionDashboard, int isAdmin) {
         this.idDashboard = idDashboard;
         this.titleDashboard = titleDashboard;
         this.descriptionDashboard = descriptionDashboard;
@@ -73,14 +68,11 @@ public class DashboardPreview extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        if (source == homeButton) {
-            Container parent = this.getParent();
-            parent.removeAll();
-            parent.repaint();
-        }
-        else if (source == validatePanel) {
-            Dashboard selectedDashboard = new Dashboard(this.idDashboard, this.titleDashboard, utilisateur);
-
+        if (source == validatePanel) {
+            Container parentContainer = this.getParent();
+            parentContainer.removeAll();
+            parentContainer.revalidate();
+            parentContainer.add(new Dashboard(this.idDashboard, this.titleDashboard));
         }
     }
 }
