@@ -1,6 +1,7 @@
 package windows.menus.myplugins;
 
 import hoverboard.BDD;
+import windows.menus.themes.Theme;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class ListeMyPlugins extends JFrame {
      */
     public ListeMyPlugins(int idUser) {
         this.setSize(1100, 200);
-        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
+        this.setIconImage(Theme.logo.getImage());
         this.idUser = idUser;
         this.main_container.setLayout(new GridLayout(3,6));
         

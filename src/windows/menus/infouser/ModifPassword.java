@@ -1,13 +1,12 @@
 package windows.menus.infouser;
 
 import hoverboard.BDD;
+import windows.menus.themes.Theme;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GridLayout;
 import java.io.File;
-
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -51,7 +50,7 @@ public class ModifPassword extends JFrame implements ActionListener {
         this.main_container.add(validate);
         
         this.setTitle("Vos informations");
-        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
+        this.setIconImage(Theme.logo.getImage());
         this.setContentPane(main_container);
         this.pack();
         this.setLocationRelativeTo(null);
