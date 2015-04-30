@@ -205,6 +205,9 @@ public class Home extends JFrame implements ActionListener, WindowListener {
             }
         }
         else if (source == menuDisconnect) {
+            for (Widget widget : listWidgets) {
+                widget.save();
+            }
             File cookie = new File("userData/cookie_login.xml");
             cookie.delete();
             this.dispose();
