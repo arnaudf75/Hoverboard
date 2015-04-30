@@ -10,7 +10,6 @@ import java.awt.GridLayout;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Properties;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -45,15 +44,17 @@ public class MenuTheme extends JFrame implements ActionListener, ItemListener {
         this.deleteTheme.addActionListener(this);
         this.themeSelector.addItemListener(this);
         
-        File[] listOfFiles = new File("themes").listFiles();
         
-        this.labelFont.setText(listOfFiles[0].getName());
-        this.labelFontColor.setText(listOfFiles[0].getName());
-        this.labelFontSize.setText(listOfFiles[0].getName());
-        
-        for (File fichier : listOfFiles) {
-            if (fichier.getName().endsWith(".xml")) {
-                themeSelector.addItem(fichier.getName().substring(0,fichier.getName().indexOf('.')));
+        File themeFolder  = new File("themes");
+        if (themeFolder.exists()) {
+            File[] listOfFiles = new File("themes").listFiles();
+            this.labelFontColor.setText(listOfFiles[0].getName());
+            this.labelFontSize.setText(listOfFiles[0].getName());
+            this.labelFont.setText(listOfFiles[0].getName());
+            for (File fichier : listOfFiles) {
+                if (fichier.getName().endsWith(".xml")) {
+                    themeSelector.addItem(fichier.getName().substring(0,fichier.getName().indexOf('.')));
+                }
             }
         }
         
@@ -73,7 +74,7 @@ public class MenuTheme extends JFrame implements ActionListener, ItemListener {
         this.main_container.add(modifyTheme);
         
         this.setTitle("Apparence et thèmes");
-        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
+        this.setIconImage(Theme.icone.getImage());
         this.setContentPane(main_container);
         this.pack();
         this.setLocationRelativeTo(null);

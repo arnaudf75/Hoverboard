@@ -31,7 +31,6 @@ import org.jdom2.output.XMLOutputter;
  * @author Arnaud
  */
 public class Login extends JFrame implements ActionListener {
-    private final BDD connexion = new BDD();
     private final JButton validation = new JButton ("Valider");
     private final JButton password_lost = new JButton("J'ai perdu mon mot de passe");
     private final JButton register = new JButton ("Créer un compte");
@@ -100,7 +99,7 @@ public class Login extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Vous devez entrer votre login et votre mot de passe pour vous connecter !" , "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
             else {
-                ResultSet isUser = this.connexion.connect_user(login, password);
+                ResultSet isUser = BDD.connect_user(login, password);
                 try {
                     if (!isUser.isBeforeFirst()) {
                         JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec ce login et ce mot de passe !" , "ERREUR", JOptionPane.ERROR_MESSAGE);
@@ -120,7 +119,7 @@ public class Login extends JFrame implements ActionListener {
                     }
                 }
                 catch (SQLException error) {
-                    JOptionPane.showMessageDialog(null, "Impossible de vous connecter ! " +error, "ERREUR", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Impossible de vous connecter !", "ERREUR", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         }

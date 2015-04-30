@@ -34,7 +34,6 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
     protected int oldY;
     
     protected EditableText name = new EditableText("Nouveau widget");
-    protected BDD connexion = new BDD();
     protected Dimension buttonSize = new Dimension(16,15);
     protected JButton save = new JButton(new ImageIcon(this.getClass().getResource("/images/save.png")));
     protected JButton refresh = new JButton(new ImageIcon(this.getClass().getResource("/images/refresh.png")));
@@ -169,17 +168,17 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
             
             if (option == JOptionPane.OK_OPTION) {
                 this.dispose();
-                this.connexion.deleteWidget(this.idWidget);
+                BDD.deleteWidget(this.idWidget);
             }
         }
     }
     
     public void refresh(){
-        this.positionX=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "positionX"));
-        this.positionY=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "positionY"));
-        this.height=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "longueur"));
-        this.width=Integer.parseInt(this.connexion.getFieldWidget(this.idWidget, "largeur"));
-        this.name.label.setText(this.connexion.getFieldWidget(this.idWidget, "namewidget"));
+        this.positionX=Integer.parseInt(BDD.getFieldWidget(this.idWidget, "positionX"));
+        this.positionY=Integer.parseInt(BDD.getFieldWidget(this.idWidget, "positionY"));
+        this.height=Integer.parseInt(BDD.getFieldWidget(this.idWidget, "longueur"));
+        this.width=Integer.parseInt(BDD.getFieldWidget(this.idWidget, "largeur"));
+        this.name.label.setText(BDD.getFieldWidget(this.idWidget, "namewidget"));
         this.setBounds(positionX, positionY, width, height);
     }
     

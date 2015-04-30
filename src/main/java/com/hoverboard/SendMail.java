@@ -37,7 +37,6 @@ public class SendMail {
         this.smtp = "smtp.gmail.com";
         this.sender = "hoverboard.esgi@gmail.com";
         this.password = "esgi_hoverboard";
-        // Ces 3 variables doivent être récupérées depuis la base de données ou un fichier .xml.
         this.propertiesList.setProperty("mail.transport.protocol", "smtp");
         this.propertiesList.put("mail.smtp.auth", "true");
         this.propertiesList.put("mail.smtp.starttls.enable", "true");
@@ -78,15 +77,16 @@ public class SendMail {
     /**
      * Envoie un mail à l'utilisateur pour qu'il change son mot de passe.
      * @param mailDestinataire Adresse email du destinataire.
+     * @param new_password Le nouveau mot de passe de l'utilisateur, généré aléatoirement.
      * @throws MessagingException si l'email n'arrive pas à être envoyé.
      */
-    public void sendPasswordLostEmail(String mailDestinataire) throws MessagingException {
+    public void sendPasswordLostEmail(String mailDestinataire, String new_password) throws MessagingException {
         this.message.addRecipients(Message.RecipientType.TO, mailDestinataire);
         this.message.setSubject("How to change your password");
         this.messageBodyPart.setText("Hi,\n"
                 + "You have recently asked to change your password.\n"
-                + "Here's the link to change it :\n"
-                + "http://reset.password.hoverboard.com/\n\n"
+                + "Here's your new password for the moment, you can change it as soon as you connect to the application :\n"
+                + "Password : "+ new_password+"\n"
                 + "If you didn't asked for a change, please disregard this email.\n"
                 + "Cordially,\n"
                 + "The Hoverboard Team\n\n");

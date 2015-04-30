@@ -2,6 +2,7 @@ package com.hoverboard.windows.menus.infouser;
 
 import com.hoverboard.BDD;
 import com.hoverboard.User;
+import com.hoverboard.windows.menus.themes.Theme;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,7 +20,6 @@ import javax.swing.JTextField;
  * @author Arnaud
  */
 public class InfoUser extends JFrame implements ActionListener {
-    protected BDD connexion = new BDD();
     private final JButton changePassword = new JButton("Changer mon mot de passe");
     private final JButton validate = new JButton("Valider");
     private final JButton deleteAccount = new JButton("Supprimer mon compte");
@@ -45,10 +45,10 @@ public class InfoUser extends JFrame implements ActionListener {
         this.deleteAccount.addActionListener(this);
         
         this.utilisateur = utilisateur;
-        this.firstNameField.setText(this.utilisateur.getFirstName());
-        this.lastNameField.setText(this.utilisateur.getLastName());
-        this.emailField.setText(this.utilisateur.getEmail());
-        this.loginLabel.setText(loginLabel.getText()+this.utilisateur.getLogin());
+        this.firstNameField.setText(User.getFirstName());
+        this.lastNameField.setText(User.getLastName());
+        this.emailField.setText(User.getEmail());
+        this.loginLabel.setText(loginLabel.getText()+User.getLogin());
         this.main_container.setLayout(new GridLayout(6,2));
         
         this.main_container.add(firstNameLabel);
@@ -59,7 +59,7 @@ public class InfoUser extends JFrame implements ActionListener {
         this.main_container.add(emailField);
         this.main_container.add(isAdminLabel);
         
-        if (this.utilisateur.getAdminRights() == true) {
+        if (User.getAdminRights() == true) {
             this.main_container.add(new JLabel("Oui"));
         }
         else {
@@ -71,7 +71,7 @@ public class InfoUser extends JFrame implements ActionListener {
         this.main_container.add(deleteAccount);
         
         this.setTitle("Vos informations");
-        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
+        this.setIconImage(Theme.icone.getImage());
         this.setContentPane(main_container);
         this.pack();
         this.setLocationRelativeTo(null);
@@ -90,19 +90,18 @@ public class InfoUser extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Veuillez remplir tous les champs !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
             else {
-                this.connexion.setNewPrivateInformations(this.utilisateur.getIdUser(), firstNameField.getText(), lastNameField.getText(), emailField.getText());
-                this.utilisateur.setFirstName(firstNameField.getText());
-                this.utilisateur.setLastName(lastNameField.getText());
-                this.utilisateur.setEmail(emailField.getText());
+                BDD.setNewPrivateInformations(User.getIdUser(), firstNameField.getText(), lastNameField.getText(), emailField.getText());
+                User.setFirstName(firstNameField.getText());
+                User.setLastName(lastNameField.getText());
+                User.setEmail(emailField.getText());
             }
         }
         else if (source == changePassword) {
-            ModifPassword modifPassword = new ModifPassword(this.utilisateur.getIdUser());
+            ModifPassword modifPassword = new ModifPassword(User.getIdUser());
         }
         else if (source == deleteAccount) {
             int choix = JOptionPane.showConfirmDialog(null, "Êtes vous sûr de bien vouloir supprimer votre compte ?", "Message de confirmation", JOptionPane.OK_CANCEL_OPTION);
             if (choix == JOptionPane.OK_OPTION) {
-                // Envoi du mail approprié pour supprimer le compte.
                 JOptionPane.showMessageDialog(null, "Un message vous a été envoyé sur votre adresse email pour supprimer votre compte.", "Information", JOptionPane.INFORMATION_MESSAGE);
             }
         }

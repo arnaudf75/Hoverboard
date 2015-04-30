@@ -1,9 +1,11 @@
 package com.hoverboard;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.sql.DriverManager;
 import java.sql.Connection;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
@@ -18,30 +20,26 @@ import org.jdom2.input.SAXBuilder;
  * @author Arnaud
  */
 public class BDD {
-    
-    Connection dataBaseConnection = null;
-    String requete;
-    Statement statement;
-    ResultSet result;
-    String databaseUrl, driver, user, password;
-    
+        
     /**
-     * Initialise la connexion à la base de données à partir du fichier data_jdbc.xml.
+     * Crée un objet de type Connection permettant d'exécuter des requêtes vers la base de données à partir du fichier data_jdbc.xml.
+     * @return databaseConnection, l'objet permettant d'intéragir à la base de données.
      */ 
-    public BDD() {
+    public static Connection getConnection() {
+        Connection dataBaseConnection = null;
         try {
             Document data_jdbc = new SAXBuilder().build(BDD.class.getResource("/data/data_jdbc_local.xml"));
             Element racine = data_jdbc.getRootElement();
-            this.databaseUrl= racine.getChild("dbUrl").getText();
-            this.user =  racine.getChild("login").getText();
-            this.password =  racine.getChild("password").getText();
+            String databaseUrl= racine.getChild("dbUrl").getText();
+            String user =  racine.getChild("login").getText();
+            String password =  racine.getChild("password").getText();
             Class.forName(racine.getChild("driver").getText());
             dataBaseConnection = DriverManager.getConnection(databaseUrl, user, password);
-            this.statement = dataBaseConnection.createStatement();
         }
         catch (ClassNotFoundException | IOException | JDOMException | SQLException error) {
             JOptionPane.showMessageDialog(null, "Impossible de se connecter à la base de données !", "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
+        return (dataBaseConnection);
     }
     
     /**
@@ -51,20 +49,30 @@ public class BDD {
      * @param descriptionDashboard La description du dashboard saisie par l'utilisateur.
      * @return L'id du dashboard si il a bien été ajouté à la base de données, -1 sinon.
      */
-    public int ajouteDashboard(int idUser, String titreDashboard, String descriptionDashboard) {
-        this.requete = "INSERT INTO dashboard VALUES(NULL, '"+titreDashboard+"', '"+descriptionDashboard+"')";
+    public static int ajouteDashboard(int idUser, String titreDashboard, String descriptionDashboard) {
+        Connection databaseConnection = BDD.getConnection();
         int idDashboard = -1;
-        try {
-            this.statement.executeUpdate(this.requete, Statement.RETURN_GENERATED_KEYS);
-            this.result = this.statement.getGeneratedKeys();
-            if (this.result.next()) {
-                idDashboard = this.result.getInt(1);
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("INSERT INTO dashboard VALUES(NULL, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
+                statement.setString(1, titreDashboard);
+                statement.setString(2, descriptionDashboard);
+                statement.executeUpdate();
+                ResultSet result = statement.getGeneratedKeys();
+                if (result.next()) {
+                    idDashboard = result.getInt(1);
+                    statement.close();
+                    statement = databaseConnection.prepareStatement("INSERT INTO utilise VALUES (?, ?, 1)");
+                    statement.setInt(1, idUser);
+                    statement.setInt(2, idDashboard);
+                    statement.executeUpdate();
+                    statement.close();
+                    databaseConnection.close();
+                }
             }
-            this.requete = "INSERT INTO utilise VALUES ("+idUser+", "+idDashboard+", 1)";
-            this.statement.executeUpdate(this.requete);
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de créer le dashboard ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de créer le dashboard !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            } 
         }
         return (idDashboard);
     }
@@ -76,22 +84,31 @@ public class BDD {
      * de données, si il n'y a aucun utilisateur correspondant au pseudo saisi, l'application affiche un message d'erreur.
      * @return True si l'utilisateur a bien été rajouté au dashboard, False sinon.
      */
-    public boolean ajouteUserToDashboard(int idDashboard, String pseudoUser) {
-        this.requete = "SELECT idUser from users WHERE login ='"+pseudoUser+"' ";
-        try {
-            this.result = this.statement.executeQuery(this.requete);
-            if (this.result.next()) {
-                int idUser = this.result.getInt("idUser");
-                this.requete = "INSERT INTO utilise VALUES ("+idUser+", "+idDashboard+", 0)";
-                this.statement.executeUpdate(this.requete);
-                return (true);
+    public static boolean ajouteUserToDashboard(int idDashboard, String pseudoUser) {
+        Connection databaseConnection = BDD.getConnection();
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT idUser from users WHERE login = ? ");
+                statement.setString(1, pseudoUser);
+                ResultSet result = statement.executeQuery();
+                statement.close();
+                if (result.next()) {
+                    int idUser = result.getInt("idUser");
+                    statement = databaseConnection.prepareStatement("INSERT INTO utilise VALUES (?, ?, 0)");
+                    statement.setInt(1, idUser);
+                    statement.setInt(2, idDashboard);
+                    statement.executeUpdate();
+                    statement.close();
+                    databaseConnection.close();
+                    return (true);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec ce pseudo !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                }
             }
-            else {
-                JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec ce pseudo !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible d'ajouter '"+pseudoUser+"' au dashboard !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible d'ajouter '"+pseudoUser+"' au dashboard ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
         return (false);
     }
@@ -106,18 +123,28 @@ public class BDD {
      * @param typeWidget Le type du widget (post-it, liste de tâches ou sondage). 
      * @return L'id du widget issu de l'insertion dans la base de données. Si cette dernière échoue, la fonction renvoie -1.
      */
-    public int ajouteWidget(int positionX, int positionY, int height, int width, int idDashboard, String typeWidget) {
-        this.requete = "INSERT INTO widgets VALUES (NULL, 'Nouveau widget', '', "+positionX+", "+positionY+", "+height+", "+width+", '"+typeWidget+"',0, "+idDashboard+", NULL ) ";
+    public static int ajouteWidget(int positionX, int positionY, int height, int width, int idDashboard, String typeWidget) {
+        Connection databaseConnection = BDD.getConnection();
         int idWidget = -1;
-        try {
-            this.statement.executeUpdate(this.requete, Statement.RETURN_GENERATED_KEYS);
-            this.result = this.statement.getGeneratedKeys();
-            if (this.result.next()) {
-                idWidget = this.result.getInt(1);
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("INSERT INTO widgets VALUES (NULL, 'Nouveau widget', '', ?, ?, ?, ?, ?, 0, ?, NULL) ", PreparedStatement.RETURN_GENERATED_KEYS);
+                ResultSet result = statement.getGeneratedKeys();
+                statement.setInt(1, positionX);
+                statement.setInt(2, positionY);
+                statement.setInt(3, height);
+                statement.setInt(4, width);
+                statement.setString(5, typeWidget);
+                statement.setInt(6, idDashboard);
+                statement.executeUpdate();
+                if (result.next()) {
+                    idWidget = result.getInt(1);
+                }
+                databaseConnection.close();
             }
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible d'ajouter le widget ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible d'ajouter le widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
         }
         return (idWidget);
     }
@@ -128,31 +155,40 @@ public class BDD {
      * @param password Le mot de passe saisit par l'utilisateur via la fenêtre de login.
      * @return Un ResulSet contenant l'id, le prénom, le nom l'adresse email et 1 si l'utilisateur est administrateur, 0 sinon.
      */   
-    public ResultSet connect_user(String login, String password) {
-        this.requete = ("SELECT idUser, firstName, lastName, email, isAdmin FROM users WHERE login ='"+login+"' AND password ='"+password+"'");
-        try {
-            this.result = this.statement.executeQuery(requete);
+    public static ResultSet connect_user(String login, String password) {
+        Connection databaseConnection = BDD.getConnection();
+        ResultSet result = null;
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT idUser, firstName, lastName, email, isAdmin FROM users WHERE login = ? AND password = ?");
+                statement.setString(1, login);
+                statement.setString(2, password);
+                result = statement.executeQuery();
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de vous connecter à l'application !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
         }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de vous connecter à l'application ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        }
-        return (this.result);
+        return (result);
     }
     
     /**
      * Supprime un widget dans la base de données.
      * @param idWidget L'id du widget que l'utilisateur veut supprimer.
      */
-    public void deleteWidget(int idWidget) {
-        this.requete = "UPDATE widgets SET "
-                + "isDeleted = 1 "
-                + "WHERE idWidget = "+idWidget;
-        try {
-            this.statement.executeUpdate(requete);
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de supprimer le widget ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        }
+    public static void deleteWidget(int idWidget) {
+        Connection databaseConnection = BDD.getConnection();
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("UPDATE widgets SET isDeleted = 1 WHERE idWidget = ?");
+                statement.setInt(1, idWidget);
+                statement.executeUpdate();
+                databaseConnection.close();
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de supprimer le widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
+        }        
     }
     
     /**
@@ -160,30 +196,39 @@ public class BDD {
      * @param idWidget L'id du widget concerné.
      * @return Le contenu du wigdet peut être soit du texte (pour les post-it) soit un élément faisant partie d'un fichier .xml (pour les listes de tâches et les sondages).
      */
-    public String getContentWidget(int idWidget) {
-        String contentWidget = "NULL";
-        this.requete = "SELECT contentWidget FROM widgets WHERE idWidget ="+idWidget;
-        try {
-            this.result = this.statement.executeQuery(this.requete);
-            this.result.next();
-            contentWidget = result.getString("contentWidget");
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de récupérer le contenu du widget ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        }
+    public static String getContentWidget(int idWidget) {
+        Connection databaseConnection = BDD.getConnection();
+        String contentWidget = "VIDE";
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT contentWidget FROM widgets WHERE idWidget = ?");
+                ResultSet result = statement.executeQuery();
+                statement.setInt(1, idWidget);
+                result.next();
+                contentWidget = result.getString("contentWidget");
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de récupérer le contenu du widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
+        }        
         return (contentWidget);
     }
     
-    public String getFieldWidget(int idWidget, String field) {
+    public static String getFieldWidget(int idWidget, String field) {
+        Connection databaseConnection = BDD.getConnection();
         String fieldWidget = "NULL";
-        this.requete = "SELECT "+field+" FROM widgets WHERE idWidget ="+idWidget;
-        try {
-            this.result = statement.executeQuery(requete);
-            this.result.next();
-            fieldWidget = result.getString(field);
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de récupérer le contenu du widget ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT ? FROM widgets WHERE idWidget = ?");
+                ResultSet result = statement.executeQuery();
+                statement.setString(1, field);
+                statement.setInt(2, idWidget);
+                result.next();
+                fieldWidget = result.getString(field);
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de récupérer le contenu du widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
         }
         return (fieldWidget);
     }
@@ -193,28 +238,37 @@ public class BDD {
      * @param idUser L'id de l'utilisateur connecté.
      * @return Un ResultSet contenant les données de chaque dashboard : id, droits (administrateur ou non), si il est partagé ou non, le titre et la description.
      */
-    public ResultSet getDashboards(int idUser) {
-        this.requete = "SELECT U.idUser, U.idDashboard, U.isDashboardAdmin, D.titleDashboard, D.descriptionDashboard "
-                    + " FROM utilise U RIGHT JOIN dashboard D ON D.idDashboard = U.idDashboard WHERE idUser = "+idUser +" ORDER BY titleDashboard ASC";
-        try {
-            this.result = statement.executeQuery(requete);
+    public static ResultSet getDashboards(int idUser) {
+        Connection databaseConnection = BDD.getConnection();
+        ResultSet result = null;
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT U.idUser, U.idDashboard, U.isDashboardAdmin, D.titleDashboard, D.descriptionDashboard "
+                 + "FROM utilise U RIGHT JOIN dashboard D ON D.idDashboard = U.idDashboard WHERE idUser = ? ORDER BY titleDashboard ASC");
+                statement.setInt(1, idUser);
+                result = statement.executeQuery(); 
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de récupérer la liste des dashboards !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            } 
         }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de récupérer la liste des dashboards ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        } 
-        return (this.result);
+        return (result);
     }
     
-    public ResultSet getDashboardUsers(int idDashboard) {
-        this.requete = "SELECT U.login FROM users U RIGHT JOIN utilise UT ON UT.idUser = U.idUser "+
-                       "WHERE idDashboard = "+idDashboard+" ORDER BY login ASC";
-        try {
-            this.result = statement.executeQuery(requete);
+    public static ResultSet getDashboardUsers(int idDashboard) {
+        Connection databaseConnection = BDD.getConnection();
+        ResultSet result = null;
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT U.login FROM users U RIGHT JOIN utilise UT ON UT.idUser = U.idUser WHERE idDashboard = ? ORDER BY login ASC");
+                statement.setInt(1, idDashboard);
+                result = statement.executeQuery();
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de récupérer la liste des utilisateurs du dashboard !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
         }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de récupérer la liste des utilisateurs du dashboard ! ", "ERREUR", JOptionPane.ERROR_MESSAGE);
-        } 
-        return (this.result);
+        return (result);
     }
     
     /**
@@ -222,36 +276,42 @@ public class BDD {
      * @param idUser L'id de l'utilisateur connecté.
      * @return L'id, le nom, la description et le statut pour chaque plugin.
      */
-    public ResultSet getMyPlugins(int idUser) {
-        this.requete = "SELECT I.idVersion, V.idPlugin, I.idStatutPlugin, P.namePlugin, P.descriptionPlugin, V.numVersion, V.dateUpdate, V.pathToVersion" +
-                       " FROM installe I,version V, plugins P" +
-                       " WHERE I.idVersion = V.idVersion" +
-                       " AND V.idPlugin = P.idPlugin" +
-                       " AND P.isValid = 1" +
-                       " AND I.idUser = "+idUser+
-                       " ORDER BY I.idStatutPlugin DESC";
-        try {
-            this.result = this.statement.executeQuery(this.requete);
+    public static ResultSet getMyPlugins(int idUser) {
+        Connection databaseConnection = BDD.getConnection();
+        ResultSet result = null;
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT I.idVersion, V.idPlugin, I.idStatutPlugin, P.namePlugin, P.descriptionPlugin, V.numVersion, V.dateUpdate, V.pathToVersion " +
+                "FROM installe I,version V, plugins P WHERE I.idVersion = V.idVersion AND V.idPlugin = P.idPlugin AND P.isValid = 1 AND I.idUser = ? ORDER BY I.idStatutPlugin DESC");
+                statement.setInt(1, idUser);
+                result = statement.executeQuery();
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de récupérer la liste des plugins !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
         }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de récupérer la liste des plugins ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        }
-        return (this.result);
+        return (result);   
     }
+  
     /**
      * Récupère le widget ayant l'id idWidget
      * @param idWidget L'id du widget concerné.
      * @return Les données de chaque widget (id, contenu, position et dimensions) dans un ResultSet.
      */
-    public ResultSet getWidget(int idWidget) {
-        this.requete = "SELECT E.*, T.nomTypeWidget FROM widgets E, type_widget T WHERE idWidget = "+idWidget+" AND E.idTypeWidget = T.idTypeWidget";
-        try {
-            this.result = statement.executeQuery(requete);
+    public static ResultSet getWidget(int idWidget) {
+        Connection databaseConnection = BDD.getConnection();
+        ResultSet result = null;
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT * FROM widgets WHERE idWidget = ?");
+                statement.setInt(1, idWidget);
+                result = statement.executeQuery();
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de récupérer le widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
         }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de récupérer le widget ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        }
-        return (this.result);
+        return (result);
     }
     
     /**
@@ -259,15 +319,20 @@ public class BDD {
      * @param idDashboard L'id du dashboard concerné.
      * @return Les données de chaque widget (id, contenu, position et dimensions) dans un ResultSet.
      */
-    public ResultSet getWidgets(int idDashboard) {
-        this.requete = "SELECT * FROM widgets WHERE idDashboard = "+idDashboard+" AND isDeleted = 0";
-        try {
-            this.result = statement.executeQuery(requete);
+    public static ResultSet getWidgets(int idDashboard) {
+        Connection databaseConnection = BDD.getConnection();
+        ResultSet result = null;
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT * FROM widgets WHERE idDashboard = ? AND isDeleted = 0");
+                statement.setInt(1, idDashboard);
+                result = statement.executeQuery();  
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de récupérer les widgets !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
         }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de récupérer les widgets ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        }
-        return (this.result);
+        return (result);
     }
     
     /**
@@ -280,20 +345,30 @@ public class BDD {
      * @param email Email saisit par l'utilisateur.
      * @return True si l'utilisateur a bien été inscrit, False sinon.
      */ 
-    public boolean registerUser(String firstName, String lastName, String email, String login, String password) {
-        requete = ("SELECT email, login FROM users WHERE email = '"+email+"' OR login = '"+login+"'");
-        try {
-            result = statement.executeQuery(requete);
-            if (!result.isBeforeFirst()) {
-                requete = "INSERT INTO users VALUES (NULL, '"+firstName+"', '"+lastName+"', '"+email+"', '"+login+"', '"+password+"' ,0 ,0) ";
-                statement.executeUpdate(requete);
+    public static boolean registerUser(String firstName, String lastName, String email, String login, String password) {
+        Connection databaseConnection = BDD.getConnection();
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT email, login FROM users WHERE email = ? OR login = ?");
+                ResultSet result = statement.executeQuery();
+                if (!result.isBeforeFirst()) {
+                    statement.close();
+                    statement = databaseConnection.prepareStatement("INSERT INTO users VALUES (NULL, ?, ?, ?, ?, ?, 0) ");
+                    statement.setString(1, firstName);
+                    statement.setString(2, lastName);
+                    statement.setString(3, email);
+                    statement.setString(4, login);
+                    statement.setString(5, password);
+                    statement.executeUpdate();
+                    statement.close();
+                }
+                else {
+                    return (false);
+                }
             }
-            else {
-                return (false);
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de créer le compte !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de créer le compte ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
         return (true);
     }
@@ -303,24 +378,34 @@ public class BDD {
      * @param emailUser L'adresse email renseignée dans le formulaire.
      * @return True si toutes les actions ont été effectuées, False si l'utilisateur n'existe pas ou que la connexion à la base de données n'a pas fonctionnée.
      */  
-    public boolean resetPassword(String emailUser) {
-        requete = "SELECT * FROM users WHERE email ='"+emailUser+"'";
-        try {
-            result = statement.executeQuery(requete);
-            if (!result.isBeforeFirst()) {
-                return (false);
+    public static String resetPassword(String emailUser) {
+        Connection databaseConnection = BDD.getConnection();
+        String token = null;
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT idUser FROM users WHERE email = ?");
+                statement.setString(1, emailUser);
+                ResultSet result = statement.executeQuery();
+                if (!result.isBeforeFirst()) {
+                    return (null);
+                }
+                else {
+                    SecureRandom random = new SecureRandom();
+                    token = new BigInteger(130, random).toString(32);
+                    result.next();
+                    int idUser = result.getInt("idUser");
+                    result.close();
+                    statement.close();
+                    statement = databaseConnection.prepareStatement("UPDATE users SET password = ?");
+                    statement.setString(1, token);
+                    statement.executeUpdate();
+                }
             }
-            else {
-                // On doit réinitialiser le mot de passe de l'utilisateur ici
-                // Une idée : Update From users; Set password = random(passsword)
-                // On envoie le nouveau password par mail à l'utilisateur
-                return (true);
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de changer le mot de passe !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
         }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de changer le mot de passe ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        }
-        return (false);
+        return (token);
     }
     
     /**
@@ -330,33 +415,34 @@ public class BDD {
      * @param old_password Le mot de passe actuel.
      * @param new_password Le nouveau mot de passe désiré.
      */
-    public void setNewPassword(int idUser, String old_password, String new_password) {
-        this.requete = "SELECT users.password FROM users WHERE idUser = " +idUser;
-        try {
-            this.result = this.statement.executeQuery(this.requete);
-            this.result.next();
-            if (old_password.equals(this.result.getString("password"))) {
-                if (!this.result.getString("password").equals(new_password)) {
-                    this.requete = "UPDATE users SET password = '" +new_password
-                                 + "' WHERE idUser = " +idUser;
-                    try {
-                        this.statement.executeUpdate(this.requete);
+    public static void setNewPassword(int idUser, String old_password, String new_password) {
+        Connection databaseConnection = BDD.getConnection();
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT users.password FROM users WHERE idUser = ?");
+                statement.setInt(1, idUser);
+                ResultSet result = statement.executeQuery();
+                result.next();
+                statement.close();
+                if (old_password.equals(result.getString("password"))) {
+                    if (!result.getString("password").equals(new_password)) {
+                        statement = databaseConnection.prepareStatement("UPDATE users SET password = ? WHERE idUser = ? ");
+                        statement.setString(1, new_password);
+                        statement.setInt(2, idUser);
+                        statement.executeUpdate();
                     }
-                    catch (SQLException error) {
-                        JOptionPane.showMessageDialog(null, "Impossible de mettre à jour votre mot de passe ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                    else {
+                       JOptionPane.showMessageDialog(null, "L'ancien et le nouveau mot de passe sont identiques !", "ERREUR", JOptionPane.ERROR_MESSAGE);
                     }
                 }
                 else {
-                   JOptionPane.showMessageDialog(null, "L'ancien et le nouveau mot de passe sont identiques !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Votre mot de passe ne correspond pas à celui stocké dans la base de données ! ", "ERREUR", JOptionPane.ERROR_MESSAGE);
                 }
             }
-            else {
-                JOptionPane.showMessageDialog(null, "Votre mot de passe ne correspond pas à celui stocké dans la base de données ! ", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de mettre à jour votre mot de passe !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de mettre à jour votre mot de passe ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        }
+        } 
     }
     
     /**
@@ -366,41 +452,30 @@ public class BDD {
      * @param nom Le nouveau nom de famille.
      * @param email Le nouvel email.
      */
-    public void setNewPrivateInformations(int idUser, String prenom, String nom, String email) {
-        this.requete = "UPDATE users SET firstName = '" +prenom+ "', lastName = '"+nom+ "', email = '"+email
-                     + "' WHERE idUser = " +idUser;
-        try {
-            this.statement.executeUpdate(this.requete);
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de mettre à jour vos coordonnées ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+    public static void setNewPrivateInformations(int idUser, String prenom, String nom, String email) {
+        Connection databaseConnection = BDD.getConnection();
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("UPDATE users SET firstName = ?, lastName = ?, email = ? WHERE idUser = ?");
+                statement.setString(1, prenom);
+                statement.setString(2, nom);
+                statement.setString(3, email);
+                statement.setInt(4, idUser);
+                statement.executeUpdate();
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de mettre à jour vos coordonnées !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
     
-    /**
-     * Change le statut d'un plugin en fonction du choix de l'utilisateur.
-     * @param idUser L'id de l'utilisateur connecté.
-     * @param idPlugin L'id du plugin à activer/désactiver.
-     * @param statut Le statut choisi par l'utilisateur (1 pour désactivé, 3 pour activé).
-     */
-    public void setStatutPlugin(int idUser, int idPlugin, int statut) {
-        this.requete = "UPDATE installe SET idStatutPlugin = " +statut
-                     + " WHERE idPlugin = " +idPlugin
-                     + " AND idUser = " +idUser;
-        try {
-            this.statement.executeUpdate(this.requete);
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de modifier le statut du plugin ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        }
-    }
     
     /**
      * Est appellée lorsqu'un utilisateur cherche à mettre à jour un plugin installé. A partir de la date de version, la fonction
      * va aller chercher si il en existe une plus récente et l'installer.
      * @param idVersion 
      */
-    public void updatePlugin(int idVersion) {
+    public static void updatePlugin(int idVersion) {
         
     }
     
@@ -408,6 +483,7 @@ public class BDD {
      * Cette fonction est appellée lorsque l'utilisateur clique sur le bouton "Enregistrer" (îcone de disquete) sur un widget.
      * Elle modifie le contenu d'un widget dans la base de données.
      * @param idWidget L'ID du widget concerné.
+     * @param namewidget Le titre du widget.
      * @param contentWidget Le contenu du widget (une chaîne de caractère simple pour les post-it, une URL pour les images ou une chaine
      * de caractères au format .xml pour les liste de tâches et les sondages).
      * @param positionX La position horizontale du widget.
@@ -415,20 +491,22 @@ public class BDD {
      * @param height La hauteur du widget.
      * @param width La largeur du widget.
      */
-    public void updateWidget(int idWidget, String namewidget, String contentWidget, int positionX, int positionY, int height, int width) {
-        this.requete = "UPDATE widgets SET "
-                + "nameWidget = '"+namewidget+"', "
-                + "contentWidget = '"+contentWidget+"', "
-                + "positionX = "+positionX+", "
-                + "positionY = "+positionY+", "
-                + "longueur = "+height+", "
-                + "largeur = "+width+" "
-                + "WHERE idWidget = "+idWidget;
-        try {
-            this.statement.executeUpdate(this.requete);
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible de modifier le widget ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+    public static void updateWidget(int idWidget, String namewidget, String contentWidget, int positionX, int positionY, int height, int width) {
+        Connection databaseConnection = BDD.getConnection();
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("UPDATE widgets SET nameWidget = ?, contentWidget = ?, positionX = ?, positionY = ?, longueur = ?, largeur = ? WHERE idWidget = ?");
+                statement.setString(1, namewidget);
+                statement.setString(2, contentWidget);
+                statement.setInt(3, positionX);
+                statement.setInt(4, positionY);
+                statement.setInt(5, height);
+                statement.setInt(6, width);
+                statement.executeUpdate();
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de modifier le widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }

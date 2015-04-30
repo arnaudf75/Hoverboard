@@ -1,5 +1,6 @@
 package com.hoverboard.windows.widgets;
 
+import com.hoverboard.BDD;
 import com.hoverboard.windows.dashboards.Dashboard;
 
 import java.awt.BorderLayout;
@@ -56,7 +57,7 @@ public class ToDoList extends Widget {
                                                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         content.add(scrollPane);
         this.idDashboard = idDashboard;
-        this.idWidget=this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "TODOLIST");
+        this.idWidget = BDD.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "TODOLIST");
         Dashboard.listWidgets.add(this);
         this.revalidate();
     }
@@ -134,29 +135,26 @@ public class ToDoList extends Widget {
             
             if (option == JOptionPane.OK_OPTION) {
                 this.dispose();
-                this.connexion.deleteWidget(this.idWidget);
+                BDD.deleteWidget(this.idWidget);
             }
         }
     }
     
     public void refresh(){
         super.refresh();
-            String contenuWidget = this.connexion.getContentWidget(idWidget);
-            this.taskList.removeAll();
-            org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
-            try {
-                Document doc = saxBuilder.build(new StringReader(contenuWidget));
-                List<Element> tasklist = doc.getRootElement().getChildren();
-                for(int cpt=0;cpt<tasklist.size();cpt++){
-                    this.taskList.add(new Task(tasklist.get(cpt).getChild("name").getText(),Boolean.valueOf(tasklist.get(cpt).getAttributeValue("done"))));
-                }
-            } 
-            catch (JDOMException e) {
-                // handle JDOMException
-            } 
-            catch (IOException e) {
-                // handle IOException
+        String contenuWidget = BDD.getContentWidget(idWidget);
+        this.taskList.removeAll();
+        org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
+        try {
+            Document doc = saxBuilder.build(new StringReader(contenuWidget));
+            List<Element> tasklist = doc.getRootElement().getChildren();
+            for(int cpt=0;cpt<tasklist.size();cpt++){
+                this.taskList.add(new Task(tasklist.get(cpt).getChild("name").getText(),Boolean.valueOf(tasklist.get(cpt).getAttributeValue("done"))));
             }
+        } 
+        catch (IOException | JDOMException e) {
+            // handle JDOMException
+        }
     }
     public void save(){
         super.save();
@@ -169,6 +167,6 @@ public class ToDoList extends Widget {
             content=content.concat("</task>");
         }
         content=content.concat("</tasklist>");
-        this.connexion.updateWidget(idWidget, name.label.getText(), content,positionX,positionY,height,width);
+        BDD.updateWidget(idWidget, name.label.getText(), content,positionX,positionY,height,width);
     }
 }

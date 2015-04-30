@@ -1,5 +1,5 @@
 package com.hoverboard.windows.widgets;
-
+import com.hoverboard.BDD;
 import com.hoverboard.windows.dashboards.Dashboard;
 
 import java.awt.BorderLayout;
@@ -141,7 +141,7 @@ public class Poll extends Widget{
             
             if (option == JOptionPane.OK_OPTION) {
                 this.dispose();
-                this.connexion.deleteWidget(this.idWidget);
+                BDD.deleteWidget(this.idWidget);
             }
         }
     }
@@ -165,7 +165,7 @@ public class Poll extends Widget{
     public void refresh(){
         super.refresh();
             //accès à la BDD
-            String contenuWidget = this.connexion.getContentWidget(idWidget);
+            String contenuWidget = BDD.getContentWidget(idWidget);
             //Clean du widget avant réecriture
             this.questionList.removeAll();
             this.contribList=new ArrayList();
@@ -243,6 +243,6 @@ public class Poll extends Widget{
             }
             content=content.concat("</questionlist>");
             content=content.concat("</poll>");
-            this.connexion.updateWidget(idWidget, name.label.getText(), content,positionX,positionY,height,width);
+            BDD.updateWidget(idWidget, name.label.getText(), content,positionX,positionY,height,width);
     }
 }

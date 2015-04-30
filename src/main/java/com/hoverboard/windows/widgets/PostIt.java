@@ -1,5 +1,6 @@
 package com.hoverboard.windows.widgets;
 
+import com.hoverboard.BDD;
 import com.hoverboard.windows.dashboards.Dashboard;
 
 import java.awt.event.ActionEvent;
@@ -36,7 +37,7 @@ public class PostIt extends Widget {
         this.content.add(scrollPane, null);
         this.idDashboard = idDashboard;
         
-        this.idWidget = this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "POSTIT");
+        this.idWidget = BDD.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "POSTIT");
         Dashboard.listWidgets.add(this);
         this.revalidate();
     }
@@ -70,13 +71,13 @@ public class PostIt extends Widget {
     @Override
     public void refresh(){
         super.refresh();
-        this.postit_text.setText(this.connexion.getContentWidget(idWidget));
+        this.postit_text.setText(BDD.getContentWidget(idWidget));
         this.revalidate();
     }
 
     @Override
     public void save(){
-        this.connexion.updateWidget(idWidget, name.label.getText(), this.postit_text.getText(),positionX,positionY,height,width);
+        BDD.updateWidget(idWidget, name.label.getText(), this.postit_text.getText(),positionX,positionY,height,width);
     }
     
     /**
@@ -101,7 +102,7 @@ public class PostIt extends Widget {
             
             if (option == JOptionPane.OK_OPTION) {
                 this.dispose();
-                this.connexion.deleteWidget(this.idWidget);
+                BDD.deleteWidget(this.idWidget);
             }
         }
     } 

@@ -1,8 +1,5 @@
 package com.hoverboard.windows.menus.myplugins;
 
-import com.hoverboard.BDD;
-
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GridLayout;
@@ -16,7 +13,6 @@ import javax.swing.JTextArea;
  * @author Arnaud
  */
 public class Plugins extends JPanel implements ActionListener {
-    protected BDD connexion = new BDD();
     private int idUser = -1;
     private int idPlugin = -1;
     private int idVersion = -1;
@@ -86,12 +82,10 @@ public class Plugins extends JPanel implements ActionListener {
         if (source == activate) {
             this.remove(activate);
             this.add(deactivate);
-            this.connexion.setStatutPlugin(idUser, idPlugin, 3);
         }
         else if (source == deactivate) {
             this.remove(deactivate);
             this.add(activate);
-            this.connexion.setStatutPlugin(idUser, idPlugin, 1);
         }
         else if (source == delete) {
             // suppression du .jar

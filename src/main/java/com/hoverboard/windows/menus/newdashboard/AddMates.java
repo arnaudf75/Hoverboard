@@ -1,6 +1,7 @@
 package com.hoverboard.windows.menus.newdashboard;
 
 import com.hoverboard.BDD;
+import com.hoverboard.windows.menus.themes.Theme;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -40,7 +41,7 @@ public class AddMates extends JFrame implements ActionListener {
         this.main_container.add(validate);
         
         this.setTitle("Ajouter des utilisateurs à ce dashboard");
-        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
+        this.setIconImage(Theme.icone.getImage());
         this.setContentPane(main_container);
         this.pack();
         this.setLocationRelativeTo(null);
@@ -57,7 +58,7 @@ public class AddMates extends JFrame implements ActionListener {
         Object source = event.getSource();
         if (source == validate) {
             pseudoUser = ajouteUserField.getText();
-            if (connexion.ajouteUserToDashboard(this.idDashboard, pseudoUser)) {
+            if (BDD.ajouteUserToDashboard(this.idDashboard, pseudoUser)) {
                 JOptionPane.showMessageDialog(null, "L'utilisateur '"+pseudoUser+"' a bien été ajouté au dashboard !", "Succès !", JOptionPane.INFORMATION_MESSAGE);
             }
         }

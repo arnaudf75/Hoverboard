@@ -1,5 +1,6 @@
 package com.hoverboard.windows.widgets;
 
+import com.hoverboard.BDD;
 import com.hoverboard.windows.dashboards.Dashboard;
 
 import java.awt.event.ActionEvent;
@@ -49,7 +50,7 @@ public class ImagePostIt extends Widget {
         this.middle_container.add(validate);
         this.content.add(middle_container);
         this.idDashboard = idDashboard;
-        this.idWidget = this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "IMAGE");
+        this.idWidget = BDD.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "IMAGE");
         Dashboard.listWidgets.add(this);
         this.revalidate();
     }
@@ -96,7 +97,7 @@ public class ImagePostIt extends Widget {
     @Override
     public void refresh(){
         super.refresh();
-        this.pathToImage = this.connexion.getContentWidget(this.idWidget);
+        this.pathToImage = BDD.getContentWidget(this.idWidget);
         if (!this.pathToImage.equals("")) {
             try {
                 BufferedImage bufferedImage = ImageIO.read(new URL(this.pathToImage));
@@ -119,7 +120,7 @@ public class ImagePostIt extends Widget {
     public void save() {
         super.save();
         if (!this.pathToImage.equals("")) {
-            this.connexion.updateWidget(idWidget, name.label.getText(), this.pathToImage,positionX,positionY,height,width);
+            BDD.updateWidget(idWidget, name.label.getText(), this.pathToImage,positionX,positionY,height,width);
         }
         else {
             JOptionPane.showMessageDialog(null, "Vous devez saisir une URL valide pour sauvegarder ce widget ! ", "ERREUR", JOptionPane.ERROR_MESSAGE);
@@ -158,7 +159,7 @@ public class ImagePostIt extends Widget {
                 "Confirmez la suppression", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (option == JOptionPane.OK_OPTION) {
                 this.dispose();
-                this.connexion.deleteWidget(this.idWidget);
+                BDD.deleteWidget(this.idWidget);
             }
         }
     }

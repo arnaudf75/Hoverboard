@@ -2,6 +2,7 @@ package com.hoverboard.windows;
 
 import com.hoverboard.BDD;
 import com.hoverboard.SendMail;
+import com.hoverboard.windows.menus.themes.Theme;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -10,7 +11,6 @@ import java.awt.GridLayout;
 import javax.mail.MessagingException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -24,7 +24,7 @@ import javax.swing.JTextField;
 public class Register extends JFrame implements ActionListener {
 
     private final JButton validation = new JButton ("Valider");
-    private final JLabel logo = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/logo.png")));
+    private final JLabel logo = new JLabel (Theme.logo);
     private final JLabel email_label = new JLabel ("Adresse email");
     private final JLabel firstName_label = new JLabel("Prénom :");
     private final JLabel lastName_label = new JLabel("Nom de famille :");
@@ -69,7 +69,7 @@ public class Register extends JFrame implements ActionListener {
         main_container.add(bottom_container, BorderLayout.SOUTH);
         
         this.setTitle("Inscription");
-        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
+        this.setIconImage(Theme.icone.getImage());
         this.setContentPane(main_container);
         this.pack();
         this.setVisible(true);
@@ -95,8 +95,7 @@ public class Register extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Vous devez remplir tous les champs pour continuer !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
             else {
-                BDD connexion = new BDD();
-                if (connexion.registerUser(firstName, lastName, email, login, password)) {
+                if (BDD.registerUser(firstName, lastName, email, login, password)) {
                     JOptionPane.showMessageDialog(null, "Votre compte a été crée, vérifiez votre boîte mail pour l'activer.", "Compte créé !", JOptionPane.INFORMATION_MESSAGE);
                     try {
                         SendMail send = new SendMail();

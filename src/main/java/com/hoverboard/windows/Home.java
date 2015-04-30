@@ -43,7 +43,6 @@ import javax.swing.plaf.FontUIResource;
  * @author Arnaud
  */
 public class Home extends JFrame implements ActionListener {
-    protected BDD connexion = new BDD();
     private final User utilisateur = null;
     protected final Dimension windowSize = Toolkit.getDefaultToolkit().getScreenSize();
     private final JButton homeButton = new JButton(new ImageIcon(this.getClass().getResource("/images/home.png")));
@@ -206,7 +205,7 @@ public class Home extends JFrame implements ActionListener {
     }
     
     public void getDashboards(int idUser) {
-        ResultSet listeDashboard = connexion.getDashboards(idUser);
+        ResultSet listeDashboard = BDD.getDashboards(idUser);
         try {
             listeDashboard.last();
             int numberRows = listeDashboard.getRow()/5;

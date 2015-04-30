@@ -39,7 +39,6 @@ import org.jdom2.input.SAXBuilder;
  */
 public class Dashboard extends JPanel implements ActionListener {
     private int idDashboard = -1;
-    private final BDD connexion = new BDD();
     public static final ArrayList<Widget> listWidgets = new ArrayList();
     private final Dimension buttonSize = new Dimension(32,32);
     private final JButton new_postit = new JButton(new ImageIcon(this.getClass().getResource("/images/postit_icon.png")));
@@ -122,7 +121,7 @@ public class Dashboard extends JPanel implements ActionListener {
      * @param idDashboard 
      */
     public void afficheWidgets(int idDashboard) {
-        ResultSet listeWidgets = this.connexion.getWidgets(idDashboard);
+        ResultSet listeWidgets = BDD.getWidgets(idDashboard);
         try {
             while (listeWidgets.next()) {
                 switch (listeWidgets.getString("typeWidget")) {

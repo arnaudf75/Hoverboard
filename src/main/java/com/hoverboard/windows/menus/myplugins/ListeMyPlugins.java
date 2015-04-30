@@ -57,7 +57,7 @@ public class ListeMyPlugins extends JFrame {
         
         this.main_container.add(tab_header);
         
-        ResultSet listePlugins = connexion.getMyPlugins(this.idUser);
+        ResultSet listePlugins = BDD.getMyPlugins(this.idUser);
         try {
             while (listePlugins.next()) {
                 this.idVersion = listePlugins.getInt("idVersion");
@@ -74,10 +74,10 @@ public class ListeMyPlugins extends JFrame {
         }
         
         this.setTitle("Mes plugins installés");
-        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
+        this.setIconImage(Theme.icone.getImage());
         this.setContentPane(main_container);
         this.pack();
-        this.setSize(this.getWidth(),this.getHeight() + 100);
+        this.setSize(this.getWidth(), this.getHeight() + 100);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }

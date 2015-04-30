@@ -1,12 +1,12 @@
 package com.hoverboard.windows.menus.newdashboard;
 
 import com.hoverboard.BDD;
+import com.hoverboard.windows.menus.themes.Theme;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GridLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,7 +24,6 @@ public class CreateDashboard extends JFrame implements ActionListener {
     private int idUser = -1;
     private String titreDashboard = "";
     private String descriptionDashboard = "";
-    protected BDD connexion = new BDD();
     private final JButton validate = new JButton("Valider");
     private final JLabel titreLabel = new JLabel("Titre du dashboard");
     private final JLabel descriptionLabel = new JLabel("Description du dashboard");
@@ -58,7 +57,7 @@ public class CreateDashboard extends JFrame implements ActionListener {
         this.main_container.add(bottom_container, BorderLayout.SOUTH);
         
         this.setTitle("Création d'un nouveau dashboard");
-        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
+        this.setIconImage(Theme.icone.getImage());
         this.setContentPane(main_container);
         this.pack();
         this.setSize(400,this.getHeight());
@@ -81,7 +80,7 @@ public class CreateDashboard extends JFrame implements ActionListener {
                 titreDashboard = titreField.getText();
                 descriptionDashboard = descriptionArea.getText();
                 this.dispose();
-                int idDashboard = this.connexion.ajouteDashboard(this.idUser, this.titreDashboard, this.descriptionDashboard);
+                int idDashboard = BDD.ajouteDashboard(this.idUser, this.titreDashboard, this.descriptionDashboard);
                 AddMates addUsersToDashboard = new AddMates(idDashboard);
             }
         }

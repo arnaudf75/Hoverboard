@@ -1,5 +1,6 @@
 package com.hoverboard.windows.widgets;
 
+import com.hoverboard.BDD;
 import com.hoverboard.windows.dashboards.Dashboard;
 
 import java.awt.BorderLayout;
@@ -69,7 +70,7 @@ public class PollCreator extends Widget{
                                                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         content.add(scrollPane);
         this.idDashboard = idDashboard;
-        this.idWidget=this.connexion.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "POLL");
+        this.idWidget= BDD.ajouteWidget(this.positionX, this.positionY, this.height, this.width, this.idDashboard, "POLL");
         Dashboard.listWidgets.add(this);
         this.revalidate();
     }
@@ -167,7 +168,7 @@ public class PollCreator extends Widget{
             
             if (option == JOptionPane.OK_OPTION) {
                 this.dispose();
-                this.connexion.deleteWidget(this.idWidget);
+                BDD.deleteWidget(this.idWidget);
             }
         }
     }
@@ -175,7 +176,7 @@ public class PollCreator extends Widget{
     public void refresh(){
         super.refresh();
             //accès à la BDD
-            String contenuWidget = this.connexion.getContentWidget(idWidget);
+            String contenuWidget = BDD.getContentWidget(idWidget);
             //Clean du widget avant réecriture
             this.questionList.removeAll();
             //réecriture
@@ -229,7 +230,7 @@ public class PollCreator extends Widget{
             }
             content=content.concat("</questionlist>");
             content=content.concat("</poll>");
-            this.connexion.updateWidget(idWidget, name.label.getText(), content,positionX,positionY,height,width);
+            BDD.updateWidget(idWidget, name.label.getText(), content,positionX,positionY,height,width);
     }
     
     public void publish(){
@@ -251,7 +252,7 @@ public class PollCreator extends Widget{
         }
         content=content.concat("</questionlist>");
         content=content.concat("</poll>");
-        this.connexion.updateWidget(idWidget, name.label.getText(), content,positionX,positionY,height,width);
+        BDD.updateWidget(idWidget, name.label.getText(), content,positionX,positionY,height,width);
     }
     
 }

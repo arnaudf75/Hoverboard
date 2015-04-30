@@ -2,11 +2,11 @@ package com.hoverboard.windows;
 
 import com.hoverboard.BDD;
 import com.hoverboard.SendMail;
+import com.hoverboard.windows.menus.themes.Theme;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.mail.MessagingException;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
@@ -19,7 +19,7 @@ import javax.swing.JTextField;
  * @author Cavoleau
  */
 public class Forgot_Password extends JFrame implements ActionListener{
-    private final JLabel logo = new JLabel (new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/logo.png")));
+    private final JLabel logo = new JLabel (Theme.logo);
     private final JPanel grid_container= new JPanel();
     private final JPanel main_container= new JPanel();
     private final JLabel use_mail = new JLabel("Entrez votre adresse mail :");
@@ -28,7 +28,6 @@ public class Forgot_Password extends JFrame implements ActionListener{
     
     @SuppressWarnings("LeakingThisInConstructor")
     public Forgot_Password(){
-        
 
         valider_mail.addActionListener(this);
 
@@ -42,7 +41,7 @@ public class Forgot_Password extends JFrame implements ActionListener{
         main_container.add(grid_container);
         
         this.setTitle("Mot de passe perdu");
-        this.setIconImage(new ImageIcon(this.getClass().getClassLoader().getResource("ressources/images/icone.png")).getImage());
+        this.setIconImage(Theme.icone.getImage());
         this.add(main_container);
         this.pack();
         this.setLocationRelativeTo(null);
@@ -58,14 +57,17 @@ public class Forgot_Password extends JFrame implements ActionListener{
         Object source = event.getSource();
         if (source == valider_mail){
             try {
-                BDD connexion = new BDD();
-                if (connexion.resetPassword(mail_field.getText())) {
+                String new_password = BDD.resetPassword(mail_field.getText());
+                if (new_password != null) {
                     SendMail send = new SendMail();
-                    send.sendPasswordLostEmail(mail_field.getText());
+                    send.sendPasswordLostEmail(mail_field.getText(), new_password);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec cet email !", "ERREUR", JOptionPane.ERROR_MESSAGE);
                 }
             }
             catch (MessagingException error) {
-                JOptionPane.showMessageDialog(null, "Impossible d'envoyer un message pour changer votre mot de passe ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Impossible d'envoyer un message pour changer votre mot de passe !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

@@ -19,7 +19,6 @@ import javax.swing.JOptionPane;
  * @author Arnaud
  */
 public class ModifPassword extends JFrame implements ActionListener {
-    protected BDD connexion = new BDD();
     private int idUser = -1;
     private final JButton validate = new JButton("Valider");
     private final JLabel old_password_label = new JLabel("Votre mot de passe actuel");
@@ -69,7 +68,7 @@ public class ModifPassword extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Les deux mots de passe saisis sont différents !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
             else {
-                this.connexion.setNewPassword(this.idUser, old_password_field.getText(), new_password_field.getText());
+                BDD.setNewPassword(this.idUser, old_password_field.getText(), new_password_field.getText());
                 File cookie = new File("userData/cookie_login.xml");
                 cookie.delete();
             }

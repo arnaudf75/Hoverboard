@@ -26,34 +26,38 @@ public class MainApp {
      */
     public static void main(String[] args) {
         try {
-            BDD connexion = new BDD();
             File cookie = new File("userData/cookie_login.xml");
             if (cookie.exists()) {
                 Document data_cookie = new SAXBuilder().build(cookie);
                 Element racine = data_cookie.getRootElement();
                 String login = racine.getChild("login").getText();
                 String password = racine.getChild("password").getText();
-                ResultSet isUser = connexion.connect_user(login,password);
-                if (!isUser.isBeforeFirst()) {
-                    JOptionPane.showMessageDialog(null, "Aucun utilisateur avec ce login et ce mot de passe !", "ERREUR", JOptionPane.ERROR_MESSAGE);
-                    Login login_window = new Login();
+                try {
+                    ResultSet isUser = BDD.connect_user(login,password);
+                    if (!isUser.isBeforeFirst()) {
+                        JOptionPane.showMessageDialog(null, "Aucun utilisateur avec ce login et ce mot de passe !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                        Login login_window = new Login();
+                    }
+                    else {
+                        isUser.next();
+                        int idUser = isUser.getInt("idUser");
+                        String firstName = isUser.getString("firstName");
+                        String lastName = isUser.getString("lastName");
+                        String email = isUser.getString("email");
+                        int isAdmin = isUser.getInt("isAdmin");
+                        Home homeWindow = new Home(new User(idUser, login, firstName, lastName, email, isAdmin));
+                    }
                 }
-                else {
-                    isUser.next();
-                    int idUser = isUser.getInt("idUser");
-                    String firstName = isUser.getString("firstName");
-                    String lastName = isUser.getString("lastName");
-                    String email = isUser.getString("email");
-                    int isAdmin = isUser.getInt("isAdmin");
-                    Home homeWindow = new Home(new User(idUser, login, firstName, lastName, email, isAdmin));
+                catch (SQLException error) {
+                    JOptionPane.showMessageDialog(null, "Impossible de se connecter avec le cookie !", "ERREUR", JOptionPane.ERROR_MESSAGE);
                 }
             }
             else {
                 Login login_window = new Login();
             }
         }
-        catch (IOException | JDOMException | SQLException error) {
-            JOptionPane.showMessageDialog(null, "Le cookie de login n'existe pas ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+        catch (IOException | JDOMException error) {
+            JOptionPane.showMessageDialog(null, "Impossible de se connecter avec le cookie !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             Login login_window = new Login();
         }
     }
