@@ -4,12 +4,14 @@ import com.hoverboard.AppProperties;
 import com.hoverboard.BDD;
 import com.hoverboard.User;
 import com.hoverboard.windows.dashboards.Dashboard;
+import static com.hoverboard.windows.dashboards.Dashboard.listWidgets;
 import com.hoverboard.windows.dashboards.DashboardPreview;
 import com.hoverboard.windows.menus.infouser.InfoUser;
 import com.hoverboard.windows.menus.myplugins.ListeMyPlugins;
 import com.hoverboard.windows.menus.newdashboard.CreateDashboard;
 import com.hoverboard.windows.menus.themes.MenuTheme;
 import com.hoverboard.windows.menus.themes.Theme;
+import com.hoverboard.windows.widgets.Widget;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
@@ -17,6 +19,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.io.File;
@@ -42,7 +46,7 @@ import javax.swing.plaf.FontUIResource;
  * Home est la page d'accueil de l'utilisateur, elle contient tous les widgets du dashboard.
  * @author Arnaud
  */
-public class Home extends JFrame implements ActionListener {
+public class Home extends JFrame implements ActionListener, WindowListener {
     private final User utilisateur = null;
     protected final Dimension windowSize = Toolkit.getDefaultToolkit().getScreenSize();
     private final JButton homeButton = new JButton(new ImageIcon(this.getClass().getResource("/images/home.png")));
@@ -77,6 +81,8 @@ public class Home extends JFrame implements ActionListener {
         Theme.setUIFont(new FontUIResource(Theme.nomFont, Font.BOLD, Theme.fontSize));
         main_container.setLayout(new BorderLayout());
         
+        this.addWindowListener(this);
+        
         homeButton.addActionListener(this);
         newDashboard.addActionListener(this);
         menu_myPlugins.addActionListener(this);
@@ -105,7 +111,6 @@ public class Home extends JFrame implements ActionListener {
         this.setJMenuBar(menu);
         
         this.getDashboards(User.getIdUser());
-         
 
         this.bottom_container.add(homeButton);
         this.main_container.add(center_container, BorderLayout.CENTER);
@@ -135,7 +140,7 @@ public class Home extends JFrame implements ActionListener {
         this.setIconImage(Theme.icone.getImage());
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     }
     
     /**
@@ -146,6 +151,9 @@ public class Home extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source == homeButton) {
+            for (Widget widget : listWidgets) {
+                widget.save();
+            }
             Dashboard.listWidgets.clear();
             this.center_container.removeAll();
             this.getDashboards(User.getIdUser());
@@ -203,6 +211,32 @@ public class Home extends JFrame implements ActionListener {
             Login login = new Login();
         }
     }
+    
+    @Override
+    public void windowClosing(WindowEvent windowEvent) {
+        for (Widget widget : listWidgets) {
+                widget.save();
+        }
+        this.dispose();
+    }
+
+    @Override
+    public void windowClosed(WindowEvent windowEvent) { }
+
+    @Override
+    public void windowActivated(WindowEvent windowEvent) { }
+    
+    @Override
+    public void windowDeactivated(WindowEvent windowEvent) { }
+    
+    @Override
+    public void windowIconified(WindowEvent windowEvent) { }
+    
+    @Override
+    public void windowDeiconified(WindowEvent windowEvent) { }
+    
+    @Override
+    public void windowOpened(WindowEvent windowEvent) { }
     
     public void getDashboards(int idUser) {
         ResultSet listeDashboard = BDD.getDashboards(idUser);

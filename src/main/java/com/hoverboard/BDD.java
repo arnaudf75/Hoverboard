@@ -25,7 +25,7 @@ public class BDD {
      * Crée un objet de type Connection permettant d'exécuter des requêtes vers la base de données à partir du fichier data_jdbc.xml.
      * @return databaseConnection, l'objet permettant d'intéragir à la base de données.
      */ 
-    public static Connection getConnection() {
+    private static Connection getConnection() {
         Connection dataBaseConnection = null;
         try {
             Document data_jdbc = new SAXBuilder().build(BDD.class.getResource("/data/data_jdbc_local.xml"));
@@ -91,15 +91,12 @@ public class BDD {
                 PreparedStatement statement = databaseConnection.prepareStatement("SELECT idUser from users WHERE login = ? ");
                 statement.setString(1, pseudoUser);
                 ResultSet result = statement.executeQuery();
-                statement.close();
                 if (result.next()) {
                     int idUser = result.getInt("idUser");
                     statement = databaseConnection.prepareStatement("INSERT INTO utilise VALUES (?, ?, 0)");
                     statement.setInt(1, idUser);
                     statement.setInt(2, idDashboard);
                     statement.executeUpdate();
-                    statement.close();
-                    databaseConnection.close();
                     return (true);
                 }
                 else {
@@ -107,7 +104,7 @@ public class BDD {
                 }
             }
             catch (SQLException error) {
-                JOptionPane.showMessageDialog(null, "Impossible d'ajouter '"+pseudoUser+"' au dashboard !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Impossible d'ajouter '"+pseudoUser+"' au dashboard ! "  +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
         }
         return (false);
@@ -170,6 +167,24 @@ public class BDD {
             }
         }
         return (result);
+    }
+    
+    public static void deleteDashboard(int idDashboard) {
+        Connection databaseConnection = BDD.getConnection();
+        ResultSet result = null;
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("DELETE FROM utilise WHERE idDashboard = ?");
+                statement.setInt(1, idDashboard);
+                statement.executeUpdate();
+                statement = databaseConnection.prepareStatement("UPDATE widgets SET isDeleted = 1 WHERE idDashboard = ?");
+                statement.setInt(1, idDashboard);
+                statement.executeUpdate();
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Erreur lors de la suppression du dashboard !" + error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
     
     /**
@@ -260,7 +275,7 @@ public class BDD {
         ResultSet result = null;
         if (databaseConnection != null) {
             try {
-                PreparedStatement statement = databaseConnection.prepareStatement("SELECT U.login FROM users U RIGHT JOIN utilise UT ON UT.idUser = U.idUser WHERE idDashboard = ? ORDER BY login ASC");
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT U.idUser, U.login, UT.isDashboardAdmin FROM users U, utilise UT WHERE idDashboard = ? AND UT.idUser = U.idUser ORDER BY login ASC");
                 statement.setInt(1, idDashboard);
                 result = statement.executeQuery();
             }
@@ -373,6 +388,21 @@ public class BDD {
         return (true);
     }
     
+    public static void removeUserFromDashboard(int idDashboard, int idUser) {
+        Connection databaseConnection = BDD.getConnection();
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("DELETE FROM utilise WHERE idUser = ? AND idDashboard = ?");
+                statement.setInt(1, idUser);
+                statement.setInt(2, idDashboard);
+                statement.executeUpdate();
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Erreur lors de la suppression de l'utilisateur du dashboard !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
     /**
      * Cherche dans la base de données si un utilisateur existe avec cet email et change le mot de passe.
      * @param emailUser L'adresse email renseignée dans le formulaire.
@@ -406,6 +436,22 @@ public class BDD {
             }
         }
         return (token);
+    }
+    
+    public static void setDashboardRights(int idUser, int idDashboard, int isDashboardAdmin) {
+        Connection databaseConnection = BDD.getConnection();
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("UPDATE utilise SET isDashboardAdmin = ? WHERE idUser = ? AND idDashboard = ?");
+                statement.setInt(1, isDashboardAdmin);
+                statement.setInt(2, idUser);
+                statement.setInt(3, idDashboard);
+                statement.executeUpdate();
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de changer le statut de l'utilisateur !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
     
     /**
@@ -468,7 +514,6 @@ public class BDD {
             }
         }
     }
-    
     
     /**
      * Est appellée lorsqu'un utilisateur cherche à mettre à jour un plugin installé. A partir de la date de version, la fonction

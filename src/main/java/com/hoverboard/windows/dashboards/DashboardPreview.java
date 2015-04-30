@@ -16,6 +16,7 @@ import javax.swing.JPanel;
  */
 public class DashboardPreview extends JPanel implements ActionListener {
     private int idDashboard = -1;
+    private int isAdmin = 0;
     private String titleDashboard = "";
     private String descriptionDashboard = "";
     private final JButton validatePanel = new JButton("Accèder au dashboard");
@@ -46,8 +47,8 @@ public class DashboardPreview extends JPanel implements ActionListener {
         this.main_panel.setLayout(new BorderLayout());
         this.top_container.setLayout(new BorderLayout());
         this.validatePanel.addActionListener(this);
-
         if (isAdmin == 1) {
+            this.isAdmin = 1;
             this.topRightSide_container.add(adminIcon);
         }
         this.top_container.add(this.topRightSide_container, BorderLayout.WEST);
@@ -70,7 +71,7 @@ public class DashboardPreview extends JPanel implements ActionListener {
             Container parentContainer = this.getParent();
             parentContainer.removeAll();
             parentContainer.revalidate();
-            parentContainer.add(new Dashboard(this.idDashboard, this.titleDashboard));
+            parentContainer.add(new Dashboard(this.idDashboard, this.titleDashboard, this.isAdmin));
         }
     }
 }

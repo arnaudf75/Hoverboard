@@ -12,6 +12,7 @@ import com.hoverboard.windows.widgets.ToDoList;
 import com.hoverboard.windows.widgets.Widget;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,6 +40,7 @@ import org.jdom2.input.SAXBuilder;
  */
 public class Dashboard extends JPanel implements ActionListener {
     private int idDashboard = -1;
+    private int isDashboardAdmin = 0;
     public static final ArrayList<Widget> listWidgets = new ArrayList();
     private final Dimension buttonSize = new Dimension(32,32);
     private final JButton new_postit = new JButton(new ImageIcon(this.getClass().getResource("/images/postit_icon.png")));
@@ -46,6 +48,9 @@ public class Dashboard extends JPanel implements ActionListener {
     private final JButton new_tasklist = new JButton(new ImageIcon(this.getClass().getResource("/images/tasklist_icon.png")));
     private final JButton new_poll = new JButton(new ImageIcon(this.getClass().getResource("/images/poll_icon.png")));
     private final JButton add_users = new JButton(new ImageIcon(this.getClass().getResource("/images/addMates.png")));
+    private final JButton quit_dashboard = new JButton(new ImageIcon(this.getClass().getResource("/images/quit_dash.png")));
+    private final JButton remove_user = new JButton(new ImageIcon(this.getClass().getResource("/images/remove_user.png")));
+    private final JButton delete_dashboard = new JButton(new ImageIcon(this.getClass().getResource("/images/delete_dash.png")));
     private final JButton refreshAllWidgets = new JButton(new ImageIcon(this.getClass().getResource("/images/refreshAll.png")));
     private final JButton saveAllWidgets = new JButton(new ImageIcon(this.getClass().getResource("/images/saveAll.png")));
     private final JDesktopPane widget_container = new JDesktopPane() {
@@ -65,18 +70,20 @@ public class Dashboard extends JPanel implements ActionListener {
      * Crée le dashboard complet avec les widgets qui y sont associés.
      * @param idDashboard L'id du dashboard choisi dans la liste des dashboards de la page d'accueil.
      * @param titreDashboard Le titre affiché en haut de la fenêtre.
+     * @param isDashboardAdmin Vaut 1 si l'utilisateur administre le dashboard, 0 sinon.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public Dashboard(int idDashboard, String titreDashboard) {
+    public Dashboard(int idDashboard, String titreDashboard, int isDashboardAdmin) {
         this.idDashboard = idDashboard;
+        this.isDashboardAdmin = isDashboardAdmin;
         this.setLayout(new BorderLayout());
         this.top_container.setLayout(new BorderLayout());
         
-        this.add_users.addActionListener(this);
         this.new_postit.addActionListener(this);
         this.new_imagePostIt.addActionListener(this);
         this.new_tasklist.addActionListener(this);
         this.new_poll.addActionListener(this);
+        this.quit_dashboard.addActionListener(this);
         this.refreshAllWidgets.addActionListener(this);
         this.saveAllWidgets.addActionListener(this);
         
@@ -84,7 +91,7 @@ public class Dashboard extends JPanel implements ActionListener {
         this.new_imagePostIt.setPreferredSize(buttonSize);
         this.new_tasklist.setPreferredSize(buttonSize);
         this.new_poll.setPreferredSize(buttonSize);
-        this.add_users.setPreferredSize(buttonSize);
+        this.quit_dashboard.setPreferredSize(buttonSize);
         this.refreshAllWidgets.setPreferredSize(buttonSize);
         this.saveAllWidgets.setPreferredSize(buttonSize);
         
@@ -92,7 +99,7 @@ public class Dashboard extends JPanel implements ActionListener {
         this.new_imagePostIt.setToolTipText("Nouvelle image");
         this.new_tasklist.setToolTipText("Nouvelle liste de tâches");
         this.new_poll.setToolTipText("Nouveau sondage");
-        this.add_users.setToolTipText("Ajouter des utilisateurs à ce dashboard");
+        this.quit_dashboard.setToolTipText("Quitter ce dashboard");
         this.refreshAllWidgets.setToolTipText("Rafraîchir tous les widgets");
         this.saveAllWidgets.setToolTipText("Enregistrer tous les widgets");
         
@@ -100,7 +107,22 @@ public class Dashboard extends JPanel implements ActionListener {
         this.topLeftSide_container.add(new_imagePostIt);
         this.topLeftSide_container.add(new_tasklist);
         this.topLeftSide_container.add(new_poll);
-        this.topLeftSide_container.add(add_users);
+        this.topLeftSide_container.add(quit_dashboard);
+        
+        if (this.isDashboardAdmin == 1) {
+            this.add_users.addActionListener(this);
+            this.remove_user.addActionListener(this);
+            this.delete_dashboard.addActionListener(this);
+            this.add_users.setPreferredSize(buttonSize);
+            this.remove_user.setPreferredSize(buttonSize);
+            this.delete_dashboard.setPreferredSize(buttonSize);
+            this.add_users.setToolTipText("Ajouter des utilisateurs à ce dashboard");
+            this.remove_user.setToolTipText("Enlever un utilisateur de ce dashboard");
+            this.delete_dashboard.setToolTipText("Supprimer ce dashboard");
+            this.topLeftSide_container.add(add_users);
+            this.topLeftSide_container.add(remove_user);
+            this.topLeftSide_container.add(delete_dashboard);
+        }
         
         this.topRightSide_container.add(refreshAllWidgets);
         this.topRightSide_container.add(saveAllWidgets);
@@ -160,21 +182,20 @@ public class Dashboard extends JPanel implements ActionListener {
                         else {
                             org.jdom2.input.SAXBuilder saxBuilder = new SAXBuilder();
                             try {
-                               Document doc = saxBuilder.build(new StringReader(XMLContent));
-                               Element poll = doc.getRootElement();
-                               if(Boolean.valueOf(poll.getAttributeValue("published"))){
-                                   this.widget_container.add(new Poll(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
-                                   listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), User.getIdUser()));
-                               }
-                               else {
-                                   this.widget_container.add(new PollCreator(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
-                                   listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), User.getIdUser()));
-                               }
+                                Document doc = saxBuilder.build(new StringReader(XMLContent));
+                                Element poll = doc.getRootElement();
+                                if(Boolean.valueOf(poll.getAttributeValue("published"))){
+                                    this.widget_container.add(new Poll(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                                    listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), User.getIdUser()));
+                                }
+                                else {
+                                    this.widget_container.add(new PollCreator(listeWidgets.getInt("idWidget"), listeWidgets.getString("contentWidget"), listeWidgets.getInt("positionX"),
+                                    listeWidgets.getInt("positionY"), listeWidgets.getInt("longueur"), listeWidgets.getInt("largeur"), User.getIdUser()));
+                                }
                             }
                             catch (IOException | JDOMException error) {
                                 JOptionPane.showMessageDialog(null, "handle Exception " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
                             } 
-
                         }
                         break;
                     }
@@ -205,30 +226,49 @@ public class Dashboard extends JPanel implements ActionListener {
         if (source == add_users) {
             AddMates addUsersToDashboard = new AddMates(this.idDashboard);
         }
-        else {
-            if (source == new_postit) {
-                this.widget_container.add(new PostIt(this.idDashboard));
-            }
-            else if (source == new_imagePostIt) {
-                this.widget_container.add(new ImagePostIt(this.idDashboard));
-            }
-            else if (source == new_tasklist) {
-                this.widget_container.add(new ToDoList(this.idDashboard));
-            }
-            else if (source == new_poll){
-                this.widget_container.add(new PollCreator(this.idDashboard, User.getIdUser()));
-            }
-            else if (source == refreshAllWidgets) {
-                for (Widget widget : listWidgets) {
-                    widget.refresh();
-                }
-            }
-            else if (source == saveAllWidgets) {
-                for (Widget widget : listWidgets) {
-                    widget.save();
-                }
-            }
-            this.revalidate();
+        else if (source == new_postit) {
+            this.widget_container.add(new PostIt(this.idDashboard));
         }
+        else if (source == new_imagePostIt) {
+            this.widget_container.add(new ImagePostIt(this.idDashboard));
+        }
+        else if (source == new_tasklist) {
+            this.widget_container.add(new ToDoList(this.idDashboard));
+        }
+        else if (source == new_poll){
+            this.widget_container.add(new PollCreator(this.idDashboard, User.getIdUser()));
+        }
+        else if (source == remove_user) {
+            ListeDashboardUser listeUser = new ListeDashboardUser(this.idDashboard);
+        }
+        else if (source == delete_dashboard) {
+            int option = JOptionPane.showConfirmDialog(null, "Êtes vous sûr de bien vouloir supprimer ce dashboard ?",
+            "Confirmez la suppression", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (option == JOptionPane.OK_OPTION) {
+                BDD.deleteDashboard(this.idDashboard);
+                Container fenetre = this.getParent();
+                fenetre.removeAll();
+                fenetre.revalidate();
+                fenetre.repaint();
+            }
+        }
+        else if (source == quit_dashboard) {
+            BDD.removeUserFromDashboard( this.idDashboard, User.getIdUser());
+            Container fenetre = this.getParent();
+            fenetre.removeAll();
+            fenetre.revalidate();
+            fenetre.repaint();
+        }
+        else if (source == refreshAllWidgets) {
+            for (Widget widget : listWidgets) {
+                widget.refresh();
+            }
+        }
+        else if (source == saveAllWidgets) {
+            for (Widget widget : listWidgets) {
+                widget.save();
+            }
+        }
+        this.revalidate();
     }
 }
