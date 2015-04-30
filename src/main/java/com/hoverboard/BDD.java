@@ -129,7 +129,6 @@ public class BDD {
         if (databaseConnection != null) {
             try {
                 PreparedStatement statement = databaseConnection.prepareStatement("INSERT INTO widgets VALUES (NULL, 'Nouveau widget', '', ?, ?, ?, ?, ?, 0, ?, NULL) ", PreparedStatement.RETURN_GENERATED_KEYS);
-                ResultSet result = statement.getGeneratedKeys();
                 statement.setInt(1, positionX);
                 statement.setInt(2, positionY);
                 statement.setInt(3, height);
@@ -137,10 +136,10 @@ public class BDD {
                 statement.setString(5, typeWidget);
                 statement.setInt(6, idDashboard);
                 statement.executeUpdate();
+                ResultSet result = statement.getGeneratedKeys();
                 if (result.next()) {
                     idWidget = result.getInt(1);
                 }
-                databaseConnection.close();
             }
             catch (SQLException error) {
                 JOptionPane.showMessageDialog(null, "Impossible d'ajouter le widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
@@ -202,8 +201,8 @@ public class BDD {
         if (databaseConnection != null) {
             try {
                 PreparedStatement statement = databaseConnection.prepareStatement("SELECT contentWidget FROM widgets WHERE idWidget = ?");
-                ResultSet result = statement.executeQuery();
                 statement.setInt(1, idWidget);
+                ResultSet result = statement.executeQuery();
                 result.next();
                 contentWidget = result.getString("contentWidget");
             }
@@ -214,23 +213,20 @@ public class BDD {
         return (contentWidget);
     }
     
-    public static String getFieldWidget(int idWidget, String field) {
+    public static ResultSet getDataWidget(int idWidget) {
         Connection databaseConnection = BDD.getConnection();
-        String fieldWidget = "NULL";
+        ResultSet result = null;
         if (databaseConnection != null) {
             try {
-                PreparedStatement statement = databaseConnection.prepareStatement("SELECT ? FROM widgets WHERE idWidget = ?");
-                ResultSet result = statement.executeQuery();
-                statement.setString(1, field);
-                statement.setInt(2, idWidget);
-                result.next();
-                fieldWidget = result.getString(field);
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT nameWidget, positionX, positionY, longueur, largeur  FROM widgets WHERE idWidget = ?");
+                statement.setInt(1, idWidget);
+                result = statement.executeQuery();
             }
             catch (SQLException error) {
                 JOptionPane.showMessageDialog(null, "Impossible de récupérer le contenu du widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
         }
-        return (fieldWidget);
+        return (result);
     }
     
     /**
@@ -502,10 +498,11 @@ public class BDD {
                 statement.setInt(4, positionY);
                 statement.setInt(5, height);
                 statement.setInt(6, width);
+                statement.setInt(7, idWidget);
                 statement.executeUpdate();
             }
             catch (SQLException error) {
-                JOptionPane.showMessageDialog(null, "Impossible de modifier le widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Impossible de modifier le widget !" +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

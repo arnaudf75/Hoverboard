@@ -167,6 +167,7 @@ public class PollCreator extends Widget{
             "Confirmez la suppression", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             
             if (option == JOptionPane.OK_OPTION) {
+                Dashboard.listWidgets.remove(this);
                 this.dispose();
                 BDD.deleteWidget(this.idWidget);
             }

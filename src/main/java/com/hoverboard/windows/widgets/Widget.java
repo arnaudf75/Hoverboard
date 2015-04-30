@@ -12,6 +12,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
@@ -174,12 +176,21 @@ public abstract class Widget extends JInternalFrame implements ActionListener, M
     }
     
     public void refresh(){
-        this.positionX=Integer.parseInt(BDD.getFieldWidget(this.idWidget, "positionX"));
-        this.positionY=Integer.parseInt(BDD.getFieldWidget(this.idWidget, "positionY"));
-        this.height=Integer.parseInt(BDD.getFieldWidget(this.idWidget, "longueur"));
-        this.width=Integer.parseInt(BDD.getFieldWidget(this.idWidget, "largeur"));
-        this.name.label.setText(BDD.getFieldWidget(this.idWidget, "namewidget"));
-        this.setBounds(positionX, positionY, width, height);
+        ResultSet dataWidget = BDD.getDataWidget(idWidget);
+        try {
+            if (dataWidget.isBeforeFirst()) {
+                dataWidget.next();
+                this.positionX = dataWidget.getInt("positionX");
+                this.positionY = dataWidget.getInt("positionY");
+                this.height = dataWidget.getInt("longueur");
+                this.width = dataWidget.getInt("largeur");
+                this.name.label.setText(dataWidget.getString("namewidget"));
+                this.setBounds(positionX, positionY, width, height);
+            }
+        }
+        catch (SQLException error) {
+            JOptionPane.showMessageDialog(null, "Impossible de récupérer le contenu du widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     public void save(){
