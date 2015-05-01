@@ -21,7 +21,7 @@ public class MainApp {
     
     /**
      * Fonction principale appellée au lancement du programme. Elle lance une fenêtre de connexion ou, si un cookie existe et est valide,
-     * connecte l'utilisateur et affiche sa fenêtre d'accueil.
+     * connecte l'utilisateur et affiche sa fenêtre d'accueil en chargeant les plugins qui doivent l'être.
      * @param args Les paramètres éventuellement saisis depuis la console.
      */
     public static void main(String[] args) {
@@ -46,6 +46,7 @@ public class MainApp {
                     String lastName = isUser.getString("lastName");
                     String email = isUser.getString("email");
                     int isAdmin = isUser.getInt("isAdmin");
+                    loadPluginLaunch();
                     ListeDashboard myDashboards = new ListeDashboard(new User(idUser, login, firstName, lastName, email, isAdmin));
                 }
             }
@@ -58,4 +59,15 @@ public class MainApp {
             Login login_window = new Login();
         }
     }
+    
+    public static void loadPluginLaunch(){
+        // - parcourir le repertoire qui contient les plugins
+        // - etablir un tableau de correspondance entre les plugins a loader et les plugins presents en local
+        //      > implementer une methode qui retourne un tableau qui contient les IDs des plugins qui ont pour statut "a loader" (1 ou 3)
+        // - dans une boucle for qui parcours le tableau des plugins a activer :
+        //      - instancer un PluginFile
+        //      - sur ce plugin file, creer un Plugin loader
+        //      - appeler loadPlugin
+    }
+    
 }

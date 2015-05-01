@@ -12,20 +12,25 @@ package hoverboard.plugins;
  */
 public class PluginLoader {
     
-    public enum PluginLoaderOperation{
-        LoadPlugin,
-        UnloadPlugin;
-    }
-    
+    // la classe prend pour attribut un PluginFile pour garder la reference du plugin
+    // de plus *captain obvious speaking*, il faut un fichier plugin pour l' activer/loader ou le desactiver/unloader
     private PluginFile file;
-    private PluginLoaderOperation operation;
     
-    public PluginLoader(PluginFile file, PluginLoaderOperation operation){
-        this.operation = operation;
+    // constructeur ne prend donc qu'un seul param : le PluginFile
+    public PluginLoader(PluginFile file){
         this.file = file;
     }
     
-    public void loadFileOnBoard(){
+    // captain obvious here, methode pour laoder un plugin
+    public static void loadPlugin(){
         // do stuff
     }
+    
+    /**
+     * Obviously unload da plugin. 
+     */
+    public static void unloadPlugin(){
+        // do stuff
+    }
+    
 }
