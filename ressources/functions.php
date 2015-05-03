@@ -67,6 +67,41 @@
         $resultat = $bdd->query($requete)->fetchAll();
         return ($resultat);
     }
+	
+	 function getMyDashboards($bdd,$idUser) {
+        $requete = 'SELECT D.*
+                    FROM utilise U
+                    LEFT JOIN dashboard D
+                    ON D.idDashboard = U.idDashboard
+                    WHERE U.idUser = '.$idUser;
+        $resultat = $bdd->query($requete)->fetchAll();
+        return ($resultat);
+    }
+	
+	function getDashboardLogs($bdd,$idDashboard) {
+        $requete = 'SELECT L.*
+                    FROM logs L
+                    WHERE L.idDashboard = '.$idDashboard.'
+					ORDER BY L.modifDate DESC';
+        $resultat = $bdd->query($requete)->fetchAll();
+        return ($resultat);
+    }
+	
+	function getWidgetById($bdd,$idWidget) {
+        $requete = 'SELECT W.*
+                    FROM widget W
+                    WHERE L.idWidget = '.$idWidget;
+        $resultat = $bdd->query($requete)->fetchAll();
+        return ($resultat);
+    }
+	function getUserById($bdd,$idUser) {
+        $requete = 'SELECT U.*
+                    FROM users U
+                    WHERE U.iduser = '.$idUser;
+        $resultat = $bdd->query($requete)->fetchAll();
+        return ($resultat);
+    }
+	
     
     function getUser($bdd,$login,$password) {
         $requete = 'SELECT * FROM users WHERE login = "'.$login.'" AND password ="'.$password.'" AND isActive = 1';
