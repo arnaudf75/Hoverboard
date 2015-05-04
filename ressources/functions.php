@@ -2,16 +2,15 @@
     $bdd = new PDO('mysql:host=localhost;dbname=hoverboard_esgi','103876','esgi_hoverboard');
     
     function addPlugin($bdd, $idPlugin, $idUser) {
-        $bdd->exec('INSERT INTO telecharge VALUES('.$idPlugin.','.$idUser.',2)');
+        $bdd->exec('INSERT INTO installe VALUES('.$idPlugin.','.$idUser.')');
     }
     
     function addUser($bdd,$userLastName,$userFirstName,$emailUser,$userLogin,$userPassword) {
         $requete = 'SELECT email, login FROM users WHERE email = "'.$emailUser.'" OR login = "'.$userLogin.'"';
         $resultat = $bdd->query($requete);
         if ($resultat->rowCount()==0) {
-            $requete = "INSERT INTO users VALUES ('','$userLastName','$userFirstName','$emailUser','$userLogin','$userPassword',0,0)";
+            $requete = "INSERT INTO users VALUES ('','$userLastName','$userFirstName','$emailUser','$userLogin','$userPassword',0)";
             $bdd->exec($requete);
-            //sendMailNewUser($emailUser);
             return (1);
         }
         else {
@@ -31,12 +30,53 @@
         session_destroy();
     }
     
-    function getDownloads($bdd) {
+    function getPluginsByAuthor($bdd, $idAuthor) {
+        $requete = 'SELECT P.*
+                    FROM plugins P
+                    WHERE P.idEditeur = '.$idAuthor;
+        $resultat = $bdd->query($requete)->fetchAll();
+        return ($resultat);
+    }
+    
+    function getVersionsByPlugins($bdd, $idPlugin) {
         $requete = 'SELECT V.*
-                    FROM version_application VA
-                    LEFT JOIN version V
-                    ON VA.idVersion = V.idVersion
-                    ORDER BY dateUpdate DESC';
+                    FROM version V
+                    WHERE V.idPlugin = '.$idPlugin;
+        $resultat = $bdd->query($requete)->fetchAll();
+        return ($resultat);
+    }
+    
+    function getMyDashboards($bdd,$idUser) {
+        $requete = 'SELECT D.*
+                    FROM utilise U
+                    LEFT JOIN dashboard D
+                    ON D.idDashboard = U.idDashboard
+                    WHERE U.idUser = '.$idUser;
+        $resultat = $bdd->query($requete)->fetchAll();
+        return ($resultat);
+    }
+	
+    function getDashboardLogs($bdd,$idDashboard) {
+        $requete = 'SELECT L.*
+                    FROM logs L
+                    WHERE L.idDashboard = '.$idDashboard.'
+					ORDER BY L.modifDate DESC';
+        $resultat = $bdd->query($requete)->fetchAll();
+        return ($resultat);
+    }
+	
+    function getWidgetById($bdd,$idWidget) {
+        $requete = 'SELECT W.*
+                    FROM widget W
+                    WHERE L.idWidget = '.$idWidget;
+        $resultat = $bdd->query($requete)->fetchAll();
+        return ($resultat);
+    }
+        
+    function getUserById($bdd,$idUser) {
+        $requete = 'SELECT U.*
+                    FROM users U
+                    WHERE U.iduser = '.$idUser;
         $resultat = $bdd->query($requete)->fetchAll();
         return ($resultat);
     }
@@ -49,7 +89,7 @@
     
     function getListePlugins($bdd,$idUser) {
         if ($idUser) {
-            $isConnected = 'AND idPlugin NOT IN (SELECT idPlugin FROM telecharge T WHERE T.idUser = '.$idUser.')';
+            $isConnected = 'AND idPlugin NOT IN (SELECT idPlugin FROM installe I WHERE I.idUser = '.$idUser.')';
         }
         else { $isConnected = ''; }
         $requete = 'SELECT * FROM plugins WHERE isValid = 1 '.$isConnected;
@@ -59,52 +99,16 @@
     
     function getMyPlugins($bdd,$idUser) {
         $requete = 'SELECT P.*
-                    FROM telecharge T
-                    LEFT JOIN plugins P
-                    ON P.idPlugin = T.idPlugin
-                    WHERE T.idUser = '.$idUser.'
+                    FROM installe I, plugins P
+                    WHERE I.idPlugin = P.idPlugin
+                    AND I.idUser = '.$idUser.'
                     ORDER BY P.dateRelease DESC';
         $resultat = $bdd->query($requete)->fetchAll();
         return ($resultat);
     }
-	
-	 function getMyDashboards($bdd,$idUser) {
-        $requete = 'SELECT D.*
-                    FROM utilise U
-                    LEFT JOIN dashboard D
-                    ON D.idDashboard = U.idDashboard
-                    WHERE U.idUser = '.$idUser;
-        $resultat = $bdd->query($requete)->fetchAll();
-        return ($resultat);
-    }
-	
-	function getDashboardLogs($bdd,$idDashboard) {
-        $requete = 'SELECT L.*
-                    FROM logs L
-                    WHERE L.idDashboard = '.$idDashboard.'
-					ORDER BY L.modifDate DESC';
-        $resultat = $bdd->query($requete)->fetchAll();
-        return ($resultat);
-    }
-	
-	function getWidgetById($bdd,$idWidget) {
-        $requete = 'SELECT W.*
-                    FROM widget W
-                    WHERE L.idWidget = '.$idWidget;
-        $resultat = $bdd->query($requete)->fetchAll();
-        return ($resultat);
-    }
-	function getUserById($bdd,$idUser) {
-        $requete = 'SELECT U.*
-                    FROM users U
-                    WHERE U.iduser = '.$idUser;
-        $resultat = $bdd->query($requete)->fetchAll();
-        return ($resultat);
-    }
-	
     
     function getUser($bdd,$login,$password) {
-        $requete = 'SELECT * FROM users WHERE login = "'.$login.'" AND password ="'.$password.'" AND isActive = 1';
+        $requete = 'SELECT * FROM users WHERE login = "'.$login.'" AND password ="'.$password.'"';
         $resultat = $bdd->query($requete)->fetch();
         return ($resultat);
     }
@@ -119,7 +123,7 @@
     }
     
     function removePlugin($bdd, $idPlugin, $idUser) {
-        $bdd->exec('DELETE FROM telecharge WHERE idPlugin = '.$idPlugin.' AND idUser = '.$idUser.' ');
+        $bdd->exec('DELETE FROM installe WHERE idPlugin = '.$idPlugin.' AND idUser = '.$idUser.' ');
     }
     
     function sendMailNewUser($emailUser) {

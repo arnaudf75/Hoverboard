@@ -6,24 +6,24 @@
                 $idUser = $_SESSION['idUser'];
                 $dashboards = getMyDashboards($bdd,$idUser);
                 if ($dasboards) {
-					foreach($dashboards as $dashboard) {
-						echo '<h3>'.$dashboard['titleDashboard'].'</h3>
-						<table role="grid">
-							<tr>
-								<th>utilisateur</th> <th>Nom du widget/th> <th>modification</th>
-							</tr>';
-							$logs = getDashboardLogs($bdd,$dashboard['idDashboard']);
-							foreach ($logs as $log) {
-								$widget=getWidgetById($bdd,$log['idWidget']);
-								$user=getUserById($bdd,$log['idUser']);
-								echo '
-									<tr>
-										<td>'.$widget['nameWidget'].'</td>
-										<td>'.$user['login'].'</td>
-										<td>'.$log['contentWidget'].'</td>
-									</tr>';
-							}
-						echo '</table>';
+                foreach($dashboards as $dashboard) {
+                        echo '<h3>'.$dashboard['titleDashboard'].'</h3>
+                        <table role="grid">
+                                <tr>
+                                        <th>utilisateur</th> <th>Nom du widget/th> <th>modification</th>
+                                </tr>';
+                                $logs = getDashboardLogs($bdd,$dashboard['idDashboard']);
+                                foreach ($logs as $log) {
+                                        $widget=getWidgetById($bdd,$log['idWidget']);
+                                        $user=getUserById($bdd,$log['idUser']);
+                                        echo '
+                                                <tr>
+                                                        <td>'.$widget['nameWidget'].'</td>
+                                                        <td>'.$user['login'].'</td>
+                                                        <td>'.$log['contentWidget'].'</td>
+                                                </tr>';
+                                }
+                        echo '</table>';
 					}
                 }
             }

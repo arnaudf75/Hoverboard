@@ -7,6 +7,8 @@
     include_once 'views/v_navbar.php';
     include_once 'views/v_menu.php';
     
+    //error_reporting(0);
+    
     if (isset($_REQUEST['control'])) {
         $control = $_REQUEST['control'];
     }
@@ -17,10 +19,6 @@
     switch ($control) {
         default : {
             include_once 'views/v_home.php';
-            break;
-        }
-        case 'downloads' : {
-            include_once 'views/v_downloads.php';
             break;
         }
         case 'login' : {
