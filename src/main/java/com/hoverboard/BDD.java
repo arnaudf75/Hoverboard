@@ -422,8 +422,9 @@ public class BDD {
                     int idUser = result.getInt("idUser");
                     result.close();
                     statement.close();
-                    statement = databaseConnection.prepareStatement("UPDATE users SET password = ?");
+                    statement = databaseConnection.prepareStatement("UPDATE users SET password = ? WHERE idUser = ?");
                     statement.setString(1, token);
+                    statement.setInt(2, idUser);
                     statement.executeUpdate();
                 }
             }

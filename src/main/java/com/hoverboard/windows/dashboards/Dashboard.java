@@ -2,6 +2,7 @@ package com.hoverboard.windows.dashboards;
 
 import com.hoverboard.BDD;
 import com.hoverboard.User;
+import com.hoverboard.plugins.GestionPlugins;
 import com.hoverboard.windows.menus.newdashboard.AddMates;
 import com.hoverboard.windows.menus.themes.Theme;
 import com.hoverboard.windows.widgets.ImagePostIt;
@@ -123,7 +124,7 @@ public class Dashboard extends JPanel implements ActionListener {
             this.topLeftSide_container.add(remove_user);
             this.topLeftSide_container.add(delete_dashboard);
         }
-        
+                
         this.topRightSide_container.add(refreshAllWidgets);
         this.topRightSide_container.add(saveAllWidgets);
         
