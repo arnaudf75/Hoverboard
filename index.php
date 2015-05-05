@@ -7,7 +7,7 @@
     include_once 'views/v_navbar.php';
     include_once 'views/v_menu.php';
     
-    //error_reporting(0);
+    error_reporting(0);
     
     if (isset($_REQUEST['control'])) {
         $control = $_REQUEST['control'];
@@ -34,11 +34,11 @@
             break;
         }
         case 'upload' : {
-            include_once 'controlers/c_upload.php';
+            include 'controlers/c_upload.php';
             break;
         }
-        case 'support' : {
-            include_once 'views/v_support.php';
+        case 'theme' : {
+            include 'controlers/c_theme.php';
             break;
         }
     }

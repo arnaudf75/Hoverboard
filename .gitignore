@@ -14,3 +14,9 @@ userData/cookie_login.xml
 nbproject/build-impl.xml
 nbproject/genfiles.properties
 /nbproject/
+target/
+Scripts/MPD_Hoverboard.mwb.bak
+nbactions.xml
+plugins/GoogleMaps.jar
+theme.rar
+userData/app.properties
