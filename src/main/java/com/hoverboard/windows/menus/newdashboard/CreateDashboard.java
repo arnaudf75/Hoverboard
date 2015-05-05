@@ -80,8 +80,7 @@ public class CreateDashboard extends JFrame implements ActionListener {
                 titreDashboard = titreField.getText();
                 descriptionDashboard = descriptionArea.getText();
                 this.dispose();
-                int idDashboard = BDD.ajouteDashboard(this.idUser, this.titreDashboard, this.descriptionDashboard);
-                AddMates addUsersToDashboard = new AddMates(idDashboard);
+                BDD.ajouteDashboard(this.idUser, this.titreDashboard, this.descriptionDashboard);
             }
         }
     }

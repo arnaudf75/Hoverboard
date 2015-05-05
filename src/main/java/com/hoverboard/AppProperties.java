@@ -1,5 +1,7 @@
 package com.hoverboard;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,22 +18,29 @@ public class AppProperties {
     
     public static void getProperties() {
         try {
-            InputStream propertiesFile = AppProperties.class.getResourceAsStream("/data/app.properties");
+            InputStream propertiesFile = new FileInputStream("userData/app.properties");
             AppProperties.properties.load(propertiesFile);
             AppProperties.themeSelected = properties.get("theme").toString();
         }
-        catch (IOException error) {
-            JOptionPane.showMessageDialog(null, "Impossible d'accèder au fichier de configuration !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+        catch (IOException | NullPointerException errorNoFile) {
+            File userData = new File("userData");
+            userData.mkdirs();
+            File appData = new File("userData/app.properties");
+            try {
+                appData.createNewFile();
+            }
+            catch (IOException error) { }
         }
     }
     
     public static void storeProperties() {
         try {
-            FileOutputStream propertiesOut = new FileOutputStream(AppProperties.class.getClassLoader().getResource("ressources/app.properties").toString());
+            FileOutputStream propertiesOut = new FileOutputStream((new File("userData/app.properties")));
+            AppProperties.properties.put("theme", AppProperties.themeSelected);
             AppProperties.properties.store(propertiesOut, "Fichier de configuration"); 
         }
         catch (IOException error) {
-            JOptionPane.showMessageDialog(null, "Impossible d'enregistrer fichier de configuration !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Impossible d'enregistrer le fichier de configuration !", "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

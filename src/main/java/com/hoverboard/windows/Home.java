@@ -14,6 +14,7 @@ import com.hoverboard.windows.menus.themes.Theme;
 import com.hoverboard.windows.widgets.Widget;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -21,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.Font;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +40,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
 
 /**
@@ -75,10 +76,11 @@ public class Home extends JFrame implements ActionListener, WindowListener {
     @SuppressWarnings("LeakingThisInConstructor")
     public Home(User user) {
         AppProperties.getProperties();
-        if (AppProperties.themeSelected.equals("DEFAULT")) {
-            Theme.setTheme(new File("/themes/"+AppProperties.themeSelected+".xml"));
+        if (!AppProperties.themeSelected.equals("DEFAULT")) {
+            Theme.setTheme(new File("themes/"+AppProperties.themeSelected+".xml"));
         }
-        Theme.setUIFont(new FontUIResource(Theme.nomFont, Font.BOLD, Theme.fontSize));
+        
+        Theme.setUIColorAndFont(new ColorUIResource(Theme.couleurPolice), new FontUIResource(Theme.police));
         main_container.setLayout(new BorderLayout());
         
         this.addWindowListener(this);
@@ -220,7 +222,9 @@ public class Home extends JFrame implements ActionListener, WindowListener {
         for (Widget widget : listWidgets) {
                 widget.save();
         }
+        AppProperties.storeProperties();
         this.dispose();
+        System.exit(0);
     }
 
     @Override
@@ -259,7 +263,7 @@ public class Home extends JFrame implements ActionListener, WindowListener {
             this.center_container.repaint();
         }
         catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible d'afficher la liste des dashboards ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Impossible d'afficher la liste des dashboards !", "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

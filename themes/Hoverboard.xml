@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<theme>
+  <nom>Hoverboard 3.0</nom>
+  <font>TimeRomans</font>
+  <background>D:\Dropbox\Arnaud\Images\Half-Life.png</background>
+  <colorText>
+    <colorR>255</colorR>
+    <colorG>51</colorG>
+    <colorB>51</colorB>
+  </colorText>
+  <fontSize>12</fontSize>
+</theme>

@@ -47,11 +47,9 @@ public class BDD {
      * @param idUser L'id de l'utilisateur qui a crée le dashboard et qui en est donc l'administrateur.
      * @param titreDashboard Le titre du dashboard saisi par l'utilisateur.
      * @param descriptionDashboard La description du dashboard saisie par l'utilisateur.
-     * @return L'id du dashboard si il a bien été ajouté à la base de données, -1 sinon.
      */
-    public static int ajouteDashboard(int idUser, String titreDashboard, String descriptionDashboard) {
+    public static void ajouteDashboard(int idUser, String titreDashboard, String descriptionDashboard) {
         Connection databaseConnection = BDD.getConnection();
-        int idDashboard = -1;
         if (databaseConnection != null) {
             try {
                 PreparedStatement statement = databaseConnection.prepareStatement("INSERT INTO dashboard VALUES(NULL, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
@@ -60,7 +58,7 @@ public class BDD {
                 statement.executeUpdate();
                 ResultSet result = statement.getGeneratedKeys();
                 if (result.next()) {
-                    idDashboard = result.getInt(1);
+                    int idDashboard = result.getInt(1);
                     statement.close();
                     statement = databaseConnection.prepareStatement("INSERT INTO utilise VALUES (?, ?, 1)");
                     statement.setInt(1, idUser);
@@ -74,7 +72,6 @@ public class BDD {
                 JOptionPane.showMessageDialog(null, "Impossible de créer le dashboard !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             } 
         }
-        return (idDashboard);
     }
     
     /**
@@ -100,7 +97,7 @@ public class BDD {
                     return (true);
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec ce pseudo !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                    return (false);
                 }
             }
             catch (SQLException error) {
@@ -548,7 +545,7 @@ public class BDD {
                 statement.executeUpdate();
             }
             catch (SQLException error) {
-                JOptionPane.showMessageDialog(null, "Impossible de modifier le widget !" +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Impossible de modifier le widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

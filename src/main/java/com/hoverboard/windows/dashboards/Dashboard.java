@@ -2,8 +2,6 @@ package com.hoverboard.windows.dashboards;
 
 import com.hoverboard.BDD;
 import com.hoverboard.User;
-import com.hoverboard.plugins.GestionPlugins;
-import com.hoverboard.windows.menus.newdashboard.AddMates;
 import com.hoverboard.windows.menus.themes.Theme;
 import com.hoverboard.windows.widgets.ImagePostIt;
 import com.hoverboard.windows.widgets.Poll;
@@ -177,7 +175,7 @@ public class Dashboard extends JPanel implements ActionListener {
                                }
                             }
                             catch (IOException | JDOMException error) {
-                                JOptionPane.showMessageDialog(null, "handle Exception " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "handle Exception ", "ERREUR", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                         else {
@@ -195,7 +193,7 @@ public class Dashboard extends JPanel implements ActionListener {
                                 }
                             }
                             catch (IOException | JDOMException error) {
-                                JOptionPane.showMessageDialog(null, "handle Exception " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "handle Exception ", "ERREUR", JOptionPane.ERROR_MESSAGE);
                             } 
                         }
                         break;
@@ -213,7 +211,7 @@ public class Dashboard extends JPanel implements ActionListener {
             }
         }
         catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible d'afficher les widgets ! "+error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Impossible d'afficher les widgets !", "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -225,7 +223,13 @@ public class Dashboard extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source == add_users) {
-            AddMates addUsersToDashboard = new AddMates(this.idDashboard);
+            String pseudoUser = JOptionPane.showInputDialog(null, "Saisissez le pseudo de l'utilisateur :", "Ajout d'utilisateurs au dashboard", JOptionPane.QUESTION_MESSAGE);
+            if(BDD.ajouteUserToDashboard(this.idDashboard, pseudoUser)) {
+                JOptionPane.showMessageDialog(null, "L'utilisateur '"+pseudoUser+"' a bien été ajouté au dashboard !", "Succès !", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec ce pseudo !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
         }
         else if (source == new_postit) {
             this.widget_container.add(new PostIt(this.idDashboard));

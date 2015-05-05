@@ -1,6 +1,7 @@
 package com.hoverboard.windows;
 
 import com.hoverboard.BDD;
+import com.hoverboard.SendMail;
 import com.hoverboard.User;
 import com.hoverboard.windows.menus.themes.Theme;
 
@@ -13,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.mail.MessagingException;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -27,7 +29,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 /**
- * Login est la fenêtre par laquelle l'utilisateur se connecte à son compte.
+ * Login est la fenÃªtre par laquelle l'utilisateur se connecte Ã  son compte.
  * @author Arnaud
  */
 public class Login extends JFrame implements ActionListener {
@@ -46,8 +48,8 @@ public class Login extends JFrame implements ActionListener {
     private final JTextField login_field = new JTextField();
 
     /**
-     * Crée une fenêtre de login dans laquelle l'utilisateur rentre ses identifiants
-     * ou demande à afficher une fenêtre d'inscription ou de mot de passe perdu.
+     * CrÃ©e une fenÃªtre de login dans laquelle l'utilisateur rentre ses identifiants
+     * ou demande Ã  afficher une fenÃªtre d'inscription ou de mot de passe perdu.
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Login() {
@@ -85,8 +87,8 @@ public class Login extends JFrame implements ActionListener {
     }
     
     /**
-     * Affiche la page d'accueil de l'utilisateur si le login et le mot de passe sont valides, ou affiche une fenêtre d'enregistrement ou de mot de passe perdu.
-     * @param event L'action qui vient de se produire (bouton cliqué).
+     * Affiche la page d'accueil de l'utilisateur si le login et le mot de passe sont valides, ou affiche une fenÃªtre d'enregistrement ou de mot de passe perdu.
+     * @param event L'action qui vient de se produire (bouton cliquÃ©).
      */
     @Override
     public void actionPerformed(ActionEvent event) {
@@ -124,7 +126,20 @@ public class Login extends JFrame implements ActionListener {
             }
         }
         else if (source == password_lost) {
-            Forgot_Password forgot_psw = new Forgot_Password();
+            String nomTheme = JOptionPane.showInputDialog(null, "Saisissez votre adresse email :", "Réinitialisation du mot de passe", JOptionPane.QUESTION_MESSAGE);
+            try {
+                String new_password = BDD.resetPassword(nomTheme);
+                if (new_password != null) {
+                    SendMail send = new SendMail();
+                    send.sendPasswordLostEmail(nomTheme, new_password);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec cet email !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            catch (MessagingException error) {
+                JOptionPane.showMessageDialog(null, "Impossible d'envoyer un message pour changer votre mot de passe !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
         }
         else if (source == register) {
             Register reg = new Register();
@@ -132,8 +147,8 @@ public class Login extends JFrame implements ActionListener {
     }
     
     /**
-     * Créer un fichier cookie pour connecter l'utilisateur automatiquement la prochaine fois qu'il utilisera l'application.
-     * Les informations saisies dans la fenêtre de login sont récupérées pour les insérées dans le fichier cookie_login.xml.
+     * CrÃ©er un fichier cookie pour connecter l'utilisateur automatiquement la prochaine fois qu'il utilisera l'application.
+     * Les informations saisies dans la fenÃªtre de login sont rÃ©cupÃ©rÃ©es pour les insÃ©rÃ©es dans le fichier cookie_login.xml.
      * @param loginField Le login saisi par l'utilisateur lors de la connexion
      * @param passwordField Le mot de passe saisi par l'utilisateur lors de la connexion
      */
@@ -148,7 +163,7 @@ public class Login extends JFrame implements ActionListener {
             cookie_login.output(cookie, new FileWriter(new File("userData/cookie_login.xml")));
         }
         catch (IOException error) {
-            JOptionPane.showMessageDialog(null, "Erreur lors de la création du cookie ! " +error, "ERREUR", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Erreur lors de la création du cookie ! ", "ERREUR", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 }
