@@ -200,6 +200,23 @@ public class BDD {
         return (this.result);
     }
     
+    public String getPluginName(int idPlugin) {
+        this.requete = "SELECT P.namePlugin, V.numVersion" +
+                       " FROM version V, plugins P" +
+                       " WHERE P.idPlugin = " + idPlugin +
+                       " AND V.idPlugin = P.idPlugin";
+        String name = null;
+        try {
+            this.result = this.statement.executeQuery(this.requete);
+            result.next();
+            name = result.getString("namePlugin") + "-" + result.getString("numVersion");
+        }
+        catch (SQLException error) {
+            JOptionPane.showMessageDialog(null, "Impossible de récupérer la liste des plugins ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+        }
+        return name;
+    }
+    
     /**
      * Récupère la liste des plugins ajoutés depuis le site par l'utilisateur connecté.
      * @param idUser L'id de l'utilisateur connecté.
