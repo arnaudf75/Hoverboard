@@ -1,6 +1,8 @@
 package windows.menus.myplugins;
 
 import hoverboard.BDD;
+import hoverboard.plugins.PluginDownloader;
+import hoverboard.plugins.PluginFile;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -44,7 +46,7 @@ public class Plugins extends JPanel implements ActionListener {
         this.idVersion = idVersion;
         
         this.setLayout(new GridLayout(1,6));
-        
+      
         this.labelNom.setText(namePlugin);
         this.labelNumeroVersion.setText(numeroVersion);
         this.labelDateUpdate.setText(dateUpdate);
@@ -82,13 +84,21 @@ public class Plugins extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        
+        BDD db = new BDD();
+        String name = db.getPluginName(idPlugin) + ".jar";
+        // creer un objet plugin
         if (source == activate) {
             this.remove(activate);
             this.add(deactivate);
+            if(!PluginFile.pluginExists(name)){ //"nom du plugin.jar"
+                PluginDownloader p = new PluginDownloader(idPlugin);
+                PluginFile pFile = p.downloadPluginFromServer();
+            }
             this.connexion.setStatutPlugin(idUser, idPlugin, 3);
+            
         }
         else if (source == deactivate) {
+            if(!PluginFile.pluginExists(name)) return;
             this.remove(deactivate);
             this.add(activate);
             this.connexion.setStatutPlugin(idUser, idPlugin, 1);
