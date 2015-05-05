@@ -4,17 +4,15 @@ import com.hoverboard.AppProperties;
 import com.hoverboard.BDD;
 import com.hoverboard.User;
 import com.hoverboard.windows.dashboards.Dashboard;
-import static com.hoverboard.windows.dashboards.Dashboard.listWidgets;
 import com.hoverboard.windows.dashboards.DashboardPreview;
 import com.hoverboard.windows.menus.infouser.InfoUser;
 import com.hoverboard.windows.menus.myplugins.ListeMyPlugins;
-import com.hoverboard.windows.menus.newdashboard.CreateDashboard;
+import com.hoverboard.windows.dashboards.CreateDashboard;
 import com.hoverboard.windows.menus.themes.MenuTheme;
 import com.hoverboard.windows.menus.themes.Theme;
 import com.hoverboard.windows.widgets.Widget;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -27,9 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
@@ -71,7 +66,7 @@ public class Home extends JFrame implements ActionListener, WindowListener {
     
     /**
      * Crée la fenêtre d'accueil de l'utilisateur, comportant les menus lui permettant d'accéder à ses options, etc.
-     * @param user
+     * @param user L'objet User est constitué du nom, du prénom, du login, de l'ID et de l'email de l'utilisateur.
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Home(User user) {
@@ -117,23 +112,6 @@ public class Home extends JFrame implements ActionListener, WindowListener {
         this.bottom_container.add(homeButton);
         this.main_container.add(center_container, BorderLayout.CENTER);
         this.main_container.add(bottom_container, BorderLayout.SOUTH);
-        
-       /* ResultSet myPlugins = connexion.getMyPlugins(idUser);
-        try {
-            while (myPlugins.next()) {
-                try {
-                    //if(myPlugins.getInt())
-                    new File("plugins").mkdirs();
-                    Files.copy(new URL(myPlugins.getString("pathToVersion")).openStream(), new File("plugins/"+myPlugins.getString("namePlugin")+myPlugins.getString("numVersion")+".jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
-                }
-                catch (IOException error) {
-                    JOptionPane.showMessageDialog(null, "Impossible d'afficher la liste de vos plugins ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        }
-        catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Impossible d'accèder à vos plugins ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
-        }*/
 
         this.setTitle("Hoverboard");
         this.setContentPane(main_container);
@@ -153,7 +131,7 @@ public class Home extends JFrame implements ActionListener, WindowListener {
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source == homeButton) {
-            for (Widget widget : listWidgets) {
+            for (Widget widget : Dashboard.listWidgets) {
                 widget.save();
             }
             Dashboard.listWidgets.clear();
@@ -207,9 +185,10 @@ public class Home extends JFrame implements ActionListener, WindowListener {
             }
         }
         else if (source == menuDisconnect) {
-            for (Widget widget : listWidgets) {
+            for (Widget widget : Dashboard.listWidgets) {
                 widget.save();
             }
+            AppProperties.storeProperties();
             File cookie = new File("userData/cookie_login.xml");
             cookie.delete();
             this.dispose();
@@ -217,9 +196,14 @@ public class Home extends JFrame implements ActionListener, WindowListener {
         }
     }
     
+    /**
+     * Fonction appellée lorsque la fenêtre se ferme : Si l'utilisateur est sur un dashboard, la liste "listWidgets" est peut être remplie et donc l'application va sauvegarder les widgets.
+     * Les propriétés de l'application sont enregistrées.
+     * @param windowEvent L'évènement qui vient de se produire (clic sur la croix rouge en haut à droite de la fenêtre).
+     */
     @Override
     public void windowClosing(WindowEvent windowEvent) {
-        for (Widget widget : listWidgets) {
+        for (Widget widget : Dashboard.listWidgets) {
                 widget.save();
         }
         AppProperties.storeProperties();
@@ -245,6 +229,10 @@ public class Home extends JFrame implements ActionListener, WindowListener {
     @Override
     public void windowOpened(WindowEvent windowEvent) { }
     
+    /**
+     * Affiche la liste des dashboards de l'utilisateurs sous la forme de JPanel comprenant le nom du dashboard, sa description et les droits de l'utilisateur par rapport à celui-ci, réprésentés par une icône.
+     * @param idUser L'ID de l'utilisateur connecté.
+     */
     public void getDashboards(int idUser) {
         ResultSet listeDashboard = BDD.getDashboards(idUser);
         try {

@@ -165,6 +165,10 @@ public class BDD {
         return (result);
     }
     
+    /**
+     * Supprime un dashboard de la base de données.
+     * @param idDashboard L'ID du dashboard à supprimer.
+     */
     public static void deleteDashboard(int idDashboard) {
         Connection databaseConnection = BDD.getConnection();
         ResultSet result = null;
@@ -225,6 +229,11 @@ public class BDD {
         return (contentWidget);
     }
     
+    /**
+     * Cette fonction est appellée lorsqu'il faut actualiser un ou plusieurs widgets dans un dashboard. 
+     * @param idWidget L'ID du widget sélectionné.
+     * @return Un ResulSet contenant le nom, les positions, et les dimensions du widget.
+     */
     public static ResultSet getDataWidget(int idWidget) {
         Connection databaseConnection = BDD.getConnection();
         ResultSet result = null;
@@ -263,6 +272,11 @@ public class BDD {
         return (result);
     }
     
+    /**
+     * Cette fonction est appellée lorsque l'afministrateur d'un dashboard veut administrer les droits des autres utilisateurs.
+     * @param idDashboard L'ID du dashboard utilisé.
+     * @return Un ResulSet contenant l'ID, le login, les droits d'administration (par rapport au dashboard choisi) des utilisateurs du dashboard.
+     */
     public static ResultSet getDashboardUsers(int idDashboard) {
         Connection databaseConnection = BDD.getConnection();
         ResultSet result = null;
@@ -282,15 +296,14 @@ public class BDD {
     /**
      * Récupère la liste des plugins ajoutés depuis le site par l'utilisateur connecté.
      * @param idUser L'id de l'utilisateur connecté.
-     * @return L'id, le nom, la description et le statut pour chaque plugin.
+     * @return Un ResultSet contenant l'id, le nom, la description et le statut pour chaque plugin.
      */
     public static ResultSet getMyPlugins(int idUser) {
         Connection databaseConnection = BDD.getConnection();
         ResultSet result = null;
         if (databaseConnection != null) {
             try {
-                PreparedStatement statement = databaseConnection.prepareStatement("SELECT I.idVersion, V.idPlugin, I.idStatutPlugin, P.namePlugin, P.descriptionPlugin, V.numVersion, V.dateUpdate, V.pathToVersion " +
-                "FROM installe I,version V, plugins P WHERE I.idVersion = V.idVersion AND V.idPlugin = P.idPlugin AND P.isValid = 1 AND I.idUser = ? ORDER BY I.idStatutPlugin DESC");
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT * FROM plugins P WHERE idPlugin IN (SELECT idplugin FROM installe WHERE idUser = ?)");
                 statement.setInt(1, idUser);
                 result = statement.executeQuery();
             }
@@ -299,6 +312,29 @@ public class BDD {
             }
         }
         return (result);   
+    }
+    
+    /**
+     * Récupère la liste des plugins de l'utilisateur ainsi que leur version la plus récente et le chemin auquel il faut accèder pour les télécharger.
+     * @param idUser L'ID de l'utilisateur connecté.
+     * @return La liste des plugins de l'utilisateur.
+     */
+    public static ResultSet getMyPluginsVersion(int idUser) {
+        Connection databaseConnection = BDD.getConnection();
+        ResultSet result = null;
+        if (databaseConnection != null) {
+            try {
+                PreparedStatement statement = databaseConnection.prepareStatement("SELECT DISTINCT P.* , V.numVersion, V.pathToVersion FROM plugins P "
+                                                                                + "INNER JOIN version V ON V.idPlugin = P.idPlugin " +
+                                                                                  "WHERE P.idPlugin IN (SELECT idplugin FROM installe WHERE idUser =  ?) LIMIT 1");
+                statement.setInt(1, idUser);
+                result = statement.executeQuery();
+            }
+            catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "Impossible de récupérer la liste des plugins !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return (result); 
     }
   
     /**
@@ -381,6 +417,11 @@ public class BDD {
         return (true);
     }
     
+    /**
+     * Supprime un utilisateur du dashboard.
+     * @param idDashboard L'ID du dashboard utilisé.
+     * @param idUser L'ID de l'utilisateur à supprimer.
+     */
     public static void removeUserFromDashboard(int idDashboard, int idUser) {
         Connection databaseConnection = BDD.getConnection();
         if (databaseConnection != null) {
@@ -432,6 +473,12 @@ public class BDD {
         return (token);
     }
     
+    /**
+     * Change les droits d'un utilisateur par rapport à un dashboard.
+     * @param idUser L'ID de l'utilisateur à modifier.
+     * @param idDashboard L'ID du dashboard utilisé.
+     * @param isDashboardAdmin Les nouveaux droits d'administration (0 : Non Administrateur, 1 : Administrateur).
+     */
     public static void setDashboardRights(int idUser, int idDashboard, int isDashboardAdmin) {
         Connection databaseConnection = BDD.getConnection();
         if (databaseConnection != null) {
@@ -507,15 +554,6 @@ public class BDD {
                 JOptionPane.showMessageDialog(null, "Impossible de mettre à jour vos coordonnées !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
-    
-    /**
-     * Est appellée lorsqu'un utilisateur cherche à mettre à jour un plugin installé. A partir de la date de version, la fonction
-     * va aller chercher si il en existe une plus récente et l'installer.
-     * @param idVersion 
-     */
-    public static void updatePlugin(int idVersion) {
-        
     }
     
     /**

@@ -48,7 +48,7 @@ public class Login extends JFrame implements ActionListener {
     private final JTextField login_field = new JTextField();
 
     /**
-     * CrÃ©e une fenêtre de login dans laquelle l'utilisateur rentre ses identifiants
+     * Crée une fenêtre de login dans laquelle l'utilisateur rentre ses identifiants
      * ou demande à afficher une fenêtre d'inscription ou de mot de passe perdu.
      */
     @SuppressWarnings("LeakingThisInConstructor")
@@ -149,10 +149,10 @@ public class Login extends JFrame implements ActionListener {
     }
     
     /**
-     * CrÃ©er un fichier cookie pour connecter l'utilisateur automatiquement la prochaine fois qu'il utilisera l'application.
-     * Les informations saisies dans la fenêtre de login sont récupérées pour les insÃ©rÃ©es dans le fichier cookie_login.xml.
-     * @param loginField Le login saisi par l'utilisateur lors de la connexion
-     * @param passwordField Le mot de passe saisi par l'utilisateur lors de la connexion
+     * Crée un fichier cookie pour connecter l'utilisateur automatiquement la prochaine fois qu'il utilisera l'application.
+     * Les informations saisies dans la fenêtre de login sont récupérées pour les insérées dans le fichier cookie_login.xml.
+     * @param loginField Le login saisi par l'utilisateur lors de la connexion.
+     * @param passwordField Le mot de passe saisi par l'utilisateur lors de la connexion.
      */
     public void creerCookie(String loginField, String passwordField) {
         try {

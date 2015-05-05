@@ -138,8 +138,8 @@ public class Dashboard extends JPanel implements ActionListener {
     }
     
     /**
-     * 
-     * @param idDashboard 
+     * Affiche tous les widgets du dashboard.
+     * @param idDashboard L'ID du dashboard utilisé.
      */
     public void afficheWidgets(int idDashboard) {
         ResultSet listeWidgets = BDD.getWidgets(idDashboard);

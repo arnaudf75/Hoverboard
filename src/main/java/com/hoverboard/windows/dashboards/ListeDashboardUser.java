@@ -1,7 +1,6 @@
 package com.hoverboard.windows.dashboards;
 
 import com.hoverboard.BDD;
-import com.hoverboard.User;
 import com.hoverboard.windows.menus.themes.Theme;
 
 import java.awt.GridLayout;
@@ -12,12 +11,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- *
+ * ListeDashboardUser est une fenêtre affichant tous les utilisateurs appartenant à un dashboard.
  * @author Arnaud
  */
 public class ListeDashboardUser extends JFrame {
     private JPanel main_container = new JPanel();
     
+    /**
+     * Le constructeur de la classe ListeDashboardUser.
+     * @param idDashboard L'ID du dashboard utilisé.
+     */
     public ListeDashboardUser(int idDashboard) {
         
         ResultSet userList = BDD.getDashboardUsers(idDashboard);

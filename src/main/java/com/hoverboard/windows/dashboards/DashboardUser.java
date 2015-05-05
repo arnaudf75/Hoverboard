@@ -10,7 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- *
+ * Cette classe affiche les informations d'un utilisateur du dashboard dans un JPanel.
+ * Celui-ci est utilisé pour afficher la liste des utilisateurs d'un dashboard.
  * @author Arnaud
  */
 public class DashboardUser extends JPanel implements ActionListener {
@@ -22,6 +23,13 @@ public class DashboardUser extends JPanel implements ActionListener {
     private final JPanel admin_container = new JPanel();
     private final JPanel remove_user_container = new JPanel();
     
+    /**
+     * Constructeur de la classe DashboardUser.
+     * @param idDashboard L'ID du dashboard utilisé.
+     * @param idUser L'ID de l'utilisateur du dashboard affiché.
+     * @param login Le login de l'utilisateur affiché.
+     * @param isDashboardAdmin Les droits de l'utilisateur par rapport au dashboard.
+     */
     @SuppressWarnings("LeakingThisInConstructor")
     public DashboardUser(int idDashboard, int idUser, String login, int isDashboardAdmin) {
         this.setLayout(new GridLayout(1, 3));
@@ -44,6 +52,10 @@ public class DashboardUser extends JPanel implements ActionListener {
         this.add(remove_user_container);
     }
     
+    /**
+     * Cette fonction change les droits d'un utilisateur du dashboard ou le supprime du dashboard.
+     * @param event L'action qui vient de se produire (bouton cliqué).
+     */
     @Override
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();

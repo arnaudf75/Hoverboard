@@ -9,13 +9,17 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * La classe AppProperties gère les propriétés (ici le thème choisi par défaut par l'utilisateur) de l'application.
+ * Elle se sert du fichier app.properties où sont chargées puis enregistrées les propriétés.
  * @author Arnaud
  */
 public class AppProperties {
     public static Properties properties = new Properties();
     public static String themeSelected = "DEFAULT";
     
+    /**
+     * Charge les propriétés depuis le fichier de configuration.
+     */
     public static void getProperties() {
         try {
             InputStream propertiesFile = new FileInputStream("userData/app.properties");
@@ -33,6 +37,9 @@ public class AppProperties {
         }
     }
     
+    /**
+     * Enregistre les propriétés dans le fichier de configuration.
+     */
     public static void storeProperties() {
         try {
             FileOutputStream propertiesOut = new FileOutputStream(new File("userData/app.properties"));

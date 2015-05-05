@@ -13,37 +13,27 @@ import javax.swing.JTextArea;
  * @author Arnaud
  */
 public class Plugins extends JPanel implements ActionListener {
-    private int idUser = -1;
     private int idPlugin = -1;
-    private int idVersion = -1;
     
     private final JButton activate = new JButton("Activer");
     private final JButton deactivate = new JButton("Désactiver");
     private final JButton delete = new JButton ("Supprimer");
     private final JLabel labelNom = new JLabel("");
-    private final JLabel labelDateUpdate = new JLabel("");
-    private final JLabel labelNumeroVersion = new JLabel("");
     private final JTextArea areaDescription = new JTextArea("");
     
     /**
      * Crée un JPanel affichant les informations relatives à un plugin.
-     * @param idUser L'id de l'utilisateur connecté.
      * @param idPlugin L'id du plugin affiché.
      * @param namePlugin Le nom du plugin affiché.
      * @param descriptionPlugin La description du plugin affiché.
-     * @param statutPlugin Le statut du plugin : si il est désactivé, en cours de téléchargement ou activé.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public Plugins(int idUser, int idPlugin, int idVersion, String namePlugin, String numeroVersion, String dateUpdate, String descriptionPlugin, int statutPlugin) {        
-        this.idUser = idUser;
+    public Plugins(int idPlugin, String namePlugin, String descriptionPlugin) {        
         this.idPlugin = idPlugin;
-        this.idVersion = idVersion;
         
-        this.setLayout(new GridLayout(1,6));
+        this.setLayout(new GridLayout(1,3));
         
         this.labelNom.setText(namePlugin);
-        this.labelNumeroVersion.setText(numeroVersion);
-        this.labelDateUpdate.setText(dateUpdate);
         this.areaDescription.setText(descriptionPlugin);
         this.areaDescription.setWrapStyleWord(true);
         this.areaDescription.setLineWrap(true);
@@ -55,19 +45,7 @@ public class Plugins extends JPanel implements ActionListener {
         this.delete.addActionListener(this);
         
         this.add(labelNom);
-        this.add(labelNumeroVersion);
-        this.add(labelDateUpdate);
         this.add(areaDescription);
-        
-        if (statutPlugin == 1) {
-            this.add(activate);
-        }
-        else if (statutPlugin == 3) {
-            this.add(deactivate);
-        }
-        else {
-            this.add(new JLabel("En cours de téléchargement..."));
-        }
         this.add(delete);
     }
     

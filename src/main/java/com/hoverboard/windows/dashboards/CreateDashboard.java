@@ -1,4 +1,4 @@
-package com.hoverboard.windows.menus.newdashboard;
+package com.hoverboard.windows.dashboards;
 
 import com.hoverboard.BDD;
 import com.hoverboard.windows.menus.themes.Theme;
@@ -16,7 +16,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
- * La classe CreateDashboard affiche une fenêtre permettant à un utilisateur
+ * La classe CreateDashboard affiche une fenêtre permettant à un utilisateur de créer un dashboard.
  * @author Arnaud
  */
 public class CreateDashboard extends JFrame implements ActionListener {
@@ -33,6 +33,10 @@ public class CreateDashboard extends JFrame implements ActionListener {
     private final JTextField titreField = new JTextField("");
     private final JTextArea descriptionArea = new JTextArea("");
     
+    /**
+     * Constructeur de la fenêtre d'ajout de dashboard.
+     * @param idUser L'ID de l'utilisateur connecté.
+     */
     @SuppressWarnings("LeakingThisInConstructor")
     public CreateDashboard(int idUser) {
         
