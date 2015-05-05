@@ -222,7 +222,7 @@ public class MenuTheme extends JFrame implements ActionListener, ItemListener {
           BufferedImage backgroundPreview = null;
           try {
               backgroundPreview = ImageIO.read(new File(dataTheme.get("background").toString()));
-              backgroundPreview.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+              backgroundPreview.getScaledInstance(200, 200, Image.SCALE_DEFAULT);
           }
           catch (IOException error) {
               JOptionPane.showMessageDialog(null, "Erreur lors de l'affichage du background !", "Erreur !", JOptionPane.ERROR_MESSAGE);

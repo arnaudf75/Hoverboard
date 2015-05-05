@@ -35,7 +35,7 @@ public class AppProperties {
     
     public static void storeProperties() {
         try {
-            FileOutputStream propertiesOut = new FileOutputStream((new File("userData/app.properties")));
+            FileOutputStream propertiesOut = new FileOutputStream(new File("userData/app.properties"));
             AppProperties.properties.put("theme", AppProperties.themeSelected);
             AppProperties.properties.store(propertiesOut, "Fichier de configuration"); 
         }

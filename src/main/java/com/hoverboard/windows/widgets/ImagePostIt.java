@@ -84,7 +84,7 @@ public class ImagePostIt extends Widget {
                 this.pathToImage = pathToImage;
             }
             catch (IOException error) {
-                JOptionPane.showMessageDialog(null, "Impossible de mettre à jour l'image de ce widget ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Impossible de mettre à jour l'image de ce widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
         }
         Dashboard.listWidgets.add(this);
@@ -108,7 +108,7 @@ public class ImagePostIt extends Widget {
                 this.repaint();
             }
             catch (IllegalArgumentException | IOException | NullPointerException error) {
-                JOptionPane.showMessageDialog(null, "Impossible de mettre à jour l'image de ce widget ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Impossible de mettre à jour l'image de ce widget !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
