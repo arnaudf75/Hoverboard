@@ -29,7 +29,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 /**
- * Login est la fenÃªtre par laquelle l'utilisateur se connecte Ã  son compte.
+ * Login est la fenêtre par laquelle l'utilisateur se connecte à son compte.
  * @author Arnaud
  */
 public class Login extends JFrame implements ActionListener {
@@ -48,8 +48,8 @@ public class Login extends JFrame implements ActionListener {
     private final JTextField login_field = new JTextField();
 
     /**
-     * CrÃ©e une fenÃªtre de login dans laquelle l'utilisateur rentre ses identifiants
-     * ou demande Ã  afficher une fenÃªtre d'inscription ou de mot de passe perdu.
+     * CrÃ©e une fenêtre de login dans laquelle l'utilisateur rentre ses identifiants
+     * ou demande à afficher une fenêtre d'inscription ou de mot de passe perdu.
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Login() {
@@ -87,8 +87,8 @@ public class Login extends JFrame implements ActionListener {
     }
     
     /**
-     * Affiche la page d'accueil de l'utilisateur si le login et le mot de passe sont valides, ou affiche une fenÃªtre d'enregistrement ou de mot de passe perdu.
-     * @param event L'action qui vient de se produire (bouton cliquÃ©).
+     * Affiche la page d'accueil de l'utilisateur si le login et le mot de passe sont valides, ou affiche une fenêtre d'enregistrement ou de mot de passe perdu.
+     * @param event L'action qui vient de se produire (bouton cliqué).
      */
     @Override
     public void actionPerformed(ActionEvent event) {
@@ -126,19 +126,21 @@ public class Login extends JFrame implements ActionListener {
             }
         }
         else if (source == password_lost) {
-            String nomTheme = JOptionPane.showInputDialog(null, "Saisissez votre adresse email :", "Réinitialisation du mot de passe", JOptionPane.QUESTION_MESSAGE);
-            try {
-                String new_password = BDD.resetPassword(nomTheme);
-                if (new_password != null) {
-                    SendMail send = new SendMail();
-                    send.sendPasswordLostEmail(nomTheme, new_password);
+            String adresseEmail = JOptionPane.showInputDialog(null, "Saisissez votre adresse email :", "Réinitialisation du mot de passe", JOptionPane.QUESTION_MESSAGE);
+            if (!adresseEmail.equals("")) {
+                try {
+                    String new_password = BDD.resetPassword(adresseEmail);
+                    if (new_password != null) {
+                        SendMail send = new SendMail();
+                        send.sendPasswordLostEmail(adresseEmail, new_password);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec cet email !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
-                else {
-                    JOptionPane.showMessageDialog(null, "Aucun utilisateur n'existe avec cet email !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                catch (MessagingException error) {
+                    JOptionPane.showMessageDialog(null, "Impossible d'envoyer un message pour changer votre mot de passe !", "ERREUR", JOptionPane.ERROR_MESSAGE);
                 }
-            }
-            catch (MessagingException error) {
-                JOptionPane.showMessageDialog(null, "Impossible d'envoyer un message pour changer votre mot de passe !", "ERREUR", JOptionPane.ERROR_MESSAGE);
             }
         }
         else if (source == register) {
