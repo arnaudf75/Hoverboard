@@ -5,6 +5,13 @@
  */
 package hoverboard.plugins;
 
+import hoverboard.BDD;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+
 /**
  * Cette classe permet de télécharger un plugin d'un menu du programme 
  * directement sur le site. 
@@ -19,8 +26,12 @@ public class PluginDownloader {
         this.pluginID = pluginID;
     }
     
-    // methode qui sert a apprendre au programme a debugger winodws vista
-    public static PluginFile downloadPluginFromServer() {
+    /**
+     * Permet de télécharger un fichier plugin depuis le serveur afin 
+     * de le charger dans le programme. 
+     * @return
+     */
+    public PluginFile downloadPluginFromServer() {
         // - appelle la methode qui retourne le nom du fichier du plugin avec son ID
         //      > methode a implementer dans la classe BDD
         // - utilise un protocole de telechargement java a la wget
@@ -29,12 +40,53 @@ public class PluginDownloader {
         //      > determiner un fichier dans lequel stocker les plugins
         // - retourner le PluginFile fabrique a partir du fichier telecharge plus haut
         //      > utiliser la methode d'en dessous qui le fabrique
-        return PluginDownloader.createPluginFile();
-    }
-    
-    public static PluginFile createPluginFile(){
-        // creer un nouveau puginFile avec le plugindl
-        return new PluginFile("Some/path");
+        BDD db = new BDD();
+        String name = db.getPluginName(pluginID);
+        String host = "http://" + name + ".jar"; // concatener avec le "nom du plugin.jar"
+        
+        InputStream input = null;
+        FileOutputStream writeFile = null;
+
+        try
+        {
+            URL url = new URL(host);
+            URLConnection connection = url.openConnection();
+            int fileLength = connection.getContentLength();
+
+            if (fileLength == -1)
+            {
+                System.out.println("Invalide URL or file.");
+                return null;
+            }
+
+            input = connection.getInputStream();
+            String fileName = url.getFile().substring(url.getFile().lastIndexOf('/') + 1);
+            writeFile = new FileOutputStream(fileName);
+            byte[] buffer = new byte[1024];
+            int read;
+
+            while ((read = input.read(buffer)) > 0)
+                writeFile.write(buffer, 0, read);
+            writeFile.flush();
+        }
+        catch (IOException e)
+        {
+            System.out.println("Error while trying to download the file.");
+            e.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                writeFile.close();
+                input.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return new PluginFile("/" + name + ".jar");
     }
     
 }
