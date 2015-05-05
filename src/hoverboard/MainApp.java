@@ -68,6 +68,7 @@ public class MainApp {
         //      - instancer un PluginFile
         //      - sur ce plugin file, creer un Plugin loader
         //      - appeler loadPlugin
+        
     }
     
 }

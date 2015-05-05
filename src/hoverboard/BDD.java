@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -383,6 +384,9 @@ public class BDD {
      * @param idPlugin L'id du plugin à activer/désactiver.
      * @param statut Le statut choisi par l'utilisateur (1 pour désactivé, 3 pour activé).
      */
+    
+    
+    
     public void setStatutPlugin(int idUser, int idPlugin, int statut) {
         this.requete = "UPDATE installe SET idStatutPlugin = " +statut
                      + " WHERE idPlugin = " +idPlugin
@@ -401,9 +405,30 @@ public class BDD {
      * @param idVersion 
      */
     public void updatePlugin(int idVersion) {
+  
         
     }
     
+    /**
+     * Retourne la liste des plugins pour un utilisateur
+     * @param userId 
+     * @return la liste des plugins pour cet user en ArrayList<String>
+    */
+    public ArrayList<String> getPluginsForUser(int userId) {
+        this.requete = "SELECT namePlugin FROM `plugins` p, telecharge t, users u WHERE p.idPlugin = t.idPlugin AND u.idUser = t.idUser AND u.idUser = " + userId;
+        ArrayList<String> listPluginName = new ArrayList<>();
+        try {
+            ResultSet result = this.statement.executeQuery(this.requete);
+            while(result.next()) {
+                listPluginName.add(result.getString("namePlugin"));
+            }
+            
+        }
+        catch (SQLException error) {
+            JOptionPane.showMessageDialog(null, "Impossible de modifier le widget ! " +error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+        }
+        return listPluginName;
+    } 
     /**
      * Cette fonction est appellée lorsque l'utilisateur clique sur le bouton "Enregistrer" (îcone de disquete) sur un widget.
      * Elle modifie le contenu d'un widget dans la base de données.
