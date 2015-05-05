@@ -54,7 +54,7 @@ public class PluginLoader {
             int place = 0;
             for (File f : listFile) {
                 try {
-                    URL[] listeUrl = {f.toURL()};
+                    URL[] listeUrl = {f.toURI().toURL()};
                     listClassLoader.add(new URLClassLoader(listeUrl));
                     JarFile ficjar = new JarFile(f.getAbsolutePath());
                     enums = ficjar.entries();
